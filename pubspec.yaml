@@ -1,0 +1,28 @@
+﻿name: virtual_chem_lab
+description: 2D Interactive Virtual Chemistry Laboratory
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.13.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  flutter_riverpod: ^2.6.1
+  go_router: ^14.6.2
+  camera: ^0.11.0+2
+  camera_windows: ^0.2.6
+  window_manager: ^0.4.3
+  model_viewer_plus: ^1.7.2
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/models/

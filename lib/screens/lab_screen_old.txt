@@ -1,0 +1,2111 @@
+﻿import 'dart:async';
+import 'dart:math';
+import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:go_router/go_router.dart';
+
+import '../data/models/chemical.dart';
+import '../data/models/reaction.dart';
+import '../logic/reaction_engine.dart';
+
+class K {
+  static const bgDeep = Color(0xFF050D1A);
+  static const bg = Color(0xFF0A1424);
+  static const panel = Color(0xFF0F1B2E);
+  static const panelElev = Color(0xFF152238);
+  static const panelTop = Color(0xFF1A2942);
+  static const border = Color(0xFF1F2E48);
+  static const cyan = Color(0xFF22D3EE);
+  static const blue = Color(0xFF3B82F6);
+  static const blueBright = Color(0xFF60A5FA);
+  static const blueSoft = Color(0xFF1E3A5F);
+  static const green = Color(0xFF10B981);
+  static const amber = Color(0xFFF59E0B);
+  static const red = Color(0xFFEF4444);
+  static const text = Color(0xFFF1F5F9);
+  static const textSub = Color(0xFF94A3B8);
+  static const textDim = Color(0xFF64748B);
+  static const textMute = Color(0xFF475569);
+}
+
+enum EquipmentType { beaker, flask, testTube, cylinder }
+
+extension EqX on EquipmentType {
+  String get label => const ['Beaker', 'Flask', 'Test Tube', 'Cylinder'][index];
+  IconData get icon => const [Icons.coffee, Icons.science, Icons.biotech, Icons.straighten][index];
+  double get maxVolume => const [250.0, 250.0, 50.0, 100.0][index];
+  Size get size => const [Size(120.0, 160.0), Size(145.0, 195.0), Size(50.0, 200.0), Size(70.0, 220.0)][index];
+  EqShape get shape => const [EqShape.beaker, EqShape.flask, EqShape.testTube, EqShape.cylinder][index];
+}
+
+enum ToolType { bunsenBurner, thermometer, stirrer, balance, dropper, testTubeRack, filtration }
+
+extension ToolX on ToolType {
+  String get label => const ['Bunsen', 'Thermo', 'Stirrer', 'Balance', 'Dropper', 'Rack', 'Funnel'][index];
+  IconData get icon => const [Icons.local_fire_department, Icons.thermostat, Icons.rotate_right, Icons.scale, Icons.water_drop, Icons.grid_on, Icons.filter_alt][index];
+  Size get size => const [Size(60.0, 110.0), Size(40.0, 180.0), Size(55.0, 190.0), Size(160.0, 100.0), Size(40.0, 130.0), Size(180.0, 90.0), Size(110.0, 200.0)][index];
+  ToolShape get shape => const [ToolShape.bunsenBurner, ToolShape.thermometer, ToolShape.stirrer, ToolShape.balance, ToolShape.dropper, ToolShape.testTubeRack, ToolShape.filtration][index];
+}
+
+enum EqShape { beaker, flask, testTube, cylinder }
+enum ToolShape { bunsenBurner, thermometer, stirrer, balance, dropper, testTubeRack, filtration }
+
+class EquipmentData {
+  final EquipmentType type;
+  final Map<String, double> chemicalVolumes = {};
+  double temperature = 25.0;
+  bool isHeating = false;
+  bool isStirring = false;
+  EquipmentData(this.type);
+  double get totalVolume => chemicalVolumes.values.fold(0.0, (a, b) => a + b);
+  List<String> get chemicalIds => chemicalVolumes.keys.toList();
+  void addChemical(String id, double mL) {
+    chemicalVolumes[id] = (chemicalVolumes[id] ?? 0.0) + mL;
+    if (chemicalVolumes[id]! > type.maxVolume) chemicalVolumes[id] = type.maxVolume;
+  }
+  void clear() { chemicalVolumes.clear(); temperature = 25.0; isHeating = false; isStirring = false; }
+}
+
+class ToolData {
+  final ToolType type;
+  bool isActive = false;
+  ToolData(this.type);
+}
+
+class LabScreen extends StatefulWidget {
+  const LabScreen({super.key});
+  @override
+  State<LabScreen> createState() => _LabScreenState();
+}
+
+class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
+  static const List<Chemical> _chemicals = [
+    Chemical(id: 'hcl', name: 'Hydrochloric Acid', formula: 'HCl', state: 'Liquid', color: Color(0xFFB8E1F5), safetyInfo: 'Corrosive'),
+    Chemical(id: 'naoh', name: 'Sodium Hydroxide', formula: 'NaOH', state: 'Solid', color: Color(0xFFF0F4F8), safetyInfo: 'Strong base'),
+    Chemical(id: 'cuso4', name: 'Copper(II) Sulfate', formula: 'CuSO4', state: 'Solid', color: Color(0xFF1A8FE3), safetyInfo: 'Harmful'),
+    Chemical(id: 'agno3', name: 'Silver Nitrate', formula: 'AgNO3', state: 'Solid', color: Color(0xFFEDEDED), safetyInfo: 'Stains skin'),
+    Chemical(id: 'ethanol', name: 'Ethanol', formula: 'C2H5OH', state: 'Liquid', color: Color(0xFFE8F0F8), safetyInfo: 'Flammable'),
+    Chemical(id: 'phenolphthalein', name: 'Phenolphthalein', formula: 'C20H12O4', state: 'Indicator', color: Color(0xFFEC4899), safetyInfo: 'Indicator'),
+    Chemical(id: 'nacl', name: 'Sodium Chloride', formula: 'NaCl', state: 'Solid', color: Color(0xFFF5F5F5), safetyInfo: 'Common salt'),
+    Chemical(id: 'h2so4', name: 'Sulfuric Acid', formula: 'H2SO4', state: 'Liquid', color: Color(0xFFF3C87A), safetyInfo: 'Corrosive'),
+  ];
+
+  static const List<double> _measurements = [5.0, 10.0, 25.0, 50.0];
+
+  final List<EquipmentData> _equipment = [
+    EquipmentData(EquipmentType.beaker),
+    EquipmentData(EquipmentType.flask),
+  ];
+  final List<ToolData> _tools = [];
+
+  final List<AnimationController> _bubbleCtrl = [];
+  final List<AnimationController> _pourCtrl = [];
+  final List<AnimationController> _shakeCtrl = [];
+  final List<AnimationController> _steamCtrl = [];
+  final List<AnimationController> _sparkCtrl = [];
+  final List<AnimationController> _toolCtrl = [];
+  final List<ReactionResult?> _results = [];
+  final List<bool> _showSteam = [];
+  final List<bool> _showSparks = [];
+
+  double _selectedVolume = 10.0;
+  Chemical? _draggingChemical;
+  final ValueNotifier<Offset> _dragPos = ValueNotifier(Offset.zero);
+  OverlayEntry? _dragOverlay;
+  int? _hoveredIndex;
+  int _activeNavIndex = 1;
+
+  final List<GlobalKey> _equipKeys = [];
+  final List<GlobalKey> _toolKeys = [];
+
+  Timer? _heatTimer;
+
+  @override
+  void initState() {
+    super.initState();
+    _ensureEquipCapacity();
+    _heatTimer = Timer.periodic(const Duration(milliseconds: 900), (_) => _tickHeating());
+  }
+
+  void _ensureEquipCapacity() {
+    while (_bubbleCtrl.length < _equipment.length) {
+      _bubbleCtrl.add(AnimationController(vsync: this, duration: const Duration(seconds: 3)));
+      _pourCtrl.add(AnimationController(vsync: this, duration: const Duration(milliseconds: 800)));
+      _shakeCtrl.add(AnimationController(vsync: this, duration: const Duration(milliseconds: 600)));
+      _steamCtrl.add(AnimationController(vsync: this, duration: const Duration(seconds: 4))..repeat());
+      _sparkCtrl.add(AnimationController(vsync: this, duration: const Duration(seconds: 2)));
+      _results.add(null);
+      _showSteam.add(false);
+      _showSparks.add(false);
+      _equipKeys.add(GlobalKey());
+    }
+  }
+
+  void _ensureToolCapacity() {
+    while (_toolCtrl.length < _tools.length) {
+      _toolCtrl.add(AnimationController(vsync: this, duration: const Duration(seconds: 2))..repeat());
+      _toolKeys.add(GlobalKey());
+    }
+  }
+
+  @override
+  void dispose() {
+    _heatTimer?.cancel();
+    _dragOverlay?.remove();
+    for (final c in _bubbleCtrl) { c.dispose(); }
+    for (final c in _pourCtrl) { c.dispose(); }
+    for (final c in _shakeCtrl) { c.dispose(); }
+    for (final c in _steamCtrl) { c.dispose(); }
+    for (final c in _sparkCtrl) { c.dispose(); }
+    for (final c in _toolCtrl) { c.dispose(); }
+    super.dispose();
+  }
+
+  void _addEquipment(EquipmentType t) {
+    SystemSound.play(SystemSoundType.click);
+    setState(() { _equipment.add(EquipmentData(t)); _ensureEquipCapacity(); });
+  }
+
+  void _removeEquipment(int i) {
+    SystemSound.play(SystemSoundType.click);
+    setState(() {
+      if (_equipment.length <= 1) return;
+      _equipment.removeAt(i);
+      _bubbleCtrl[i].dispose(); _bubbleCtrl.removeAt(i);
+      _pourCtrl[i].dispose(); _pourCtrl.removeAt(i);
+      _shakeCtrl[i].dispose(); _shakeCtrl.removeAt(i);
+      _steamCtrl[i].dispose(); _steamCtrl.removeAt(i);
+      _sparkCtrl[i].dispose(); _sparkCtrl.removeAt(i);
+      _results.removeAt(i); _showSteam.removeAt(i);
+      _showSparks.removeAt(i); _equipKeys.removeAt(i);
+    });
+  }
+
+  void _addTool(ToolType t) {
+    SystemSound.play(SystemSoundType.click);
+    setState(() { _tools.add(ToolData(t)); _ensureToolCapacity(); });
+  }
+
+  void _removeTool(int i) {
+    SystemSound.play(SystemSoundType.click);
+    setState(() {
+      _tools.removeAt(i);
+      _toolCtrl[i].dispose(); _toolCtrl.removeAt(i);
+      _toolKeys.removeAt(i);
+    });
+  }
+
+  void _toggleTool(int i) {
+    SystemSound.play(SystemSoundType.click);
+    final tool = _tools[i];
+    setState(() => tool.isActive = !tool.isActive);
+    if (tool.type == ToolType.bunsenBurner) {
+      for (var k = 0; k < _equipment.length; k++) {
+        _equipment[k].isHeating = tool.isActive;
+        _updateTemp(k);
+      }
+    } else if (tool.type == ToolType.stirrer) {
+      for (var k = 0; k < _equipment.length; k++) {
+        _equipment[k].isStirring = tool.isActive;
+      }
+    }
+  }
+
+  void _updateTemp(int i) {
+    final eq = _equipment[i];
+    if (eq.isHeating) {
+      eq.temperature = (eq.temperature + 4).clamp(25.0, 150.0);
+    } else if (eq.temperature > 25.0) {
+      eq.temperature = (eq.temperature - 2).clamp(25.0, 150.0);
+    }
+    _showSteam[i] = eq.temperature > 60.0 && eq.totalVolume > 0;
+  }
+
+  void _tickHeating() {
+    if (!mounted) return;
+    setState(() {
+      for (var i = 0; i < _equipment.length; i++) {
+        if (_equipment[i].isHeating || _equipment[i].temperature > 25.0) {
+          _updateTemp(i);
+        }
+      }
+    });
+  }
+
+  void _startDrag(Chemical c, Offset pos) {
+    _draggingChemical = c;
+    _dragPos.value = pos;
+    _dragOverlay = OverlayEntry(builder: (_) => ValueListenableBuilder<Offset>(
+      valueListenable: _dragPos,
+      builder: (_, p, __) => Positioned(left: p.dx - 40, top: p.dy - 60,
+        child: IgnorePointer(child: Material(color: Colors.transparent, child: _floatingBottle(c)))),
+    ));
+    Overlay.of(context).insert(_dragOverlay!);
+    setState(() {});
+  }
+
+  void _updateDrag(Offset pos) {
+    if (_dragOverlay == null) return;
+    _dragPos.value = pos;
+    final idx = _equipAtPoint(pos);
+    if (idx != _hoveredIndex) setState(() => _hoveredIndex = idx);
+  }
+
+  void _endDrag() {
+    _dragOverlay?.remove();
+    _dragOverlay = null;
+    final idx = _equipAtPoint(_dragPos.value);
+    if (idx != null && _draggingChemical != null) _pourInto(idx, _draggingChemical!);
+    setState(() { _draggingChemical = null; _hoveredIndex = null; });
+  }
+
+  int? _equipAtPoint(Offset pos) {
+    for (var i = 0; i < _equipment.length; i++) {
+      final ctx = _equipKeys[i].currentContext;
+      if (ctx == null) continue;
+      final box = ctx.findRenderObject() as RenderBox?;
+      if (box == null) continue;
+      final local = box.globalToLocal(pos);
+      if (local.dx >= -20 && local.dy >= -20 && local.dx <= box.size.width + 20 && local.dy <= box.size.height + 20) return i;
+    }
+    return null;
+  }
+
+  void _pourInto(int i, Chemical c) {
+    SystemSound.play(SystemSoundType.click);
+    setState(() {
+      final eq = _equipment[i];
+      eq.addChemical(c.id, _selectedVolume);
+      final prev = _results[i];
+      final next = ReactionEngine.verify(eq.chemicalIds);
+      _results[i] = next;
+      _pourCtrl[i].forward(from: 0);
+      if (next.matched && (prev == null || !prev.matched)) {
+        _shakeCtrl[i].forward(from: 0);
+        _sparkCtrl[i].forward(from: 0);
+        _showSparks[i] = true;
+        SystemSound.play(SystemSoundType.alert);
+        Future.delayed(const Duration(milliseconds: 1800), () {
+          if (mounted) setState(() => _showSparks[i] = false);
+        });
+      }
+      if (next.reaction?.bubbles == true) { _bubbleCtrl[i].repeat(); }
+      else { _bubbleCtrl[i].stop(); }
+    });
+  }
+
+  void _reset() {
+    SystemSound.play(SystemSoundType.click);
+    setState(() {
+      for (var i = 0; i < _equipment.length; i++) {
+        _equipment[i].clear();
+        _results[i] = null;
+        _bubbleCtrl[i].stop(); _bubbleCtrl[i].reset();
+        _pourCtrl[i].reset(); _shakeCtrl[i].reset();
+        _showSteam[i] = false; _showSparks[i] = false;
+      }
+      _hoveredIndex = null;
+    });
+  }
+
+  Color _liquidColor(int i) {
+    final r = _results[i];
+    if (r?.matched == true && r?.reaction?.colorChange != null) return r!.reaction!.colorChange!;
+    final eq = _equipment[i];
+    if (eq.chemicalIds.isEmpty) return Colors.transparent;
+    return _chemicals.firstWhere((c) => c.id == eq.chemicalIds.last).color;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: K.bgDeep,
+      body: Column(
+        children: [
+          _topBar(),
+          Expanded(
+            child: Row(
+              children: [
+                _leftNav(),
+                _chemicalInventoryPanel(),
+                Expanded(child: _mainLabArea()),
+                _rightToolboxPanel(),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _topBar() {
+    return Container(
+      height: 64,
+      decoration: const BoxDecoration(
+        color: K.bg,
+        border: Border(bottom: BorderSide(color: K.border)),
+      ),
+      padding: const EdgeInsets.symmetric(horizontal: 20),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(9),
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(colors: [K.cyan, K.blue]),
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [BoxShadow(color: K.cyan.withValues(alpha: 0.4), blurRadius: 12)],
+            ),
+            child: const Icon(Icons.science, color: Colors.white, size: 20),
+          ),
+          const SizedBox(width: 12),
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              RichText(
+                text: const TextSpan(
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: Colors.white),
+                  children: [
+                    TextSpan(text: 'Virtual '),
+                    TextSpan(text: 'Chemistry', style: TextStyle(color: K.cyan)),
+                    TextSpan(text: ' Lab'),
+                  ],
+                ),
+              ),
+              const Text('Explore - Experiment - Learn', style: TextStyle(color: K.textDim, fontSize: 10)),
+            ],
+          ),
+          const SizedBox(width: 32),
+          Expanded(
+            child: Container(
+              height: 40,
+              decoration: BoxDecoration(
+                color: K.panel,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: K.border),
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: Row(
+                children: const [
+                  Icon(Icons.search, color: K.textDim, size: 16),
+                  SizedBox(width: 10),
+                  Expanded(child: Text('Search chemicals, experiments or keywords...',
+                    style: TextStyle(color: K.textDim, fontSize: 12))),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(width: 20),
+          _topIcon(Icons.brightness_6, () {}),
+          const SizedBox(width: 6),
+          _topIcon(Icons.notifications_none, () {}),
+          const SizedBox(width: 16),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+            decoration: BoxDecoration(
+              color: K.panel,
+              borderRadius: BorderRadius.circular(20),
+              border: Border.all(color: K.border),
+            ),
+            child: Row(
+              children: [
+                Container(
+                  width: 28, height: 28,
+                  decoration: const BoxDecoration(
+                    gradient: LinearGradient(colors: [K.cyan, K.blue]),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.person, color: Colors.white, size: 16),
+                ),
+                const SizedBox(width: 10),
+                const Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text('Student', style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+                    Text('University Student', style: TextStyle(color: K.textDim, fontSize: 9)),
+                  ],
+                ),
+                const SizedBox(width: 6),
+                const Icon(Icons.keyboard_arrow_down, color: K.textDim, size: 16),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _topIcon(IconData icon, VoidCallback onTap) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.all(9),
+          decoration: BoxDecoration(
+            color: K.panel,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: K.border),
+          ),
+          child: Icon(icon, color: K.textSub, size: 16),
+        ),
+      ),
+    );
+  }
+
+  Widget _leftNav() {
+    final items = [
+      (Icons.home_outlined, 'Home'),
+      (Icons.science_outlined, 'Virtual Lab'),
+      (Icons.biotech_outlined, 'Experiments'),
+      (Icons.inventory_2_outlined, 'Chemical\nInventory'),
+      (Icons.history, 'History'),
+      (Icons.settings_outlined, 'Settings'),
+    ];
+
+    return Container(
+      width: 170,
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter, end: Alignment.bottomCenter,
+          colors: [K.panel, K.bg],
+        ),
+        border: Border(right: BorderSide(color: K.border)),
+      ),
+      child: Column(
+        children: [
+          const SizedBox(height: 16),
+          ...items.asMap().entries.map((e) {
+            final active = _activeNavIndex == e.key;
+            return GestureDetector(
+              onTap: () => setState(() => _activeNavIndex = e.key),
+              child: AnimatedContainer(
+                duration: const Duration(milliseconds: 180),
+                margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 3),
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                decoration: BoxDecoration(
+                  color: active ? K.blueSoft.withValues(alpha: 0.6) : null,
+                  borderRadius: BorderRadius.circular(10),
+                  border: active ? Border.all(color: K.cyan.withValues(alpha: 0.4)) : null,
+                  boxShadow: active ? [BoxShadow(color: K.cyan.withValues(alpha: 0.15), blurRadius: 12)] : null,
+                ),
+                child: Row(
+                  children: [
+                    Icon(e.value.$1, size: 18, color: active ? K.cyan : K.textSub),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        e.value.$2,
+                        style: TextStyle(
+                          color: active ? Colors.white : K.textSub,
+                          fontSize: 12,
+                          fontWeight: active ? FontWeight.bold : FontWeight.w500,
+                          height: 1.2,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }),
+          const Spacer(),
+          Container(
+            margin: const EdgeInsets.all(14),
+            padding: const EdgeInsets.all(14),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topLeft, end: Alignment.bottomRight,
+                colors: [K.blueSoft.withValues(alpha: 0.5), K.panel],
+              ),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: K.cyan.withValues(alpha: 0.2)),
+            ),
+            child: Column(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(color: K.cyan.withValues(alpha: 0.15), shape: BoxShape.circle),
+                  child: const Icon(Icons.science, color: K.cyan, size: 24),
+                ),
+                const SizedBox(height: 10),
+                const Text('Small\nExperiments\nMake Big\nDiscoveries',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: K.textSub, fontSize: 10, height: 1.5)),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _chemicalInventoryPanel() {
+    return Container(
+      width: 290,
+      decoration: const BoxDecoration(
+        color: K.panel,
+        border: Border(right: BorderSide(color: K.border)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Container(
+            padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
+            child: Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(color: K.cyan.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(6)),
+                  child: const Icon(Icons.science, size: 12, color: K.cyan),
+                ),
+                const SizedBox(width: 10),
+                const Text('Chemical Inventory',
+                  style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
+              ],
+            ),
+          ),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Row(
+              children: [
+                _catChip('All', true),
+                const SizedBox(width: 4),
+                _catChip('Acids', false),
+                const SizedBox(width: 4),
+                _catChip('Bases', false),
+                const SizedBox(width: 4),
+                _catChip('Salts', false),
+                const SizedBox(width: 4),
+                _catChip('Others', false),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          Container(
+            margin: const EdgeInsets.symmetric(horizontal: 12),
+            height: 34,
+            decoration: BoxDecoration(
+              color: K.bg, borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: K.border),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 10),
+            child: Row(
+              children: const [
+                Icon(Icons.search, color: K.textDim, size: 13),
+                SizedBox(width: 8),
+                Text('Search chemicals...', style: TextStyle(color: K.textDim, fontSize: 11)),
+              ],
+            ),
+          ),
+          const SizedBox(height: 10),
+          Expanded(
+            child: ListView.builder(
+              padding: const EdgeInsets.symmetric(horizontal: 10),
+              itemCount: _chemicals.length,
+              itemBuilder: (_, i) => _chemRow(_chemicals[i]),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _catChip(String label, bool active) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+      decoration: BoxDecoration(
+        gradient: active ? const LinearGradient(colors: [K.cyan, K.blue]) : null,
+        color: active ? null : K.bg,
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: active ? K.cyan : K.border),
+      ),
+      child: Text(label,
+        style: TextStyle(color: active ? Colors.white : K.textSub, fontSize: 10, fontWeight: FontWeight.w600)),
+    );
+  }
+
+  Widget _chemRow(Chemical c) {
+    return Container(
+      margin: const EdgeInsets.symmetric(vertical: 3),
+      padding: const EdgeInsets.all(8),
+      decoration: BoxDecoration(
+        color: K.panelElev,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: K.border.withValues(alpha: 0.5)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 32, height: 40,
+            decoration: BoxDecoration(color: K.bg, borderRadius: BorderRadius.circular(6), border: Border.all(color: K.border)),
+            child: Center(
+              child: Container(width: 16, height: 24,
+                decoration: BoxDecoration(color: c.color, borderRadius: BorderRadius.circular(3))),
+            ),
+          ),
+          const SizedBox(width: 10),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(c.name, style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 2),
+                Row(
+                  children: [
+                    Text(c.formula, style: const TextStyle(color: K.cyan, fontSize: 10, fontWeight: FontWeight.bold)),
+                    const SizedBox(width: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+                      decoration: BoxDecoration(color: K.blueSoft.withValues(alpha: 0.5), borderRadius: BorderRadius.circular(4)),
+                      child: Text(c.state, style: const TextStyle(color: K.blueBright, fontSize: 8, fontWeight: FontWeight.w600)),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+          MouseRegion(
+            cursor: SystemMouseCursors.grab,
+            child: GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onPanStart: (d) => _startDrag(c, d.globalPosition),
+              onPanUpdate: (d) => _updateDrag(d.globalPosition),
+              onPanEnd: (_) => _endDrag(),
+              onPanCancel: _endDrag,
+              child: Container(
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: K.cyan.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(6),
+                  border: Border.all(color: K.cyan.withValues(alpha: 0.3)),
+                ),
+                child: const Icon(Icons.add, size: 14, color: K.cyan),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _mainLabArea() {
+    return Container(
+      color: K.bgDeep,
+      child: Column(
+        children: [
+          _labHeader(),
+          Expanded(child: _benchImageWithEquipment()),
+          _bottomPanels(),
+        ],
+      ),
+    );
+  }
+
+  Widget _labHeader() {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: const BoxDecoration(
+        color: K.bg,
+        border: Border(bottom: BorderSide(color: K.border)),
+      ),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(5),
+            decoration: BoxDecoration(color: K.cyan.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(5)),
+            child: const Icon(Icons.science, size: 11, color: K.cyan),
+          ),
+          const SizedBox(width: 8),
+          const Text('Virtual Laboratory',
+            style: TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.bold)),
+          const SizedBox(width: 16),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+            decoration: BoxDecoration(
+              color: K.panelElev,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: K.border),
+            ),
+            child: const Row(
+              children: [
+                Text('Experiment: Neutralization Reaction',
+                  style: TextStyle(color: K.textSub, fontSize: 10, fontWeight: FontWeight.w600)),
+                SizedBox(width: 6),
+                Icon(Icons.keyboard_arrow_down, color: K.textSub, size: 14),
+              ],
+            ),
+          ),
+          const Spacer(),
+          _headerBtn(Icons.refresh, 'Reset', _reset, K.textSub),
+          const SizedBox(width: 8),
+          Material(
+            color: Colors.transparent,
+            child: InkWell(
+              onTap: () { SystemSound.play(SystemSoundType.alert); },
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+                decoration: BoxDecoration(
+                  gradient: const LinearGradient(colors: [K.green, Color(0xFF059669)]),
+                  borderRadius: BorderRadius.circular(8),
+                  boxShadow: [BoxShadow(color: K.green.withValues(alpha: 0.4), blurRadius: 10)],
+                ),
+                child: const Row(
+                  children: [
+                    Icon(Icons.play_arrow, color: Colors.white, size: 13),
+                    SizedBox(width: 5),
+                    Text('Start Experiment',
+                      style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _headerBtn(IconData icon, String label, VoidCallback onTap, Color color) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          decoration: BoxDecoration(
+            color: K.panelElev,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: K.border),
+          ),
+          child: Row(
+            children: [
+              Icon(icon, color: color, size: 13),
+              const SizedBox(width: 5),
+              Text(label, style: TextStyle(color: color, fontSize: 10, fontWeight: FontWeight.w600)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _benchImageWithEquipment() {
+    return Stack(
+      children: [
+        Positioned.fill(
+          child: Container(
+            decoration: const BoxDecoration(
+              gradient: LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [Color(0xFF1A2942), Color(0xFF0A1424)],
+              ),
+            ),
+          ),
+        ),
+        Positioned.fill(
+          child: Container(color: Colors.black.withValues(alpha: 0.15)),
+        ),
+        Positioned(
+          left: 100, top: 60, right: 100,
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: _equipment.asMap().entries.map((e) {
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: _equipmentWidget(e.key),
+                );
+              }).toList(),
+            ),
+          ),
+        ),
+        if (_tools.isNotEmpty)
+          Positioned(
+            left: 100, bottom: 20, right: 100,
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: _tools.asMap().entries.map((e) {
+                  return Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 12),
+                    child: _toolWidget(e.key),
+                  );
+                }).toList(),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+
+  Widget _equipmentWidget(int i) {
+    final eq = _equipment[i];
+    final hover = _hoveredIndex == i;
+    final color = _liquidColor(i);
+    final total = eq.totalVolume;
+    final maxV = eq.type.maxVolume;
+    final fill = (total / maxV).clamp(0.0, 1.0);
+    final size = eq.type.size;
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            _equipLabel(eq, total, maxV, hover),
+            const SizedBox(height: 8),
+            AnimatedBuilder(
+              animation: _shakeCtrl[i],
+              builder: (_, child) {
+                final p = _shakeCtrl[i].value;
+                final off = p > 0 ? sin(p * pi * 8) * (1 - p) * 8 : 0.0;
+                return Transform.translate(offset: Offset(off, 0), child: child);
+              },
+              child: SizedBox(
+                width: size.width + 20,
+                height: size.height + 60,
+                child: Stack(
+                  alignment: Alignment.topCenter,
+                  children: [
+                    if (_showSteam[i])
+                      Positioned(
+                        top: 0, left: 10, right: 10, height: 60,
+                        child: AnimatedBuilder(
+                          animation: _steamCtrl[i],
+                          builder: (_, __) => CustomPaint(
+                            painter: SteamPainter(progress: _steamCtrl[i].value),
+                          ),
+                        ),
+                      ),
+                    Positioned(
+                      bottom: 0,
+                      child: AnimatedBuilder(
+                        animation: Listenable.merge([_pourCtrl[i], _bubbleCtrl[i]]),
+                        builder: (_, __) {
+                          return Container(
+                            key: _equipKeys[i],
+                            width: size.width,
+                            height: size.height,
+                            child: CustomPaint(
+                              painter: EquipmentPainter(
+                                shape: eq.type.shape,
+                                liquidColor: color,
+                                fillRatio: fill,
+                                isHovering: hover,
+                                showBubbles: _results[i]?.reaction?.bubbles == true,
+                                showPrecipitate: _results[i]?.reaction?.precipitate == true,
+                                precipitateColor: _results[i]?.reaction?.colorChange ?? const Color(0xFF60A5FA),
+                                pourProgress: _pourCtrl[i].value,
+                                bubbleProgress: _bubbleCtrl[i].value,
+                                isStirring: eq.isStirring,
+                                stirProgress: _toolCtrl.isNotEmpty ? _toolCtrl.first.value : 0.0,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ),
+                    if (_showSparks[i])
+                      Positioned.fill(
+                        child: IgnorePointer(
+                          child: AnimatedBuilder(
+                            animation: _sparkCtrl[i],
+                            builder: (_, __) => CustomPaint(
+                              painter: SparksPainter(progress: _sparkCtrl[i].value, color: K.amber),
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+        Positioned(
+          top: 40, right: -6,
+          child: GestureDetector(
+            onTap: () => _removeEquipment(i),
+            child: Container(
+              width: 18, height: 18,
+              decoration: BoxDecoration(
+                color: K.red, shape: BoxShape.circle,
+                border: Border.all(color: Colors.white, width: 1.2),
+              ),
+              child: const Icon(Icons.close, size: 9, color: Colors.white),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _equipLabel(EquipmentData eq, double total, double maxV, bool hover) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: hover ? K.green : K.bg.withValues(alpha: 0.85),
+        borderRadius: BorderRadius.circular(14),
+        border: Border.all(color: hover ? K.green : K.cyan.withValues(alpha: 0.3)),
+        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.5), blurRadius: 8)],
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(eq.type.icon, size: 9, color: hover ? Colors.white : K.cyan),
+          const SizedBox(width: 5),
+          Text(
+            hover ? 'RELEASE' : '${total.toInt()}/${maxV.toInt()} mL',
+            style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
+          ),
+          if (!hover) ...[
+            const SizedBox(width: 6),
+            Container(width: 1, height: 8, color: K.border),
+            const SizedBox(width: 6),
+            Text('${eq.temperature.toInt()}°C',
+              style: const TextStyle(color: K.amber, fontSize: 9, fontWeight: FontWeight.bold)),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _toolWidget(int i) {
+    final tool = _tools[i];
+    final size = tool.type.size;
+    return Stack(
+      clipBehavior: Clip.none,
+      children: [
+        GestureDetector(
+          onTap: () => _toggleTool(i),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                decoration: BoxDecoration(
+                  color: tool.isActive ? K.green : K.bg.withValues(alpha: 0.85),
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: tool.isActive ? K.green : K.border),
+                ),
+                child: Text(tool.type.label,
+                  style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold)),
+              ),
+              const SizedBox(height: 3),
+              SizedBox(
+                key: _toolKeys[i],
+                width: size.width,
+                height: size.height,
+                child: AnimatedBuilder(
+                  animation: _toolCtrl[i],
+                  builder: (_, __) => CustomPaint(
+                    painter: ToolPainter(
+                      shape: tool.type.shape,
+                      isActive: tool.isActive,
+                      progress: _toolCtrl[i].value,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+        Positioned(
+          top: -4, right: -4,
+          child: GestureDetector(
+            onTap: () => _removeTool(i),
+            child: Container(
+              width: 16, height: 16,
+              decoration: const BoxDecoration(color: K.red, shape: BoxShape.circle),
+              child: const Icon(Icons.close, size: 9, color: Colors.white),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _rightToolboxPanel() {
+    return Container(
+      width: 290,
+      decoration: const BoxDecoration(
+        color: K.panel,
+        border: Border(left: BorderSide(color: K.border)),
+      ),
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _toolboxHeader(),
+            _toolboxSection('Lab Equipment',
+              EquipmentType.values.map((t) => _toolboxTile(t.icon, t.label, () => _addEquipment(t))).toList()),
+            _toolboxSection('Actions', [
+              _toolboxTile(Icons.local_fire_department, 'Heat', () {
+                if (!_tools.any((t) => t.type == ToolType.bunsenBurner)) _addTool(ToolType.bunsenBurner);
+              }),
+              _toolboxTile(Icons.waves, 'Mix', () {}),
+              _toolboxTile(Icons.rotate_right, 'Stir', () {
+                if (!_tools.any((t) => t.type == ToolType.stirrer)) _addTool(ToolType.stirrer);
+              }),
+              _toolboxTile(Icons.ac_unit, 'Cool', () {}),
+              _toolboxTile(Icons.cleaning_services, 'Clear', _reset),
+            ]),
+            _toolboxSection('Other Tools', [
+              _toolboxTile(Icons.straighten, 'pH Meter', () {}),
+              _toolboxTile(Icons.water_drop, 'Indicator', () {}),
+              _toolboxTile(Icons.zoom_in, 'Magnifier', () {}),
+              _toolboxTile(Icons.scale, 'Scale', () {
+                if (!_tools.any((t) => t.type == ToolType.balance)) _addTool(ToolType.balance);
+              }),
+              _toolboxTile(Icons.hardware, 'Tongs', () {}),
+              _toolboxTile(Icons.brush, 'Brush', () {}),
+            ]),
+            _reactionInfoPanel(),
+            _instructionsPanel(),
+            _historyPanel(),
+            const SizedBox(height: 16),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _toolboxHeader() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 12),
+      child: Row(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(6),
+            decoration: BoxDecoration(color: K.cyan.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(6)),
+            child: const Icon(Icons.build_circle_outlined, size: 12, color: K.cyan),
+          ),
+          const SizedBox(width: 10),
+          const Text('Chemistry Toolbox',
+            style: TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold)),
+        ],
+      ),
+    );
+  }
+
+  Widget _toolboxSection(String title, List<Widget> tiles) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
+          child: Text(title,
+            style: const TextStyle(color: K.textSub, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 0.5)),
+        ),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Wrap(spacing: 6, runSpacing: 6, children: tiles),
+        ),
+      ],
+    );
+  }
+
+  Widget _toolboxTile(IconData icon, String label, VoidCallback onTap) {
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.circular(8),
+        child: Container(
+          width: 76,
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+          decoration: BoxDecoration(
+            color: K.panelElev,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(color: K.border.withValues(alpha: 0.6)),
+          ),
+          child: Column(
+            children: [
+              Icon(icon, color: K.cyan, size: 18),
+              const SizedBox(height: 6),
+              Text(label,
+                textAlign: TextAlign.center,
+                style: const TextStyle(color: K.textSub, fontSize: 9, fontWeight: FontWeight.w600)),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _reactionInfoPanel() {
+    int idx = -1;
+    for (var k = _results.length - 1; k >= 0; k--) {
+      if (_results[k] != null) { idx = k; break; }
+    }
+
+    return Container(
+      margin: const EdgeInsets.all(12),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: K.panelElev,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: K.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(color: K.cyan.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(4)),
+                child: const Icon(Icons.info_outline, size: 10, color: K.cyan),
+              ),
+              const SizedBox(width: 8),
+              const Text('Reaction Information',
+                style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+            ],
+          ),
+          const SizedBox(height: 10),
+          if (idx == -1)
+            Container(
+              padding: const EdgeInsets.all(10),
+              decoration: BoxDecoration(color: K.bg, borderRadius: BorderRadius.circular(6)),
+              child: const Text('Add chemicals to see reaction info',
+                style: TextStyle(color: K.textDim, fontSize: 10)),
+            )
+          else
+            _reactionContent(idx),
+        ],
+      ),
+    );
+  }
+
+  Widget _reactionContent(int idx) {
+    final r = _results[idx]!;
+    if (!r.matched) {
+      return Container(
+        padding: const EdgeInsets.all(10),
+        decoration: BoxDecoration(
+          color: K.bg,
+          borderRadius: BorderRadius.circular(6),
+          border: Border.all(color: K.red.withValues(alpha: 0.3)),
+        ),
+        child: Row(
+          children: const [
+            Icon(Icons.error_outline, size: 14, color: K.red),
+            SizedBox(width: 8),
+            Expanded(child: Text('No supported reaction', style: TextStyle(color: K.red, fontSize: 10))),
+          ],
+        ),
+      );
+    }
+
+    final rxn = r.reaction!;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _infoRow('Name', rxn.name),
+        _infoRow('Type', rxn.type),
+        const SizedBox(height: 8),
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: K.blueSoft.withValues(alpha: 0.4),
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(color: K.cyan.withValues(alpha: 0.3)),
+          ),
+          child: Text(rxn.equation,
+            style: const TextStyle(color: K.cyan, fontSize: 12, fontWeight: FontWeight.bold),
+            textAlign: TextAlign.center),
+        ),
+        const SizedBox(height: 8),
+        Text(rxn.description,
+          style: const TextStyle(color: K.textSub, fontSize: 10, height: 1.4)),
+      ],
+    );
+  }
+
+  Widget _infoRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 4),
+      child: Row(
+        children: [
+          SizedBox(width: 44, child: Text('$label:',
+            style: const TextStyle(color: K.textDim, fontSize: 10))),
+          Expanded(
+            child: Text(value,
+              style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _instructionsPanel() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: K.panelElev,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: K.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(color: K.amber.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(4)),
+                child: const Icon(Icons.lightbulb_outline, size: 10, color: K.amber),
+              ),
+              const SizedBox(width: 8),
+              const Text('Instructions',
+                style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+            ],
+          ),
+          const SizedBox(height: 10),
+          _instructionStep('1', 'Select chemicals from the inventory.'),
+          _instructionStep('2', 'Drag & drop them into the lab equipment.'),
+          _instructionStep('3', 'Mix the chemicals and observe.'),
+          _instructionStep('4', 'Check the result and chemical equation.'),
+        ],
+      ),
+    );
+  }
+
+  Widget _instructionStep(String num, String text) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 6),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 16, height: 16,
+            decoration: BoxDecoration(
+              color: K.cyan.withValues(alpha: 0.2),
+              shape: BoxShape.circle,
+              border: Border.all(color: K.cyan.withValues(alpha: 0.5)),
+            ),
+            child: Center(
+              child: Text(num,
+                style: const TextStyle(color: K.cyan, fontSize: 9, fontWeight: FontWeight.bold)),
+            ),
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(text,
+              style: const TextStyle(color: K.textSub, fontSize: 10, height: 1.3)),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _historyPanel() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: K.panelElev,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: K.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(color: K.green.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(4)),
+                child: const Icon(Icons.history, size: 10, color: K.green),
+              ),
+              const SizedBox(width: 8),
+              const Text('Experiment History',
+                style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+              const Spacer(),
+              const Text('View All', style: TextStyle(color: K.cyan, fontSize: 9)),
+            ],
+          ),
+          const SizedBox(height: 10),
+          _historyItem('Neutralization Reaction', 'HCl + NaOH -> NaCl + H2O', 'Today'),
+          _historyItem('Copper Displacement', 'CuSO4 + Zn -> ZnSO4 + Cu', 'Yesterday'),
+          _historyItem('Precipitation Reaction', 'AgNO3 + NaCl -> AgCl + NaNO3', '2 days ago'),
+        ],
+      ),
+    );
+  }
+
+  Widget _historyItem(String name, String eq, String time) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8),
+      child: Row(
+        children: [
+          Container(width: 6, height: 6,
+            decoration: const BoxDecoration(color: K.green, shape: BoxShape.circle)),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(name, style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600)),
+                Text(eq, style: const TextStyle(color: K.textDim, fontSize: 9)),
+              ],
+            ),
+          ),
+          Text(time, style: const TextStyle(color: K.textMute, fontSize: 8)),
+        ],
+      ),
+    );
+  }
+
+  Widget _bottomPanels() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: const BoxDecoration(
+        color: K.bg,
+        border: Border(top: BorderSide(color: K.border)),
+      ),
+      child: Row(
+        children: [
+          Expanded(child: _currentExperimentPanel()),
+          const SizedBox(width: 10),
+          Expanded(child: _reactionResultPanel()),
+        ],
+      ),
+    );
+  }
+
+  Widget _currentExperimentPanel() {
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: K.panel,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: K.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(color: K.cyan.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(4)),
+                child: const Icon(Icons.play_circle_outline, size: 10, color: K.cyan),
+              ),
+              const SizedBox(width: 8),
+              const Text('Current Experiment',
+                style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              _stepBadge('1', 'Select\nChemicals', _equipment.any((e) => e.chemicalIds.isNotEmpty)),
+              _stepLine(),
+              _stepBadge('2', 'Mix\nReactants', _equipment.any((e) => e.chemicalIds.length >= 2)),
+              _stepLine(),
+              _stepBadge('3', 'Observe\nReaction', _results.any((r) => r?.matched == true)),
+              _stepLine(),
+              _stepBadge('4', 'View\nResult', _results.any((r) => r?.matched == true)),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _stepBadge(String num, String label, bool active) {
+    return Column(
+      children: [
+        Container(
+          width: 24, height: 24,
+          decoration: BoxDecoration(
+            color: active ? K.cyan : K.panelElev,
+            shape: BoxShape.circle,
+            border: Border.all(color: active ? K.cyan : K.border),
+            boxShadow: active ? [BoxShadow(color: K.cyan.withValues(alpha: 0.5), blurRadius: 8)] : null,
+          ),
+          child: Center(
+            child: Text(num,
+              style: TextStyle(color: active ? Colors.white : K.textDim, fontSize: 10, fontWeight: FontWeight.bold)),
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(label,
+          textAlign: TextAlign.center,
+          style: TextStyle(color: active ? Colors.white : K.textDim, fontSize: 8, height: 1.2)),
+      ],
+    );
+  }
+
+  Widget _stepLine() {
+    return Expanded(
+      child: Container(height: 1, color: K.border, margin: const EdgeInsets.only(bottom: 20)),
+    );
+  }
+
+  Widget _reactionResultPanel() {
+    int idx = -1;
+    for (var k = _results.length - 1; k >= 0; k--) {
+      if (_results[k] != null) { idx = k; break; }
+    }
+    final matched = idx != -1 && _results[idx]!.matched == true;
+    final rxn = matched ? _results[idx]!.reaction : null;
+
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        color: K.panel,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: matched ? K.green.withValues(alpha: 0.5) : K.border),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: matched ? K.green.withValues(alpha: 0.15) : K.textDim.withValues(alpha: 0.15),
+                  borderRadius: BorderRadius.circular(4),
+                ),
+                child: Icon(matched ? Icons.science : Icons.science_outlined,
+                  size: 10, color: matched ? K.green : K.textDim),
+              ),
+              const SizedBox(width: 8),
+              const Text('Reaction Result',
+                style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.bold)),
+              if (matched) ...[
+                const Spacer(),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                  decoration: BoxDecoration(color: K.green.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(4)),
+                  child: const Text('SUCCESS',
+                    style: TextStyle(color: K.green, fontSize: 8, fontWeight: FontWeight.bold)),
+                ),
+              ],
+            ],
+          ),
+          const SizedBox(height: 10),
+          if (!matched)
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(10),
+                  decoration: BoxDecoration(color: K.bg, borderRadius: BorderRadius.circular(30)),
+                  child: const Icon(Icons.science_outlined, color: K.textDim, size: 20),
+                ),
+                const SizedBox(width: 12),
+                const Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('No reaction yet',
+                        style: TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600)),
+                      SizedBox(height: 2),
+                      Text('Add chemicals and start the experiment.',
+                        style: TextStyle(color: K.textDim, fontSize: 9)),
+                    ],
+                  ),
+                ),
+              ],
+            )
+          else
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(rxn!.equation,
+                  style: const TextStyle(color: K.cyan, fontSize: 12, fontWeight: FontWeight.bold)),
+                const SizedBox(height: 6),
+                Text(rxn.name,
+                  style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.w600)),
+              ],
+            ),
+        ],
+      ),
+    );
+  }
+
+  Widget _floatingBottle(Chemical c) {
+    return SizedBox(
+      width: 80, height: 115,
+      child: Transform.rotate(
+        angle: -0.15,
+        child: Container(
+          decoration: BoxDecoration(
+            gradient: const LinearGradient(
+              begin: Alignment.topLeft, end: Alignment.bottomRight,
+              colors: [K.panelTop, K.panelElev],
+            ),
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: K.cyan, width: 1.5),
+            boxShadow: [BoxShadow(color: K.cyan.withValues(alpha: 0.4), blurRadius: 20, offset: const Offset(0, 6))],
+          ),
+          padding: const EdgeInsets.all(8),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.science, color: c.color, size: 26),
+              const SizedBox(height: 6),
+              Text(c.formula,
+                style: const TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 4),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                decoration: BoxDecoration(color: K.cyan, borderRadius: BorderRadius.circular(8)),
+                child: Text('${_selectedVolume.toInt()} mL',
+                  style: const TextStyle(color: Colors.white, fontSize: 8, fontWeight: FontWeight.bold)),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class EquipmentPainter extends CustomPainter {
+  final EqShape shape;
+  final Color liquidColor;
+  final double fillRatio;
+  final bool isHovering;
+  final bool showBubbles;
+  final bool showPrecipitate;
+  final Color precipitateColor;
+  final double pourProgress;
+  final double bubbleProgress;
+  final bool isStirring;
+  final double stirProgress;
+
+  EquipmentPainter({
+    required this.shape,
+    required this.liquidColor,
+    required this.fillRatio,
+    required this.isHovering,
+    required this.showBubbles,
+    required this.showPrecipitate,
+    required this.precipitateColor,
+    required this.pourProgress,
+    required this.bubbleProgress,
+    required this.isStirring,
+    required this.stirProgress,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final path = _buildPath(size);
+
+    canvas.drawPath(
+      path,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Colors.white.withValues(alpha: 0.35),
+            Colors.white.withValues(alpha: 0.08),
+          ],
+        ).createShader(Offset.zero & size),
+    );
+
+    canvas.save();
+    canvas.clipPath(path);
+
+    if (fillRatio > 0) {
+      _liquid(canvas, size);
+      if (showPrecipitate) _precipitate(canvas, size);
+      if (showBubbles) _bubbles(canvas, size);
+    }
+    if (pourProgress > 0 && pourProgress < 1) _pourStream(canvas, size);
+    if (isStirring) _stirRod(canvas, size);
+
+    canvas.restore();
+
+    canvas.drawPath(
+      path,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = isHovering ? 2.5 : 1.8
+        ..strokeJoin = StrokeJoin.round
+        ..color = isHovering ? K.green : Colors.white.withValues(alpha: 0.75),
+    );
+
+    if (isHovering) {
+      canvas.drawPath(
+        path,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 6
+          ..color = K.green.withValues(alpha: 0.4)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.outer, 12),
+      );
+    }
+
+    _shine(canvas, size);
+    _marks(canvas, size);
+  }
+
+  Path _buildPath(Size size) {
+    final w = size.width;
+    final h = size.height;
+    final path = Path();
+
+    switch (shape) {
+      case EqShape.beaker:
+        path.moveTo(w * 0.08, h * 0.06);
+        path.lineTo(w * 0.86, h * 0.06);
+        path.lineTo(w * 0.94, h * 0.09);
+        path.lineTo(w * 0.88, h * 0.12);
+        path.lineTo(w * 0.92, h * 0.12);
+        path.lineTo(w * 0.92, h * 0.9);
+        path.quadraticBezierTo(w * 0.92, h * 0.96, w * 0.82, h * 0.96);
+        path.lineTo(w * 0.18, h * 0.96);
+        path.quadraticBezierTo(w * 0.08, h * 0.96, w * 0.08, h * 0.9);
+        path.close();
+        break;
+      case EqShape.flask:
+        path.moveTo(w * 0.38, h * 0.04);
+        path.lineTo(w * 0.62, h * 0.04);
+        path.lineTo(w * 0.62, h * 0.24);
+        path.quadraticBezierTo(w * 0.98, h * 0.55, w * 0.98, h * 0.84);
+        path.quadraticBezierTo(w * 0.98, h * 0.96, w * 0.82, h * 0.96);
+        path.lineTo(w * 0.18, h * 0.96);
+        path.quadraticBezierTo(w * 0.02, h * 0.96, w * 0.02, h * 0.84);
+        path.quadraticBezierTo(w * 0.02, h * 0.55, w * 0.38, h * 0.24);
+        path.close();
+        break;
+      case EqShape.testTube:
+        path.moveTo(w * 0.18, h * 0.04);
+        path.lineTo(w * 0.82, h * 0.04);
+        path.lineTo(w * 0.86, h * 0.07);
+        path.lineTo(w * 0.82, h * 0.08);
+        path.lineTo(w * 0.82, h * 0.82);
+        path.quadraticBezierTo(w * 0.82, h * 0.96, w * 0.5, h * 0.96);
+        path.quadraticBezierTo(w * 0.18, h * 0.96, w * 0.18, h * 0.82);
+        path.lineTo(w * 0.18, h * 0.08);
+        path.close();
+        break;
+      case EqShape.cylinder:
+        path.moveTo(w * 0.3, h * 0.04);
+        path.lineTo(w * 0.7, h * 0.04);
+        path.lineTo(w * 0.74, h * 0.07);
+        path.lineTo(w * 0.7, h * 0.08);
+        path.lineTo(w * 0.7, h * 0.85);
+        path.lineTo(w * 0.92, h * 0.93);
+        path.lineTo(w * 0.92, h * 0.96);
+        path.lineTo(w * 0.08, h * 0.96);
+        path.lineTo(w * 0.08, h * 0.93);
+        path.lineTo(w * 0.3, h * 0.85);
+        path.lineTo(w * 0.3, h * 0.08);
+        path.close();
+        break;
+    }
+    return path;
+  }
+
+  void _liquid(Canvas canvas, Size size) {
+    final top = size.height * (1 - 0.9 * fillRatio) - size.height * 0.02;
+    final rect = Rect.fromLTWH(0, top, size.width, size.height - top);
+
+    canvas.drawRect(
+      rect,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            liquidColor.withValues(alpha: 0.6),
+            liquidColor.withValues(alpha: 0.95),
+          ],
+        ).createShader(rect),
+    );
+
+    canvas.drawRect(
+      Rect.fromLTWH(0, top, size.width, 2.5),
+      Paint()..color = Colors.white.withValues(alpha: 0.7),
+    );
+  }
+
+  void _precipitate(Canvas canvas, Size size) {
+    final pHeight = size.height * 0.22;
+    final rect = Rect.fromLTWH(0, size.height - pHeight, size.width, pHeight);
+    canvas.drawRect(
+      rect,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            precipitateColor.withValues(alpha: 0.4),
+            precipitateColor.withValues(alpha: 0.95),
+          ],
+        ).createShader(rect),
+    );
+  }
+
+  void _bubbles(Canvas canvas, Size size) {
+    final top = size.height * (1 - 0.9 * fillRatio) - size.height * 0.02;
+    final rng = Random(11);
+    for (int i = 0; i < 14; i++) {
+      final x = 8 + rng.nextDouble() * (size.width - 16);
+      final delay = rng.nextDouble();
+      final p = (bubbleProgress + delay) % 1.0;
+      final y = size.height - (size.height - top) * p - size.height * 0.03;
+      final r = 1 + rng.nextDouble() * 3.5;
+      if (y < top - 5) continue;
+      canvas.drawCircle(
+        Offset(x, y),
+        r,
+        Paint()..color = Colors.white.withValues(alpha: (1 - p) * 0.85),
+      );
+    }
+  }
+
+  void _pourStream(Canvas canvas, Size size) {
+    final op = 1 - pourProgress;
+    final x = size.width * 0.5;
+    canvas.drawLine(
+      Offset(x, 0),
+      Offset(x, size.height * pourProgress),
+      Paint()
+        ..color = liquidColor.withValues(alpha: op)
+        ..strokeWidth = 3.5
+        ..strokeCap = StrokeCap.round,
+    );
+  }
+
+  void _stirRod(Canvas canvas, Size size) {
+    final angle = stirProgress * pi * 4;
+    final cx = size.width * 0.5 + sin(angle) * size.width * 0.2;
+    canvas.drawLine(
+      Offset(cx, 0),
+      Offset(cx, size.height * 0.8),
+      Paint()
+        ..color = Colors.white.withValues(alpha: 0.8)
+        ..strokeWidth = 2.5,
+    );
+  }
+
+  void _shine(Canvas canvas, Size size) {
+    canvas.drawRect(
+      Rect.fromLTWH(size.width * 0.16, size.height * 0.1, size.width * 0.05, size.height * 0.7),
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.white.withValues(alpha: 0.85),
+            Colors.white.withValues(alpha: 0.0),
+          ],
+        ).createShader(Rect.fromLTWH(size.width * 0.16, size.height * 0.1, size.width * 0.05, size.height * 0.7)),
+    );
+  }
+
+  void _marks(Canvas canvas, Size size) {
+    final marks = switch (shape) {
+      EqShape.beaker => [50, 100, 150, 200, 250],
+      EqShape.flask => [50, 100, 150, 200, 250],
+      EqShape.testTube => [10, 20, 30, 40, 50],
+      EqShape.cylinder => [20, 40, 60, 80, 100],
+    };
+
+    for (int i = 0; i < marks.length; i++) {
+      final y = size.height * (0.82 - (i / marks.length) * 0.68);
+      final isLong = i.isEven;
+      final w = isLong ? size.width * 0.18 : size.width * 0.1;
+
+      canvas.drawLine(
+        Offset(size.width - w - 3, y),
+        Offset(size.width - 4, y),
+        Paint()
+          ..color = Colors.white.withValues(alpha: 0.7)
+          ..strokeWidth = 1.2,
+      );
+
+      final tp = TextPainter(
+        text: TextSpan(
+          text: '${marks[i]}',
+          style: TextStyle(
+            fontSize: 7,
+            color: Colors.white.withValues(alpha: 0.85),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      tp.paint(canvas, Offset(size.width - w - tp.width - 6, y - 4));
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant EquipmentPainter old) => true;
+}
+
+class ToolPainter extends CustomPainter {
+  final ToolShape shape;
+  final bool isActive;
+  final double progress;
+
+  ToolPainter({
+    required this.shape,
+    required this.isActive,
+    required this.progress,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    switch (shape) {
+      case ToolShape.bunsenBurner: _bunsen(canvas, size); break;
+      case ToolShape.thermometer: _thermo(canvas, size); break;
+      case ToolShape.stirrer: _stirrer(canvas, size); break;
+      case ToolShape.balance: _balance(canvas, size); break;
+      case ToolShape.dropper: _dropper(canvas, size); break;
+      case ToolShape.testTubeRack: _rack(canvas, size); break;
+      case ToolShape.filtration: _funnel(canvas, size); break;
+    }
+  }
+
+  void _bunsen(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(0, h * 0.85, w, h * 0.15),
+        const Radius.circular(3),
+      ),
+      Paint()..color = const Color(0xFF475569),
+    );
+
+    canvas.drawRect(
+      Rect.fromLTWH(w * 0.36, h * 0.4, w * 0.28, h * 0.45),
+      Paint()..color = const Color(0xFF94A3B8),
+    );
+
+    if (isActive) {
+      final fh = h * 0.35 + sin(progress * pi * 6) * 3;
+      final outer = Path()
+        ..moveTo(w * 0.4, h * 0.4)
+        ..quadraticBezierTo(w * 0.35, h * 0.4 - fh * 0.5, w * 0.5, h * 0.4 - fh)
+        ..quadraticBezierTo(w * 0.65, h * 0.4 - fh * 0.5, w * 0.6, h * 0.4)
+        ..close();
+      canvas.drawPath(outer, Paint()..color = Colors.orange.withValues(alpha: 0.9));
+    }
+  }
+
+  void _thermo(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+
+    canvas.drawCircle(Offset(w * 0.5, h * 0.92), w * 0.35,
+      Paint()..color = Colors.red.shade700);
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(w * 0.4, h * 0.08, w * 0.2, h * 0.84),
+        const Radius.circular(3),
+      ),
+      Paint()..color = Colors.white.withValues(alpha: 0.9),
+    );
+
+    final mh = h * 0.6 * progress;
+    canvas.drawRect(
+      Rect.fromLTWH(w * 0.44, h * 0.92 - mh, w * 0.12, mh),
+      Paint()..color = Colors.red.shade700,
+    );
+  }
+
+  void _stirrer(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+
+    canvas.drawLine(
+      Offset(w * 0.5, 0),
+      Offset(w * 0.5, h * 0.85),
+      Paint()..color = Colors.white.withValues(alpha: 0.9)..strokeWidth = 4,
+    );
+
+    if (isActive) {
+      canvas.save();
+      canvas.translate(w * 0.5, h * 0.1);
+      canvas.rotate(progress * pi * 6);
+      canvas.drawCircle(
+        Offset.zero,
+        w * 0.2,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.5
+          ..color = K.cyan,
+      );
+      canvas.restore();
+    }
+  }
+
+  void _balance(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(0, h * 0.2, w, h * 0.8),
+        const Radius.circular(8),
+      ),
+      Paint()..color = const Color(0xFFCBD5E1),
+    );
+
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(
+        Rect.fromLTWH(w * 0.15, h * 0.38, w * 0.7, h * 0.4),
+        const Radius.circular(4),
+      ),
+      Paint()..color = const Color(0xFF064E3B),
+    );
+
+    final tp = TextPainter(
+      text: TextSpan(
+        text: '${(progress * 100).toInt()} g',
+        style: const TextStyle(color: Color(0xFF6EE7B7), fontSize: 16, fontWeight: FontWeight.bold),
+      ),
+      textDirection: TextDirection.ltr,
+    )..layout();
+    tp.paint(canvas, Offset(w * 0.5 - tp.width / 2, h * 0.5 - tp.height / 2));
+  }
+
+  void _dropper(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+
+    canvas.drawCircle(Offset(w * 0.5, h * 0.18), w * 0.35,
+      Paint()..color = Colors.grey.shade400);
+
+    canvas.drawRect(
+      Rect.fromLTWH(w * 0.4, h * 0.3, w * 0.2, h * 0.55),
+      Paint()..color = Colors.white.withValues(alpha: 0.85),
+    );
+
+    canvas.drawRect(
+      Rect.fromLTWH(w * 0.42, h * 0.55, w * 0.16, h * 0.28),
+      Paint()..color = K.cyan.withValues(alpha: 0.6),
+    );
+  }
+
+  void _rack(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+
+    canvas.drawRect(Rect.fromLTWH(0, h * 0.75, w, h * 0.25),
+      Paint()..color = const Color(0xFF78350F));
+    canvas.drawRect(Rect.fromLTWH(0, h * 0.15, w, h * 0.08),
+      Paint()..color = const Color(0xFF92400E));
+
+    final colors = [
+      const Color(0xFF7DD3FC),
+      const Color(0xFFFBCFE8),
+      const Color(0xFFBBF7D0),
+      const Color(0xFFFDE68A),
+      const Color(0xFFDDD6FE),
+      const Color(0xFFFED7AA),
+    ];
+
+    for (int i = 0; i < 6; i++) {
+      final tx = w * 0.08 + i * w * 0.145;
+      canvas.drawRect(Rect.fromLTWH(tx, h * 0.18, w * 0.08, h * 0.6),
+        Paint()..color = Colors.white.withValues(alpha: 0.5));
+      canvas.drawRect(Rect.fromLTWH(tx, h * 0.5, w * 0.08, h * 0.28),
+        Paint()..color = colors[i]);
+    }
+  }
+
+  void _funnel(Canvas canvas, Size size) {
+    final w = size.width;
+    final h = size.height;
+
+    final cone = Path()
+      ..moveTo(w * 0.05, h * 0.15)
+      ..lineTo(w * 0.95, h * 0.15)
+      ..lineTo(w * 0.55, h * 0.6)
+      ..lineTo(w * 0.45, h * 0.6)
+      ..close();
+    canvas.drawPath(cone, Paint()..color = Colors.white.withValues(alpha: 0.6));
+
+    canvas.drawRect(
+      Rect.fromLTWH(w * 0.46, h * 0.6, w * 0.08, h * 0.3),
+      Paint()..color = Colors.white.withValues(alpha: 0.6),
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant ToolPainter old) => true;
+}
+
+class SteamPainter extends CustomPainter {
+  final double progress;
+  SteamPainter({required this.progress});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rng = Random(13);
+    for (int i = 0; i < 8; i++) {
+      final baseX = 20 + rng.nextDouble() * (size.width - 40);
+      final delay = rng.nextDouble();
+      final p = (progress + delay) % 1.0;
+      final y = size.height * (1 - p);
+      final x = baseX + sin(p * pi * 3 + i) * 10;
+      final r = 4 + p * 12;
+
+      canvas.drawCircle(
+        Offset(x, y),
+        r,
+        Paint()
+          ..color = Colors.white.withValues(alpha: (1 - p) * 0.4)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant SteamPainter old) => old.progress != progress;
+}
+
+class SparksPainter extends CustomPainter {
+  final double progress;
+  final Color color;
+  SparksPainter({required this.progress, required this.color});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rng = Random(21);
+    final center = Offset(size.width / 2, size.height / 2);
+
+    for (int i = 0; i < 20; i++) {
+      final angle = rng.nextDouble() * pi * 2;
+      final speed = 40 + rng.nextDouble() * 60;
+      final dist = progress * speed;
+      final x = center.dx + cos(angle) * dist;
+      final y = center.dy + sin(angle) * dist - progress * progress * 20;
+
+      canvas.drawCircle(
+        Offset(x, y),
+        2 + rng.nextDouble() * 3,
+        Paint()..color = color.withValues(alpha: (1 - progress).clamp(0.0, 1.0)),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant SparksPainter old) => old.progress != progress;
+}
+

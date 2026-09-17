@@ -1,0 +1,22 @@
+﻿# Flutter
+.dart_tool/
+.packages
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+*.iml
+.idea/
+.vscode/
+*.log
+windows/flutter/ephemeral/
+android/.gradle/
+android/local.properties
+ios/Pods/
+.DS_Store
+Thumbs.db
+
+# Corrupted files - temporarily excluded
+lib/main.dart
+lib/main_backup.txt
+lib/main_before_*.txt
+*.bak
