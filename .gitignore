@@ -1,4 +1,4 @@
-﻿# Flutter
+# Flutter
 .dart_tool/
 .packages
 build/
@@ -16,7 +16,6 @@ ios/Pods/
 Thumbs.db
 
 # Corrupted files - temporarily excluded
-lib/main.dart
 lib/main_backup.txt
 lib/main_before_*.txt
 *.bak
