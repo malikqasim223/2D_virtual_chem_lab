@@ -1,8 +1,7 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:go_router/go_router.dart';
 
 import '../data/models/chemical.dart';
 import '../data/models/reaction.dart';
@@ -44,17 +43,17 @@ extension EqX on EquipmentType {
   EqShape get shape => const [EqShape.beaker, EqShape.flask, EqShape.testTube, EqShape.cylinder][index];
 }
 
-enum ToolType { bunsenBurner, thermometer, stirrer, balance, dropper, testTubeRack, filtration }
+enum ToolType { bunsenBurner, thermometer, stirrer, balance, dropper, filtration }
 
 extension ToolX on ToolType {
-  String get label => const ['Bunsen Burner', 'Thermometer', 'Stirrer', 'Balance', 'Dropper', 'Test Tube Rack', 'Funnel'][index];
+  String get label => const ['Bunsen Burner', 'Thermometer', 'Stirrer', 'Balance', 'Dropper', 'Funnel'][index];
   IconData get icon => const [Icons.local_fire_department, Icons.thermostat, Icons.rotate_right, Icons.scale, Icons.water_drop, Icons.grid_on, Icons.filter_alt][index];
   Size get size => const [Size(70.0, 130.0), Size(45.0, 200.0), Size(60.0, 220.0), Size(160.0, 100.0), Size(45.0, 150.0), Size(180.0, 90.0), Size(120.0, 220.0)][index];
-  ToolShape get shape => const [ToolShape.bunsenBurner, ToolShape.thermometer, ToolShape.stirrer, ToolShape.balance, ToolShape.dropper, ToolShape.testTubeRack, ToolShape.filtration][index];
+  ToolShape get shape => const [ToolShape.bunsenBurner, ToolShape.thermometer, ToolShape.stirrer, ToolShape.balance, ToolShape.dropper, ToolShape.filtration][index];
 }
 
 enum EqShape { beaker, flask, testTube, cylinder }
-enum ToolShape { bunsenBurner, thermometer, stirrer, balance, dropper, testTubeRack, filtration }
+enum ToolShape { bunsenBurner, thermometer, stirrer, balance, dropper, filtration }
 
 // ═══════════════════════════════════════════════════════
 // PHYSICS: Liquid Particle
@@ -1829,17 +1828,6 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                       '${total.toInt()}/${maxV.toInt()} mL',
                       style: const TextStyle(color: Colors.white, fontSize: 9, fontWeight: FontWeight.bold),
                     ),
-                    const SizedBox(width: 6),
-                    Container(width: 1, height: 8, color: K.border),
-                    const SizedBox(width: 6),
-                    Text(
-                      '${eq.temperature.toInt()}°C',
-                      style: TextStyle(
-                        color: eq.temperature > 60 ? K.red : K.amber,
-                        fontSize: 9,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
                   ],
                 ),
               ),
@@ -2087,54 +2075,12 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
             ],
           ),
           const SizedBox(height: 12),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              _stepBadge('1', 'Select\nChemicals', _equipment.any((e) => e.chemicalIds.isNotEmpty)),
-              _stepLine(),
-              _stepBadge('2', 'Mix\nReactants', _equipment.any((e) => e.chemicalIds.length >= 2)),
-              _stepLine(),
-              _stepBadge('3', 'Observe\nReaction', _results.any((r) => r?.matched == true)),
-              _stepLine(),
-              _stepBadge('4', 'View\nResult', _results.any((r) => r?.matched == true)),
-            ],
-          ),
         ],
       ),
     );
   }
 
-  Widget _stepBadge(String num, String label, bool active) {
-    return Column(
-      children: [
-        Container(
-          width: 24, height: 24,
-          decoration: BoxDecoration(
-            color: active ? K.cyan : K.panelElev,
-            shape: BoxShape.circle,
-            border: Border.all(color: active ? K.cyan : K.border),
-            boxShadow: active ? [BoxShadow(color: K.cyan.withValues(alpha: 0.5), blurRadius: 8)] : null,
-          ),
-          child: Center(
-            child: Text(num,
-              style: TextStyle(
-                color: active ? Colors.white : K.textDim,
-                fontSize: 10, fontWeight: FontWeight.bold)),
-          ),
-        ),
-        const SizedBox(height: 6),
-        Text(label, textAlign: TextAlign.center,
-          style: TextStyle(
-            color: active ? Colors.white : K.textDim, fontSize: 8, height: 1.2)),
-      ],
-    );
-  }
 
-  Widget _stepLine() {
-    return Expanded(
-      child: Container(height: 1, color: K.border, margin: const EdgeInsets.only(bottom: 20)),
-    );
-  }
 
   Widget _reactionResultPanel() {
     int idx = -1;
@@ -2728,7 +2674,6 @@ class AnimatedToolPainter extends CustomPainter {
       case ToolShape.stirrer: _stirrer(canvas, size); break;
       case ToolShape.balance: _balance(canvas, size); break;
       case ToolShape.dropper: _dropper(canvas, size); break;
-      case ToolShape.testTubeRack: _rack(canvas, size); break;
       case ToolShape.filtration: _funnel(canvas, size); break;
     }
   }
@@ -3051,51 +2996,6 @@ class AnimatedToolPainter extends CustomPainter {
     }
   }
 
-  void _rack(Canvas canvas, Size size) {
-    final w = size.width;
-    final h = size.height;
-
-    // Wooden base
-    canvas.drawRect(
-      Rect.fromLTWH(0, h * 0.75, w, h * 0.25),
-      Paint()..color = const Color(0xFF78350F),
-    );
-    canvas.drawRect(
-      Rect.fromLTWH(0, h * 0.72, w, h * 0.05),
-      Paint()..color = const Color(0xFF92400E),
-    );
-    canvas.drawRect(
-      Rect.fromLTWH(0, h * 0.15, w, h * 0.08),
-      Paint()..color = const Color(0xFF92400E),
-    );
-
-    final colors = [
-      const Color(0xFF7DD3FC),
-      const Color(0xFFFBCFE8),
-      const Color(0xFFBBF7D0),
-      const Color(0xFFFDE68A),
-      const Color(0xFFDDD6FE),
-      const Color(0xFFFED7AA),
-    ];
-
-    for (int i = 0; i < 6; i++) {
-      final tx = w * 0.08 + i * w * 0.145;
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromLTWH(tx, h * 0.18, w * 0.08, h * 0.6),
-          const Radius.circular(3),
-        ),
-        Paint()..color = Colors.white.withValues(alpha: 0.5),
-      );
-      canvas.drawRRect(
-        RRect.fromRectAndRadius(
-          Rect.fromLTWH(tx, h * 0.5, w * 0.08, h * 0.28),
-          const Radius.circular(3),
-        ),
-        Paint()..color = colors[i],
-      );
-    }
-  }
 
   void _funnel(Canvas canvas, Size size) {
     final w = size.width;
