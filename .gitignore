@@ -19,3 +19,6 @@ Thumbs.db
 lib/main_backup.txt
 lib/main_before_*.txt
 *.bak
+
+# Local backups (do not push)
+backups/
