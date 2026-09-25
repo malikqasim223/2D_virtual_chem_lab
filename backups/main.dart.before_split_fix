@@ -2259,7 +2259,7 @@ class RealisticEquipPainter extends CustomPainter {
     final baseTop = h * (1 - 0.82 * item.fillRatio) - h * 0.03;
 
     // === REACTION COMPLETE: separated products ===
-    if (reaction != null && item.reactionProgress > 0.3) {
+    if (item.reactionComplete && reaction != null) {
       // Real product colors based on reaction type
       final products = reaction!.products.join(' ').toLowerCase();
       Color waterCol = const Color(0xFFCFE8F0);
@@ -2271,9 +2271,7 @@ class RealisticEquipPainter extends CustomPainter {
       if (products.contains('cu')) { saltCol = const Color(0xFF3D7FA8); }
       if (products.contains('agcl')) { saltCol = const Color(0xFFF5F5F5); waterCol = const Color(0xFFE8F0F5); }
       if (products.contains('ag2so4')) { saltCol = const Color(0xFFEDEDED); }
-      // Salt grows gradually from 0 to 40% based on progress
-      final _sepP = ((item.reactionProgress - 0.3) / 0.7).clamp(0.0, 1.0);
-      final splitY = h - h * 0.40 * _sepP;
+      final splitY = h * 0.60;
 
       final waterPath = Path()
         ..moveTo(0, baseTop - slosh)

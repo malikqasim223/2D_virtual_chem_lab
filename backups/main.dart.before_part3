@@ -695,8 +695,8 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
   @override
   void initState() {
     super.initState();
-    _shakeCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2800));
-    _flashCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2800));
+    _shakeCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2000));
+    _flashCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 2000));
     _tick = Timer.periodic(const Duration(milliseconds: 33), (_) {
       if (!mounted) return;
       _time += 0.033;
@@ -720,7 +720,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
           final hasReaction = reactions.containsKey(myKey) || multiReactions.containsKey(myKey);
           final rxnForThis = multiReactions[myKey] ?? reactions[myKey];
           if (hasReaction && !eq.reactionComplete) {
-            eq.reactionProgress = (eq.reactionProgress + 0.002).clamp(0.0, 1.0);
+            eq.reactionProgress = (eq.reactionProgress + 0.006).clamp(0.0, 1.0);
             if (eq.reactionProgress >= 1.0) eq.reactionComplete = true;
             if (rxnForThis != null && rxnForThis.releasesHeat) {
               eq.temperature = (eq.temperature + 0.6).clamp(25.0, 150.0);
@@ -728,19 +728,11 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
             needs = true;
           }
         }
-        // === GRADUAL SOLID DISSOLVE (starts with reaction, ends at complete) ===
-        if (eq.reactionProgress > 0.0) {
+        if (eq.reactionComplete) {
           for (final l in eq.layers) {
             if (l.isSolid && l.dissolveProgress < 1.0) {
-              // Dissolve speed proportional to reaction progress
-              // Reaches 1.0 when reactionProgress reaches 1.0
-              // Slow start, then steady — smooth
-              final targetDissolve = eq.reactionProgress;
-              // Smoothly approach target (not instant)
-              if (l.dissolveProgress < targetDissolve) {
-                l.dissolveProgress = (l.dissolveProgress + 0.004).clamp(0.0, 1.0);
-                needs = true;
-              }
+              l.dissolveProgress = (l.dissolveProgress + 0.010).clamp(0.0, 1.0);
+              needs = true;
             }
           }
         }
@@ -1038,15 +1030,8 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
       _recomputeReaction();
       final _rxnCheck = _reactionFor(eq);
       if (_rxnCheck != null && _rxnCheck.isViolent) {
-        // Small delay to sync with blast initial glow
-        Future.delayed(const Duration(milliseconds: 675), () {
-          if (!mounted) return;
-          _flashCtrl.forward(from: 0);
-        });
-        Future.delayed(const Duration(milliseconds: 1095), () {
-          if (!mounted) return;
-          _shakeCtrl.forward(from: 0);
-        });
+        _shakeCtrl.forward(from: 0);
+        _flashCtrl.forward(from: 0);
       }
     });
   }
@@ -1087,16 +1072,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                       builder: (_, __) {
                         final v = _flashCtrl.value;
                         if (v == 0 || v >= 1) return const SizedBox.shrink();
-                        double intensity;
-                        if (v < 0.15) {
-                          final ft = v / 0.15;
-                          intensity = ft * ft;
-                        } else if (v < 0.35) {
-                          intensity = 1.0;
-                        } else {
-                          final ft = (v - 0.35) / 0.65;
-                          intensity = (1 - ft) * (1 - ft) * (1 - ft);
-                        }
+                        final intensity = (1 - v) * (1 - v) * (1 - v * 0.5);
                         Color flashColor;
                         if (v < 0.15) {
                           flashColor = Colors.white;
@@ -1118,52 +1094,6 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
         },
       ),
     );
-    return Container(height: 60,
-      decoration: const BoxDecoration(color: LC.bg,
-        border: Border(bottom: BorderSide(color: LC.border))),
-      padding: const EdgeInsets.symmetric(horizontal: 18),
-      child: Row(children: [
-        Container(width: 38, height: 38,
-          decoration: BoxDecoration(color: LC.panelElev,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: LC.borderSoft)),
-          child: const Icon(Icons.science, color: LC.accentBright, size: 20)),
-        const SizedBox(width: 12),
-        const Column(crossAxisAlignment: CrossAxisAlignment.start,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Text('Virtual Chemistry Lab',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: LC.text)),
-            SizedBox(height: 2),
-            Text('Explore / Experiment / Learn',
-              style: TextStyle(color: LC.textDim, fontSize: 10)),
-          ]),
-        const SizedBox(width: 30),
-        Expanded(child: Container(height: 34,
-          decoration: BoxDecoration(color: LC.panel,
-            borderRadius: BorderRadius.circular(17),
-            border: Border.all(color: LC.border)),
-          padding: const EdgeInsets.symmetric(horizontal: 14),
-          child: Row(children: const [
-            Icon(Icons.search, color: LC.textDim, size: 15),
-            SizedBox(width: 8),
-            Expanded(child: Text('Search chemicals, experiments...',
-              style: TextStyle(color: LC.textDim, fontSize: 11))),
-          ]))),
-        const SizedBox(width: 16),
-        Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(color: LC.panel,
-            borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: LC.border)),
-          child: Row(children: const [
-            Icon(Icons.person, color: LC.accentBright, size: 14),
-            SizedBox(width: 6),
-            Text('Student', style: TextStyle(color: LC.text, fontSize: 10)),
-          ])),
-      ]));
-  }
-
-  Widget _topBar() {
     return Container(height: 60,
       decoration: const BoxDecoration(color: LC.bg,
         border: Border(bottom: BorderSide(color: LC.border))),
@@ -2259,7 +2189,7 @@ class RealisticEquipPainter extends CustomPainter {
     final baseTop = h * (1 - 0.82 * item.fillRatio) - h * 0.03;
 
     // === REACTION COMPLETE: separated products ===
-    if (reaction != null && item.reactionProgress > 0.3) {
+    if (item.reactionComplete && reaction != null) {
       // Real product colors based on reaction type
       final products = reaction!.products.join(' ').toLowerCase();
       Color waterCol = const Color(0xFFCFE8F0);
@@ -2271,9 +2201,7 @@ class RealisticEquipPainter extends CustomPainter {
       if (products.contains('cu')) { saltCol = const Color(0xFF3D7FA8); }
       if (products.contains('agcl')) { saltCol = const Color(0xFFF5F5F5); waterCol = const Color(0xFFE8F0F5); }
       if (products.contains('ag2so4')) { saltCol = const Color(0xFFEDEDED); }
-      // Salt grows gradually from 0 to 40% based on progress
-      final _sepP = ((item.reactionProgress - 0.3) / 0.7).clamp(0.0, 1.0);
-      final splitY = h - h * 0.40 * _sepP;
+      final splitY = h * 0.60;
 
       final waterPath = Path()
         ..moveTo(0, baseTop - slosh)
@@ -2560,392 +2488,28 @@ class RealisticEquipPainter extends CustomPainter {
 
   void _paintFireBlast(Canvas canvas, double w, double h) {
     if (reaction == null || !reaction!.isViolent) return;
-    // === PERSISTENT STATE (after reaction complete) ===
-    // Only bubbles + smoke — no fire
-    if (item.reactionComplete && item.reactionProgress >= 1.0) {
-      final rng = Random(42);
-      final cx = w * 0.5;
-      final baseY = h * 0.90;
-
-      // === BOILING BUBBLES (inside liquid) ===
-      for (int i = 0; i < 18; i++) {
-        final seed = rng.nextDouble();
-        final bx = cx + (rng.nextDouble() - 0.5) * w * 0.7;
-        final prog = ((time * 0.8 + seed) % 1.0);
-        final by = baseY - prog * h * 0.5;
-        final bs = 2 + (1 - prog) * 4;
-        final ba = (1 - prog) * 0.7;
-        canvas.drawCircle(Offset(bx, by), bs, Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.2
-          ..color = const Color(0xFFFFEB3B).withValues(alpha: ba));
-        canvas.drawCircle(Offset(bx, by), bs * 0.4, Paint()
-          ..color = Colors.white.withValues(alpha: ba * 0.8));
-      }
-
-      // === LIGHT SMOKE (thin, rising) ===
-      for (int i = 0; i < 10; i++) {
-        final seed = rng.nextDouble();
-        final sx = cx + (rng.nextDouble() - 0.5) * w * 0.7;
-        final prog = ((time * 0.35 + seed) % 1.0);
-        final sy = h * 0.4 - prog * h * 0.5;
-        final ss = 18 + prog * 30;
-        final sa = sin(prog * 3.14159) * 0.35;
-        final sway = sin(time * 1.2 + seed * 6) * 8;
-        canvas.drawCircle(Offset(sx + sway, sy), ss, Paint()
-          ..shader = RadialGradient(colors: [
-            const Color(0xFF5A5A5A).withValues(alpha: sa),
-            const Color(0xFF3A3A3A).withValues(alpha: sa * 0.5),
-            Colors.transparent,
-          ]).createShader(Rect.fromCircle(center: Offset(sx + sway, sy), radius: ss))
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12));
-      }
-
-      return;
+    final rng = Random(99);
+    for (int i = 0; i < 8; i++) {
+      final fx = rng.nextDouble() * w;
+      final fy = -5 - (time * 40 + rng.nextDouble() * 30) % (h * 0.45);
+      final fs = 5 + rng.nextDouble() * 10;
+      canvas.drawCircle(Offset(fx, fy), fs,
+        Paint()..color = const Color(0xFFFF6B35).withValues(alpha: 0.5));
+      canvas.drawCircle(Offset(fx, fy), fs * 0.6,
+        Paint()..color = const Color(0xFFFFD700).withValues(alpha: 0.65));
+      canvas.drawCircle(Offset(fx, fy), fs * 0.3,
+        Paint()..color = Colors.white.withValues(alpha: 0.9));
     }
-
-    final rng = Random(42);
-    final progress = item.reactionProgress;
-    final cx = w * 0.5;
-    final cy = h * (1 - 0.82 * item.fillRatio) - h * 0.03; // liquid top level
-
-    // PHASE 1 (0.0-0.25): REALISTIC EXPLOSION (gradient blobs)
-    if (progress < 0.35) {
-      final p = progress / 0.35;
-      if (p < 0.2) {
-        final pp = p / 0.2;
-        final r = w * 0.04 + pp * w * 0.04;
-        canvas.drawCircle(Offset(cx, cy), r * 4, Paint()
-          ..color = const Color(0xFFFFEB3B).withValues(alpha: 0.5 * pp)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15));
-        canvas.drawCircle(Offset(cx, cy), r * 1.5, Paint()
-          ..color = const Color(0xFFFFF176).withValues(alpha: 0.9 * pp));
-        canvas.drawCircle(Offset(cx, cy), r * 0.7, Paint()..color = Colors.white);
-      } else if (p < 0.55) {
-        final pp = (p - 0.2) / 0.35;
-        final baseR = w * 0.08 + pp * w * 0.18;
-
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-
-        // LAYER 2: Deep red (gradient + highlight)
-        for (int i = 0; i < 16; i++) {
-          final seed = i * 0.723;
-          final ang = i * 3.14159 * 2 / 16 + 0.3;
-          final distMult = 0.85 + (seed % 1) * 0.4;
-          final dist = baseR * distMult;
-          final bx = cx + cos(ang) * dist;
-          final by = cy + sin(ang) * dist * 0.9;
-          final puffR = baseR * (0.42 + (seed % 1) * 0.3);
-          canvas.drawCircle(Offset(bx, by), puffR, Paint()
-            ..shader = RadialGradient(
-              center: const Alignment(-0.3, -0.4),
-              colors: [
-                const Color(0xFFE53935).withValues(alpha: 0.95),
-                const Color(0xFF8B0000).withValues(alpha: 0.95),
-                const Color(0xFF4A0000).withValues(alpha: 0.7),
-              ],
-              stops: const [0.0, 0.5, 1.0],
-            ).createShader(Rect.fromCircle(center: Offset(bx, by), radius: puffR)));
-        }
-
-        // LAYER 3: Bright red (with top highlight)
-        for (int i = 0; i < 13; i++) {
-          final seed = i * 0.517;
-          final ang = i * 3.14159 * 2 / 13 + 0.6;
-          final distMult = 0.65 + (seed % 1) * 0.35;
-          final dist = baseR * distMult;
-          final bx = cx + cos(ang) * dist;
-          final by = cy + sin(ang) * dist * 0.88;
-          final puffR = baseR * (0.4 + (seed % 1) * 0.25);
-          canvas.drawCircle(Offset(bx, by), puffR, Paint()
-            ..shader = RadialGradient(
-              center: const Alignment(-0.4, -0.5),
-              colors: [
-                const Color(0xFFFF5252).withValues(alpha: 0.95),
-                const Color(0xFFE53935).withValues(alpha: 0.95),
-                const Color(0xFF8B0000).withValues(alpha: 0.6),
-              ],
-              stops: const [0.0, 0.55, 1.0],
-            ).createShader(Rect.fromCircle(center: Offset(bx, by), radius: puffR)));
-        }
-
-        // LAYER 4: Orange (gradient with glow)
-        for (int i = 0; i < 11; i++) {
-          final seed = i * 0.412;
-          final ang = i * 3.14159 * 2 / 11 + 1.0;
-          final distMult = 0.5 + (seed % 1) * 0.3;
-          final dist = baseR * distMult;
-          final bx = cx + cos(ang) * dist;
-          final by = cy + sin(ang) * dist * 0.85;
-          final puffR = baseR * (0.38 + (seed % 1) * 0.22);
-          canvas.drawCircle(Offset(bx, by), puffR, Paint()
-            ..shader = RadialGradient(
-              center: const Alignment(-0.3, -0.4),
-              colors: [
-                const Color(0xFFFFAB40).withValues(alpha: 0.98),
-                const Color(0xFFFF6F00).withValues(alpha: 0.95),
-                const Color(0xFFE65100).withValues(alpha: 0.7),
-              ],
-              stops: const [0.0, 0.5, 1.0],
-            ).createShader(Rect.fromCircle(center: Offset(bx, by), radius: puffR))
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1));
-        }
-
-        // LAYER 5: Yellow-orange (bright center highlight)
-        for (int i = 0; i < 9; i++) {
-          final seed = i * 0.318;
-          final ang = i * 3.14159 * 2 / 9 + 1.4;
-          final distMult = 0.35 + (seed % 1) * 0.25;
-          final dist = baseR * distMult;
-          final bx = cx + cos(ang) * dist;
-          final by = cy + sin(ang) * dist * 0.82;
-          final puffR = baseR * (0.35 + (seed % 1) * 0.2);
-          canvas.drawCircle(Offset(bx, by), puffR, Paint()
-            ..shader = RadialGradient(
-              center: const Alignment(-0.3, -0.5),
-              colors: [
-                const Color(0xFFFFE082),
-                const Color(0xFFFFB300),
-                const Color(0xFFFF8F00),
-              ],
-              stops: const [0.0, 0.6, 1.0],
-            ).createShader(Rect.fromCircle(center: Offset(bx, by), radius: puffR)));
-        }
-
-        // LAYER 6: Bright yellow (inner core puffs)
-        for (int i = 0; i < 7; i++) {
-          final seed = i * 0.227;
-          final ang = i * 3.14159 * 2 / 7 + 1.8;
-          final distMult = 0.22 + (seed % 1) * 0.2;
-          final dist = baseR * distMult;
-          final bx = cx + cos(ang) * dist;
-          final by = cy + sin(ang) * dist * 0.8;
-          final puffR = baseR * (0.3 + (seed % 1) * 0.15);
-          canvas.drawCircle(Offset(bx, by), puffR, Paint()
-            ..shader = RadialGradient(
-              center: const Alignment(-0.2, -0.4),
-              colors: [
-                const Color(0xFFFFF59D),
-                const Color(0xFFFFEB3B),
-                const Color(0xFFFFC107),
-              ],
-              stops: const [0.0, 0.5, 1.0],
-            ).createShader(Rect.fromCircle(center: Offset(bx, by), radius: puffR)));
-        }
-
-        // LAYER 7: White hot core (jagged + glow)
-        final coreR = baseR * 0.4;
-        // Outer glow
-        canvas.drawCircle(Offset(cx, cy), coreR * 1.4, Paint()
-          ..shader = RadialGradient(colors: [
-            const Color(0xFFFFEB3B).withValues(alpha: 0.6),
-            const Color(0xFFFF6F00).withValues(alpha: 0.3),
-            Colors.transparent,
-          ], stops: const [0.0, 0.6, 1.0])
-            .createShader(Rect.fromCircle(center: Offset(cx, cy), radius: coreR * 1.4))
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6));
-        // Jagged core
-        final corePath = Path();
-        for (int i = 0; i <= 16; i++) {
-          final ang = i * 3.14159 * 2 / 16;
-          final spike = (i % 2 == 0) ? 1.0 : 0.7;
-          final jitter = ((i * 7) % 10) / 100.0;
-          final r = coreR * (spike + jitter);
-          final x = cx + cos(ang) * r;
-          final y = cy + sin(ang) * r;
-          if (i == 0) { corePath.moveTo(x, y); } else { corePath.lineTo(x, y); }
-        }
-        corePath.close();
-        canvas.drawPath(corePath, Paint()
-          ..shader = RadialGradient(colors: [
-            Colors.white,
-            const Color(0xFFFFEB3B),
-            const Color(0xFFFFA000).withValues(alpha: 0.8),
-            Colors.transparent,
-          ], stops: const [0.0, 0.4, 0.75, 1.0])
-            .createShader(Rect.fromCircle(center: Offset(cx, cy), radius: coreR))
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-        canvas.drawCircle(Offset(cx, cy), coreR * 0.5, Paint()..color = Colors.white);
-
-        // LAYER 8: Sparks with glow
-        for (int i = 0; i < 25; i++) {
-          final seed = rng.nextDouble();
-          final ang = rng.nextDouble() * 6.28;
-          final dist = baseR * (0.9 + rng.nextDouble() * 1.0);
-          final sx = cx + cos(ang) * dist;
-          final sy = cy + sin(ang) * dist * 0.85;
-          final ss = 1.5 + rng.nextDouble() * 3;
-          final sa = (1 - pp * 0.5) * 0.95;
-          canvas.drawCircle(Offset(sx, sy), ss * 2.5, Paint()
-            ..color = const Color(0xFFFF4500).withValues(alpha: sa * 0.4)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-          canvas.drawCircle(Offset(sx, sy), ss, Paint()
-            ..shader = RadialGradient(colors: [
-              Colors.white,
-              const Color(0xFFFFEB3B),
-              const Color(0xFFFF6F00).withValues(alpha: 0.6),
-            ]).createShader(Rect.fromCircle(center: Offset(sx, sy), radius: ss)));
-        }
-      } else {
-        final pp = (p - 0.35) / 0.65;
-        final baseR = w * 0.26 + pp * w * 0.08;
-        final fade = 1 - pp * 0.6;
-        // Dissolving smoke (gradient)
-        for (int i = 0; i < 18; i++) {
-          final seed = i * 0.71;
-          final ang = i * 3.14159 * 2 / 18;
-          final dist = baseR * (1.0 + (seed % 1) * 0.4);
-          final bx = cx + cos(ang) * dist;
-          final by = cy + sin(ang) * dist * 0.9;
-          final puffR = baseR * (0.5 + (seed % 1) * 0.3) * (1 + pp * 0.3);
-          canvas.drawCircle(Offset(bx, by), puffR, Paint()
-            ..shader = RadialGradient(
-              center: const Alignment(0.0, 0.3),
-              colors: [
-                const Color(0xFF4A4A4A).withValues(alpha: 0.75 * fade),
-                const Color(0xFF1A1A1A).withValues(alpha: 0.6 * fade),
-                Colors.transparent,
-              ],
-            ).createShader(Rect.fromCircle(center: Offset(bx, by), radius: puffR))
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
-        }
-        // Fading red
-        for (int i = 0; i < 12; i++) {
-          final seed = i * 0.53;
-          final ang = i * 3.14159 * 2 / 12 + 0.3;
-          final dist = baseR * (0.7 + (seed % 1) * 0.35);
-          final bx = cx + cos(ang) * dist;
-          final by = cy + sin(ang) * dist * 0.88;
-          canvas.drawCircle(Offset(bx, by), baseR * 0.45, Paint()
-            ..shader = RadialGradient(colors: [
-              const Color(0xFFE53935).withValues(alpha: 0.85 * fade),
-              const Color(0xFF8B0000).withValues(alpha: 0.6 * fade),
-            ]).createShader(Rect.fromCircle(center: Offset(bx, by), radius: baseR * 0.45)));
-        }
-        // Fading orange
-        for (int i = 0; i < 9; i++) {
-          final seed = i * 0.41;
-          final ang = i * 3.14159 * 2 / 9 + 0.7;
-          final dist = baseR * (0.45 + (seed % 1) * 0.3);
-          final bx = cx + cos(ang) * dist;
-          final by = cy + sin(ang) * dist * 0.85;
-          canvas.drawCircle(Offset(bx, by), baseR * 0.4, Paint()
-            ..shader = RadialGradient(colors: [
-              const Color(0xFFFFB300).withValues(alpha: 0.8 * fade),
-              const Color(0xFFFF6F00).withValues(alpha: 0.6 * fade),
-            ]).createShader(Rect.fromCircle(center: Offset(bx, by), radius: baseR * 0.4)));
-        }
-      }
-    }
-    // PHASE 2 (0.35-0.80): SUSTAINED RISING FIRE
-    if (progress >= 0.15 && progress < 1.0) {
-      final p = (progress - 0.15) / 0.85;
-      final fadeIn = p < 0.25 ? p / 0.25 : 1.0;
-      final fadeOut = p > 0.75 ? (1 - p) / 0.25 : 1.0;
-      final intensity = fadeIn * fadeOut;
-      final baseY = h * 0.90;
-      final maxHeight = h * 0.75;
-      _drawRealFlame(canvas, cx, baseY, w * 0.34, maxHeight * 1.25 * intensity, intensity, rng, time);
-      _drawRealFlame(canvas, cx - w * 0.22, baseY, w * 0.20, maxHeight * 0.95 * intensity, intensity * 0.9, rng, time + 1.3);
-      _drawRealFlame(canvas, cx + w * 0.22, baseY, w * 0.20, maxHeight * 0.95 * intensity, intensity * 0.9, rng, time + 2.7);
-      _drawRealFlame(canvas, cx - w * 0.36, baseY, w * 0.14, maxHeight * 0.70 * intensity, intensity * 0.7, rng, time + 4.1);
-      _drawRealFlame(canvas, cx + w * 0.36, baseY, w * 0.14, maxHeight * 0.70 * intensity, intensity * 0.7, rng, time + 5.5);
-      for (int i = 0; i < 25; i++) {
-        final seed = rng.nextDouble();
-        final ex = cx + (rng.nextDouble() - 0.5) * w * 0.7;
-        final prog = ((time * 1.5 + seed) % 1.0);
-        final ey = baseY - prog * maxHeight;
-        final es = 1.5 + (1 - prog) * 2.5;
-        final ea = (1 - prog) * intensity;
-        canvas.drawCircle(Offset(ex, ey), es * 2.5, Paint()
-          ..color = const Color(0xFFFF4500).withValues(alpha: ea * 0.4)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-        canvas.drawCircle(Offset(ex, ey), es, Paint()
-          ..color = const Color(0xFFFFEB3B).withValues(alpha: ea));
-        if (es > 2.5) {
-          canvas.drawCircle(Offset(ex, ey), es * 0.4, Paint()
-            ..color = Colors.white.withValues(alpha: ea * 0.9));
-        }
-      }
-      canvas.drawCircle(Offset(cx, baseY), w * 0.28, Paint()
-        ..shader = RadialGradient(colors: [
-          const Color(0xFFFF6B00).withValues(alpha: 0.8 * intensity),
-          const Color(0xFFFF4500).withValues(alpha: 0.4 * intensity),
-          Colors.transparent,
-        ]).createShader(Rect.fromCircle(center: Offset(cx, baseY), radius: w * 0.28))
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15));
-    }
-  }
-
-  void _drawRealFlame(Canvas canvas, double baseX, double baseY, double baseW, double height, double intensity, Random rng, double t) {
-    if (intensity <= 0.01 || height <= 1) return;
-    for (int layer = 0; layer < 4; layer++) {
-      final layerH = height * (1 - layer * 0.18);
-      final layerW = baseW * (1 - layer * 0.15);
-      final alpha = (0.85 - layer * 0.15) * intensity;
-      final color = layer == 0
-          ? const Color(0xFFD32F2F)
-          : layer == 1
-              ? const Color(0xFFFF6B00)
-              : layer == 2
-                  ? const Color(0xFFFFC107)
-                  : Colors.white;
-      final wobble1 = sin(t * 5 + layer * 1.3) * baseW * 0.4;
-      final wobble2 = cos(t * 6.5 + layer * 2.1) * baseW * 0.25;
-      final path = Path();
-      path.moveTo(baseX - layerW, baseY);
-      path.quadraticBezierTo(
-        baseX - layerW * 0.8 + wobble1,
-        baseY - layerH * 0.4,
-        baseX - layerW * 0.3 + wobble2,
-        baseY - layerH * 0.7,
-      );
-      path.quadraticBezierTo(
-        baseX + wobble1,
-        baseY - layerH * 1.05,
-        baseX + layerW * 0.15 + wobble2,
-        baseY - layerH * 0.95,
-      );
-      path.quadraticBezierTo(
-        baseX + layerW * 0.8 + wobble1,
-        baseY - layerH * 0.4,
-        baseX + layerW,
-        baseY,
-      );
-      path.close();
-      canvas.drawPath(path, Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-          colors: [
-            color.withValues(alpha: alpha),
-            color.withValues(alpha: alpha * 0.5),
-            color.withValues(alpha: 0),
-          ],
-        ).createShader(Rect.fromLTWH(baseX - layerW, baseY - layerH, layerW * 2, layerH))
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5));
-    }
+    final pulse = (sin(time * 8) + 1) / 2;
+    canvas.drawCircle(
+      Offset(w * 0.5, h * 0.7),
+      w * 0.6 * (0.8 + pulse * 0.2),
+      Paint()..shader = RadialGradient(colors: [
+        const Color(0xFFFF4500).withValues(alpha: 0.5 * pulse),
+        const Color(0xFFFF8C00).withValues(alpha: 0.3 * pulse),
+        Colors.transparent,
+      ]).createShader(Rect.fromCircle(
+        center: Offset(w * 0.5, h * 0.7), radius: w * 0.6)));
   }
 
   void _paintGasEvolution(Canvas canvas, double w, double h) {
