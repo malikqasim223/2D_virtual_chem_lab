@@ -360,7 +360,7 @@ final Map<String, ReactionInfo> reactions = {
   ),
   'h2so4+nacl': const ReactionInfo(
     name: 'HCl Gas Evolution',
-    equation: 'NaCl + H2SO4 -> NaHSO4 + HCl (g)',
+    equation: 'NaCl + H2SO4 (conc.) -> NaHSO4 + HCl (g)',
     type: 'Acid-Base Displacement',
     description: 'HCl gas released. Pungent, white fumes in moist air.',
     products: ['NaHSO4', 'HCl'],
@@ -475,7 +475,7 @@ final Map<String, ReactionInfo> reactions = {
     // NEW VIOLENT REACTIONS
     'h2o+na': const ReactionInfo(
       name: 'VIOLENT: Sodium + Water',
-      equation: '2Na + 2H2O -> 2NaOH + H2 + FIRE',
+    equation: '2Na + 2H2O -> 2NaOH + H2',
       type: 'Explosive',
       description: 'Sodium metal reacts violently with water. Fire and hydrogen gas!',
       products: ['NaOH', 'H2'],
@@ -488,7 +488,7 @@ final Map<String, ReactionInfo> reactions = {
       name: 'Magnesium + Water',
       equation: 'Mg + 2H2O -> Mg(OH)2 + H2',
       type: 'Metal + Water',
-      description: 'Magnesium reacts with water slowly, releasing heat and bubbles.',
+    description: 'Mg reacts very slowly with cold water. Fast with hot water/steam.',
       products: ['Mg(OH)2', 'H2'],
       releasesHeat: true,
     // isViolent removed — h2o+mg is not chemically violent
@@ -498,7 +498,7 @@ final Map<String, ReactionInfo> reactions = {
     ),
     'hcl+na': const ReactionInfo(
       name: 'VIOLENT: Sodium + HCl',
-      equation: '2Na + 2HCl -> 2NaCl + H2 + EXPLOSION',
+    equation: '2Na + 2HCl -> 2NaCl + H2',
       type: 'Explosive',
       description: 'Sodium metal in acid causes explosive hydrogen release!',
       products: ['NaCl', 'H2'],
@@ -520,7 +520,7 @@ final Map<String, ReactionInfo> reactions = {
     ),
     'h2so4+na': const ReactionInfo(
       name: 'VIOLENT: Sodium + H2SO4',
-      equation: '2Na + H2SO4 -> Na2SO4 + H2 + EXPLOSION',
+    equation: '2Na + H2SO4 -> Na2SO4 + H2',
       type: 'Explosive',
       description: 'Extremely violent! Sodium in sulfuric acid explodes.',
       products: ['Na2SO4', 'H2'],
@@ -594,14 +594,14 @@ final Map<String, ReactionInfo> reactions = {
       releasesHeat: true,
     ),
     'h2o2+ki': const ReactionInfo(
-      name: 'Elephant Toothpaste',
+    name: 'Elephant Toothpaste (with soap)',
       equation: '2H2O2 ->(KI catalyst) 2H2O + O2',
       type: 'Catalytic Decomposition',
       description: 'Rapid foam eruption! Potassium iodide catalyzes peroxide breakdown.',
       products: ['H2O', 'O2'],
       bubbles: true,
       gasEvolution: 'O2',
-      producesSmoke: true,
+    // producesSmoke removed — gas ≠ smoke (real chemistry)
       foam: true,
       releasesHeat: true,
     ),
@@ -674,8 +674,8 @@ final Map<String, ReactionInfo> reactions = {
       releasesHeat: true,
     ),
     'cuso4+nh4oh': const ReactionInfo(
-      name: 'Deep Blue Complex',
-      equation: 'CuSO4 + 4NH4OH -> [Cu(NH3)4]SO4 + 4H2O',
+    name: 'Two-Stage: Blue ppt → Deep Blue Complex',
+    equation: 'CuSO4 + 2NH4OH -> Cu(OH)2 (ppt) + (NH4)2SO4; then Cu(OH)2 + 4NH3 (excess) -> [Cu(NH3)4](OH)2',
       type: 'Complex Formation',
       description: 'Deep blue tetraammine copper complex forms.',
       products: ['[Cu(NH3)4]SO4', 'H2O'],
@@ -722,7 +722,7 @@ final Map<String, ReactionInfo> reactions = {
   ),
   'cu+hno3': const ReactionInfo(
     name: 'Brown Gas (NO2)',
-    equation: 'Cu + 4HNO3 -> Cu(NO3)2 + 2NO2 + 2H2O',
+    equation: 'Cu + 4HNO3 (conc.) -> Cu(NO3)2 + 2NO2 + 2H2O',
     type: 'Redox',
     description: 'Brown nitrogen dioxide gas released.',
     products: ['Cu(NO3)2', 'NO2', 'H2O'],
@@ -805,7 +805,7 @@ final Map<String, ReactionInfo> reactions = {
   ),
   'ethanol+k2cr2o7': const ReactionInfo(
     name: 'Orange to Green (Breathalyzer)',
-    equation: 'K2Cr2O7 + 8H2SO4 + 3C2H5OH -> Cr2(SO4)3 + ...',
+    equation: '2K2Cr2O7 + 8H2SO4 + 3C2H5OH -> 2Cr2(SO4)3 + 3CH3COOH + 2K2SO4 + 11H2O',
     type: 'Oxidation',
     description: 'Orange dichromate reduced to green Cr3+. Breathalyzer!',
     products: ['Cr2(SO4)3'],
@@ -863,7 +863,7 @@ final Map<String, ReactionInfo> reactions = {
     description: 'Pungent ammonia gas. Test for NH4+.',
     products: ['NaCl', 'NH3', 'H2O'],
     gasEvolution: 'NH3',
-    producesSmoke: true,
+    // producesSmoke removed — gas ≠ smoke (real chemistry)
   ),
   // === BATCH 2 REACTIONS ===
   'h2c2o4+naoh': const ReactionInfo(
@@ -922,7 +922,7 @@ final Map<String, ReactionInfo> reactions = {
   ),
   'h2o+k': const ReactionInfo(
     name: 'VIOLENT: Potassium + Water',
-    equation: '2K + 2H2O -> 2KOH + H2 + FIRE',
+    equation: '2K + 2H2O -> 2KOH + H2',
     type: 'Alkali Metal',
     description: 'More violent than sodium! Lilac flame.',
     products: ['KOH', 'H2'],
@@ -953,7 +953,7 @@ final Map<String, ReactionInfo> reactions = {
     name: 'Slow Bubbles (Pb)',
     equation: 'Pb + 2HCl -> PbCl2 + H2',
     type: 'Single Displacement',
-    description: 'Very slow bubbling. Lead chloride forms.',
+    description: 'Initial bubbles, then PbCl2 coating slows reaction.',
     products: ['PbCl2', 'H2'],
     bubbles: true,
     gasEvolution: 'H2',
@@ -968,7 +968,7 @@ final Map<String, ReactionInfo> reactions = {
   ),
   'ag+hno3': const ReactionInfo(
     name: 'Silver Dissolves',
-    equation: 'Ag + 2HNO3 -> AgNO3 + NO2 + H2O',
+    equation: 'Ag + 2HNO3 (conc.) -> AgNO3 + NO2 + H2O',
     type: 'Redox',
     description: 'Silver dissolves. Brown NO2 gas.',
     products: ['AgNO3', 'NO2', 'H2O'],
@@ -1064,12 +1064,12 @@ final Map<String, ReactionInfo> reactions = {
     name: 'Lime Burning (CaO)',
     equation: 'CaCO3 -> CaO + CO2 (heat)',
     type: 'Decomposition',
-    description: 'Limestone decomposes to quicklime + CO2. Requires heat.',
+    description: 'Limestone decomposes at 825C (industrial calcination). Requires strong heat.',
     products: ['CaO', 'CO2'],
     requiresHeat: true,
     gasEvolution: 'CO2',
     bubbles: true,
-    producesSmoke: true,
+    // producesSmoke removed — gas ≠ smoke (real chemistry)
   ),
   'nahco3+heat': const ReactionInfo(
     name: 'Baking Soda Decomposition',
@@ -1080,13 +1080,13 @@ final Map<String, ReactionInfo> reactions = {
     requiresHeat: true,
     gasEvolution: 'CO2',
     bubbles: true,
-    producesSmoke: true,
+    // producesSmoke removed — gas ≠ smoke (real chemistry)
   ),
   'agno3+heat': const ReactionInfo(
     name: 'Silver Nitrate Decomposition',
     equation: '2AgNO3 -> 2Ag + 2NO2 + O2 (heat)',
     type: 'Decomposition',
-    description: 'AgNO3 decomposes to silver + brown NO2. Requires heat.',
+    description: 'AgNO3 decomposes at 440C to silver + brown NO2 gas.',
     products: ['Ag', 'NO2', 'O2'],
     requiresHeat: true,
     gasEvolution: 'NO2',
@@ -1195,7 +1195,7 @@ final Map<String, ReactionInfo> reactions = {
     description: 'Urea decomposes to ammonia + CO2.',
     products: ['NH3', 'CO2'],
     gasEvolution: 'NH3',
-    producesSmoke: true,
+    // producesSmoke removed — gas ≠ smoke (real chemistry)
   ),
   'benzene+br2': const ReactionInfo(
     name: 'Bromobenzene (Substitution)',
@@ -3221,76 +3221,23 @@ class RealisticEquipPainter extends CustomPainter {
 
     // === REACTION COMPLETE: separated products ===
     // ONLY precipitate reactions show separated salt bed
+    // PRECIPITATE REACTION — liquid tinted, bed drawn by _paintPrecipitate
     if (reaction != null && item.reactionProgress > 0.3 && reaction!.precipitate) {
-      // Real product colors based on reaction type
-      final products = reaction!.products.join(' ').toLowerCase();
-      Color waterCol = const Color(0xFFCFE8F0);
-      Color saltCol = const Color(0xFFEDEDE5);
-      Color? pptCol = reaction!.precipitateColor;
-      if (pptCol != null) {
-        saltCol = pptCol;
-      }
-      // Cu reactions: liquid pale/colorless, Cu deposit red-brown
-      final isCuDeposit = products.contains('cu') && reaction!.type.contains('Displacement');
-      if (isCuDeposit) { saltCol = const Color(0xFFB87333); waterCol = const Color(0xFFEEF6FA); }
-      else if (products.contains('cu')) { saltCol = const Color(0xFF1A4D70); waterCol = const Color(0xFFB8DCF0); }
-      if (products.contains('agcl')) { saltCol = const Color(0xFFE8E5DD); waterCol = const Color(0xFFE8F0F5); } // creamy white (visible on dark)
-      if (products.contains('ag2so4')) { saltCol = const Color(0xFFEDEDED); }
-      if (products.contains('ag2o')) { saltCol = const Color(0xFF5D4037); waterCol = const Color(0xFFF5F5F5); } // Ag2O brown ppt + colorless soln
-      // Salt grows gradually from 0 to 40% based on progress
-      final _sepP = ((item.reactionProgress - 0.3) / 0.7).clamp(0.0, 1.0);
-      // Displacement reactions → smaller bed (only 15%)
-      final isDisplacement = reaction!.type.toLowerCase().contains('displacement');
-      final bedRatio = isDisplacement ? 0.10 : 0.40; // displacement = tiny bed
-      final splitY = h - (h - baseTop) * bedRatio * _sepP;
-
-      final waterPath = Path()
+      Color liquidTint = reaction!.colorChange ?? item.blendedColor;
+      final path = Path()
         ..moveTo(0, baseTop - slosh)
         ..lineTo(w, baseTop + slosh)
-        ..lineTo(w, splitY)
-        ..lineTo(0, splitY)
-        ..close();
-      canvas.drawPath(waterPath, Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter, end: Alignment.bottomCenter,
-          colors: [
-            waterCol.withValues(alpha: isDisplacement ? 0.15 : 0.55),
-            waterCol.withValues(alpha: isDisplacement ? 0.25 : 0.75),
-          ],
-        ).createShader(Rect.fromLTWH(0, baseTop - 2, w, splitY - baseTop + 2)));
-
-      final saltPath = Path()
-        ..moveTo(0, splitY)
-        ..lineTo(w, splitY)
         ..lineTo(w, h)
         ..lineTo(0, h)
         ..close();
-      canvas.drawPath(saltPath, Paint()
+      canvas.drawPath(path, Paint()
         ..shader = LinearGradient(
           begin: Alignment.topCenter, end: Alignment.bottomCenter,
           colors: [
-            saltCol.withValues(alpha: isDisplacement ? 0.75 : 0.85),
-            saltCol.withValues(alpha: isDisplacement ? 0.90 : 0.95),
-          ],
-        ).createShader(Rect.fromLTWH(0, splitY, w, h - splitY)));
-
-      final rng = Random(item.id.length * 3 + 11);
-      for (int i = 0; i < 45; i++) {
-        final px = rng.nextDouble() * w;
-        final py = splitY + rng.nextDouble() * (h - splitY);
-        canvas.drawCircle(Offset(px, py),
-          0.5 + rng.nextDouble() * 1.1,
-          Paint()..color = Colors.white.withValues(alpha: 0.55));
-      }
-
-      final splitLine = Path()
-        ..moveTo(0, splitY)
-        ..quadraticBezierTo(w * 0.5, splitY + 2, w, splitY);
-      canvas.drawPath(splitLine, Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.5
-        ..color = Colors.white.withValues(alpha: 0.7));
-
+            liquidTint.withValues(alpha: 0.40),
+            liquidTint.withValues(alpha: 0.60),
+            liquidTint.withValues(alpha: 0.75),
+          ]).createShader(Rect.fromLTWH(0, baseTop - 2, w, h - baseTop + 2)));
       return;
     }
 
@@ -3533,76 +3480,206 @@ class RealisticEquipPainter extends CustomPainter {
         ..color = Colors.white.withValues(alpha: 0.65));
     }
   }
+  // Precipitate style — unique per precipitate type (real chemistry)
+  String _precipStyle() {
+    final rxn = reaction;
+    if (rxn == null) return 'default';
+    final products = rxn.products.join(' ').toLowerCase();
+    final key = (rxn.name + ' ' + rxn.equation).toLowerCase();
+    // CURDY — white clumpy (AgCl, Ag2SO4)
+    if (products.contains('agcl')) return 'curdy-white';
+    if (products.contains('ag2so4')) return 'curdy-white';
+    // GELATINOUS — blobby, slow settle (Cu(OH)2, Fe(OH)3, Al(OH)3)
+    if (products.contains('cu(oh)2')) return 'gel-blue';
+    if (products.contains('fe(oh)3')) return 'gel-brown';
+    if (products.contains('fe(oh)2')) return 'gel-green';
+    if (products.contains('al(oh)3')) return 'gel-white';
+    if (products.contains('zn(oh)2')) return 'gel-white';
+    if (products.contains('mg(oh)2')) return 'gel-white';
+    // GRANULAR — small particles, fast settle (PbI2, BaSO4)
+    if (products.contains('pbi2')) return 'granular-gold';
+    if (products.contains('baso4')) return 'granular-white';
+    if (products.contains('caco3')) return 'granular-white';
+    if (products.contains('cac2o4')) return 'granular-white';
+    if (products.contains('ag3po4')) return 'granular-yellow';
+    // METAL DEPOSIT — coating on metal (Cu, Ag)
+    if (rxn.type.toLowerCase().contains('single displacement')) return 'metal-deposit'; // ONLY single
+    // MILKY — clouded throughout (limewater)
+    if (key.contains('limewater') || key.contains('milky')) return 'milky';
+    // AG2O — brown heavy
+    if (products.contains('ag2o')) return 'heavy-brown';
+    // IODOFORM — bright yellow crystalline
+    if (products.contains('chi3')) return 'granular-yellow';
+    // TRIBROMOPHENOL — white crystalline
+    if (products.contains('c6h2br3oh')) return 'granular-white';
+    return 'default';
+  }
+
+  // Precipitate density (particle count multiplier)
+  double _precipDensity() {
+    switch (_precipStyle()) {
+      case 'curdy-white': return 1.3;
+      case 'gel-blue': return 1.1;
+      case 'gel-brown': return 1.4;
+      case 'gel-green': return 1.2;
+      case 'gel-white': return 1.0;
+      case 'granular-gold': return 1.5;
+      case 'granular-white': return 1.1;
+      case 'granular-yellow': return 1.4;
+      case 'metal-deposit': return 0.7;
+      case 'milky': return 2.0;
+      case 'heavy-brown': return 1.6;
+      default: return 1.0;
+    }
+  }
+
+  // Precipitate settling rate (0.5 = slow, 2.0 = fast)
+  double _precipSettleRate() {
+    switch (_precipStyle()) {
+      case 'curdy-white': return 1.0;   // clumpy
+      case 'gel-blue': return 0.9;      // gelatinous
+      case 'gel-brown': return 0.9;
+      case 'gel-green': return 0.9;
+      case 'gel-white': return 0.9;
+      case 'granular-gold': return 1.5; // fast
+      case 'granular-white': return 1.8; // very fast
+      case 'granular-yellow': return 1.5;
+      case 'metal-deposit': return 2.0;
+      case 'milky': return 0.8;
+      case 'heavy-brown': return 1.0;
+      default: return 1.0;
+    }
+  }
+
+  // Particle size (1.0 = normal)
+  double _precipParticleSize() {
+    switch (_precipStyle()) {
+      case 'curdy-white': return 1.4;   // big clumps
+      case 'gel-blue': return 1.6;      // blobby
+      case 'gel-brown': return 1.8;
+      case 'gel-green': return 1.5;
+      case 'granular-gold': return 0.8; // fine crystals
+      case 'granular-white': return 0.7;
+      case 'granular-yellow': return 0.9;
+      case 'metal-deposit': return 1.2;
+      case 'milky': return 0.5;         // very fine
+      default: return 1.0;
+    }
+  }
+
   void _paintPrecipitate(Canvas canvas, double w, double h, Color color) {
     final progress = item.reactionProgress.clamp(0.0, 1.0);
-    final settleT = (progress * 1.3).clamp(0.0, 1.0); // full settle at ~77% progress
+    final style = _precipStyle();
+    final density = _precipDensity();
+    final settleRate = _precipSettleRate();
+    final particleSize = _precipParticleSize();
+    final settleT = (progress * 2.0 * settleRate).clamp(0.0, 1.0); // faster settle
     if (settleT <= 0.0) return;
-    final maxH = h * 0.32; // bigger bed — more visible
+    
+    // METAL DEPOSIT — coating on metal, no settling bed
+    if (style == 'metal-deposit') {
+      final rng = Random(item.id.length * 11 + 7);
+      // Particles form on side/bottom (attached to metal)
+      final depositCount = (35 * (item.totalVolume / 50.0).clamp(0.5, 2.0)).toInt();
+      for (int i = 0; i < depositCount; i++) {
+        final px = w * 0.15 + rng.nextDouble() * w * 0.7;
+        final py = h * 0.55 + rng.nextDouble() * h * 0.4;
+        final r = (1.5 + rng.nextDouble() * 2.5) * particleSize;
+        canvas.drawCircle(Offset(px, py), r, Paint()..color = color.withValues(alpha: 0.85 * settleT));
+        canvas.drawCircle(Offset(px - r * 0.3, py - r * 0.3), r * 0.35, Paint()..color = Colors.white.withValues(alpha: 0.6 * settleT));
+      }
+      return;
+    }
+    
+    // MILKY — clouded throughout (no distinct bed)
+    if (style == 'milky') {
+      final rng = Random(item.id.length * 23 + 13);
+      for (int i = 0; i < (80 * density).toInt(); i++) {
+        final px = rng.nextDouble() * w;
+        final py = h * 0.25 + rng.nextDouble() * h * 0.75;
+        final r = (0.8 + rng.nextDouble() * 1.8) * particleSize;
+        canvas.drawCircle(Offset(px, py), r, Paint()..color = color.withValues(alpha: 0.35 * settleT));
+      }
+      return;
+    }
+    
+    // BED STYLES — granular, curdy, gel, heavy
+    // Bed height SCALES with amount — more reactant = more precipitate
+    final totalVol = item.totalVolume;
+    final amountFactor = (totalVol / 100.0).clamp(0.3, 1.5); // 50=0.5, 100=1.0, 150=1.5
+    final maxH = h * 0.45 * amountFactor; // scales with amount
     final pHeight = maxH * settleT;
     final pTop = h - pHeight;
-    // === CLOUDY TOP LAYER (turbid diffusion zone) ===
-    final cloudRect = Rect.fromLTWH(0, pTop - 6, w, 12);
+    
+    // === CLOUDY TOP LAYER (turbid diffusion) ===
+    final cloudH = style.contains('granular') ? 6.0 : 14.0;
+    final cloudRect = Rect.fromLTWH(0, pTop - cloudH, w, cloudH * 1.8);
     canvas.drawRect(cloudRect, Paint()
       ..shader = LinearGradient(
         begin: Alignment.topCenter, end: Alignment.bottomCenter,
         colors: [color.withValues(alpha: 0.0), color.withValues(alpha: 0.30 * settleT)]
       ).createShader(cloudRect));
-    // === MAIN PRECIPITATE BED (gradient depth) ===
+    
+    // === MAIN BED ===    
     final bedRect = Rect.fromLTWH(0, pTop, w, pHeight);
     canvas.drawRect(bedRect, Paint()
       ..shader = LinearGradient(
         begin: Alignment.topCenter, end: Alignment.bottomCenter,
         colors: [
-          color.withValues(alpha: 0.35 * settleT),
-          color.withValues(alpha: 0.75 * settleT),
-          color.withValues(alpha: 0.95 * settleT),
+          color.withValues(alpha: 0.55 * settleT),  // stronger top
+          color.withValues(alpha: 0.85 * settleT),
+          color.withValues(alpha: 1.00 * settleT),  // full bottom
         ], stops: const [0.0, 0.55, 1.0]).createShader(bedRect));
-    // EDGE GLOW — makes light precipitates visible on dark bg
-    final isLightPpt = color.r > 0.8 && color.g > 0.8 && color.b > 0.8;
+    
+    // === STYLE-SPECIFIC PARTICLES ===
+    final rng = Random(item.id.length * 13 + 17);
+    final amountScale = (item.totalVolume / 100.0).clamp(0.4, 1.5);
+    final particleCount = (45 * density * amountScale).toInt(); // scales with amount
+    
+    for (int i = 0; i < particleCount; i++) {
+      final px = w * 0.05 + rng.nextDouble() * w * 0.9;
+      final py = pTop + rng.nextDouble() * pHeight * 0.85;
+      final r = (1.2 + rng.nextDouble() * 2.0) * particleSize;
+      
+      if (style.contains('curdy')) {
+        // Big clumpy blobs
+        final blobPath = Path()
+          ..moveTo(px - r * 1.2, py)
+          ..quadraticBezierTo(px - r * 0.8, py - r * 1.3, px, py - r)
+          ..quadraticBezierTo(px + r * 0.8, py - r * 1.3, px + r * 1.2, py)
+          ..quadraticBezierTo(px + r * 0.6, py + r * 0.8, px, py + r * 0.5)
+          ..quadraticBezierTo(px - r * 0.6, py + r * 0.8, px - r * 1.2, py)
+          ..close();
+        canvas.drawPath(blobPath, Paint()..color = color.withValues(alpha: 0.85));
+        canvas.drawCircle(Offset(px - r * 0.4, py - r * 0.4), r * 0.4, Paint()..color = Colors.white.withValues(alpha: 0.55));
+      } else if (style.contains('gel')) {
+        // Gelatinous semi-transparent blobs
+        canvas.drawCircle(Offset(px, py), r * 1.3, Paint()
+          ..color = color.withValues(alpha: 0.55)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.5));
+        canvas.drawCircle(Offset(px, py), r * 0.9, Paint()..color = color.withValues(alpha: 0.85));
+        canvas.drawCircle(Offset(px - r * 0.3, py - r * 0.4), r * 0.35, Paint()..color = Colors.white.withValues(alpha: 0.55));
+      } else if (style.contains('granular')) {
+        // Small sharp crystals
+        canvas.drawCircle(Offset(px, py), r * 0.7, Paint()..color = color.withValues(alpha: 0.92));
+        canvas.drawCircle(Offset(px - r * 0.25, py - r * 0.25), r * 0.25, Paint()..color = Colors.white.withValues(alpha: 0.7));
+      } else {
+        canvas.drawCircle(Offset(px, py), r, Paint()..color = color.withValues(alpha: 0.85));
+        canvas.drawCircle(Offset(px - r * 0.3, py - r * 0.3), r * 0.4, Paint()..color = Colors.white.withValues(alpha: 0.5));
+      }
+    }
+    
+    // === EDGE GLOW (only for light precipitates) ===
+    final isLightPpt = color.r > 0.75 && color.g > 0.75 && color.b > 0.75;
     if (isLightPpt) {
       canvas.drawLine(Offset(0, pTop), Offset(w, pTop), Paint()
         ..strokeWidth = 1.2
-        ..color = Colors.black.withValues(alpha: 0.55 * settleT)); // stronger edge
+        ..color = Colors.black.withValues(alpha: 0.75 * settleT)); // stronger
       canvas.drawRect(bedRect, Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 0.8
-        ..color = Colors.black.withValues(alpha: 0.45 * settleT)); // stronger border
+        ..color = Colors.black.withValues(alpha: 0.65 * settleT)); // stronger
     }
-    // TOP INNER SHADOW — depth inside bed
-    if (settleT > 0.3) {
-      final shadowRect = Rect.fromLTWH(0, pTop, w, pHeight * 0.35);
-      canvas.drawRect(shadowRect, Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter, end: Alignment.bottomCenter,
-          colors: [Colors.black.withValues(alpha: 0.20 * settleT), Colors.transparent]
-        ).createShader(shadowRect));
-    }
-    // === FLOATING TURBID PARTICLES (settling in progress) ===
-    final rng = Random(item.id.length * 7 + 31);
-    for (int i = 0; i < 32; i++) {
-      final px = rng.nextDouble() * w;
-      final pyFrac = rng.nextDouble();
-      final py = pTop + pyFrac * pHeight;
-      final r = 0.5 + rng.nextDouble() * 1.5;
-      final alpha = (1 - pyFrac * 0.4) * 0.75 * settleT;
-      canvas.drawCircle(Offset(px, py), r,
-        Paint()..color = color.withValues(alpha: alpha));
-    }
-    // === CRYSTALLINE SPECKS (settled, bottom) ===
-    final rng2 = Random(item.id.length * 13 + 47);
-    for (int i = 0; i < 22; i++) {
-      final px = rng2.nextDouble() * w;
-      final py = h - rng2.nextDouble() * pHeight * 0.65;
-      final sz = 1.0 + rng2.nextDouble() * 1.8;
-      canvas.drawRect(Rect.fromCenter(center: Offset(px, py), width: sz, height: sz),
-        Paint()..color = color.withValues(alpha: 0.9 * settleT));
-      canvas.drawRect(Rect.fromLTWH(px - sz/3, py - sz/3, sz/3, sz/3),
-        Paint()..color = Colors.white.withValues(alpha: 0.5 * settleT));
-    }
-    // === TOP RIM HIGHLIGHT ===
-    canvas.drawLine(Offset(0, pTop), Offset(w, pTop), Paint()
-      ..strokeWidth = 0.8
-      ..color = Colors.white.withValues(alpha: 0.45 * settleT));
   }
   void _paintStir(Canvas canvas, double w, double h) {
     // Rotating stirrer rod
@@ -3702,6 +3779,59 @@ class RealisticEquipPainter extends CustomPainter {
     return [const Color(0xFFFFEB3B), const Color(0xFFE53935), const Color(0xFF4A0000)];
   }
   
+  // Fire animation style — unique per reaction
+  String _fireStyle() {
+    final rxn = reaction;
+    if (rxn == null) return 'default';
+    final name = rxn.name.toUpperCase();
+    final eq = rxn.equation.toUpperCase();
+    final k = rxn.equation.toLowerCase();
+    // K + H2O → dancing lilac flame (metal moves on surface)
+    if (k.contains('2k + 2h2o') || (eq.contains('K ') && eq.contains('H2O'))) return 'dancing-lilac';
+    // Na + H2O → dancing orange (sodium skitters)
+    if (k.contains('2na + 2h2o')) return 'dancing-orange';
+    // Na + HCl → white-hot explosion (instant)
+    if (k.contains('2na + 2hcl')) return 'explosion-white';
+    // Na + H2SO4 → intense white-hot explosion
+    if (k.contains('2na + h2so4')) return 'explosion-intense';
+    // Mg + HCl → bright white glow (no flame, just heat)
+    if (name.contains('MAGNESIUM') && k.contains('hcl')) return 'glow-white';
+    // Ca + water → pale yellow gentle
+    if (name.contains('CALCIUM')) return 'gentle-yellow';
+    return 'default';
+  }
+
+  // Intensity multiplier (0.5 = weak, 1.0 = normal, 1.3 = intense)
+  double _fireIntensity() {
+    final style = _fireStyle();
+    switch (style) {
+      case 'dancing-lilac': return 1.15;   // K more vigorous than Na
+      case 'dancing-orange': return 1.0;   // Na = baseline
+      case 'explosion-white': return 1.2;  // HCl more violent
+      case 'explosion-intense': return 1.3;// H2SO4 most violent
+      case 'glow-white': return 0.7;       // Mg = steady glow
+      case 'gentle-yellow': return 0.6;    // Ca = mild
+      default: return 1.0;
+    }
+  }
+
+  // Flame wobble amount (dancing reactions wobble more)
+  double _fireWobble() {
+    final style = _fireStyle();
+    if (style.contains('dancing')) return 1.8;
+    if (style.contains('explosion')) return 0.3;
+    if (style.contains('glow')) return 0.1;
+    return 1.0;
+  }
+
+  // Horizontal drift (metal moves across water surface)
+  double _fireDrift() {
+    final style = _fireStyle();
+    if (style == 'dancing-lilac') return 0.6;
+    if (style == 'dancing-orange') return 0.4;
+    return 0.0;
+  }
+
   void _paintFireBlast(Canvas canvas, double w, double h) {
     if (reaction == null || !reaction!.isViolent) return;
     // === PERSISTENT STATE (after reaction complete) ===
@@ -3752,6 +3882,18 @@ class RealisticEquipPainter extends CustomPainter {
     final progress = item.reactionProgress;
     final cx = w * 0.5;
     final cy = _liquidTop(h); // liquid top level
+    
+    // UNIQUE FIRE STYLE per reaction
+    final fireStyle = _fireStyle();
+    final fireIntensity = _fireIntensity();
+    final fireWobble = _fireWobble();
+    final fireDrift = _fireDrift();
+    // Dancing: horizontal sway | Explosion: still | Glow: steady
+    final flameOffsetX = fireDrift * w * 0.07 * sin(time * 3.5);
+    final flameX = cx + flameOffsetX;
+    // Explosion: 1.5x bigger | Dancing: normal | Glow: moderate
+    final isExplosion = fireStyle.contains('explosion');
+    final burstMult = isExplosion ? 1.5 : 1.0;
 
     // PHASE 1 (0.0-0.25): REALISTIC EXPLOSION (gradient blobs)
     if (progress < 0.35) {
@@ -3759,12 +3901,12 @@ class RealisticEquipPainter extends CustomPainter {
       if (p < 0.2) {
         final pp = p / 0.2;
         final r = w * 0.04 + pp * w * 0.04;
-        canvas.drawCircle(Offset(cx, cy), r * 4, Paint()
+        canvas.drawCircle(Offset(flameX, cy), r * 4 * fireIntensity * burstMult, Paint()
           ..color = _fireColors()[0].withValues(alpha: 0.5 * pp)
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15));
-        canvas.drawCircle(Offset(cx, cy), r * 1.5, Paint()
+        canvas.drawCircle(Offset(flameX, cy), r * 1.5 * fireIntensity * burstMult, Paint()
           ..color = _fireColors()[0].withValues(alpha: 0.9 * pp));
-        canvas.drawCircle(Offset(cx, cy), r * 0.7, Paint()..color = Colors.white);
+        canvas.drawCircle(Offset(flameX, cy), r * 0.7 * fireIntensity * burstMult, Paint()..color = Colors.white);
       } else if (p < 0.55) {
         final pp = (p - 0.2) / 0.35;
         final baseR = w * 0.08 + pp * w * 0.18;
