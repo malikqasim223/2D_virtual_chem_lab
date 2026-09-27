@@ -1541,6 +1541,1104 @@ class _AmountPickerDialogState extends State<AmountPickerDialog> {
   }
 }
 
+// ═══════════════════════════════════════════════════════════════
+// CHEMICAL INFO — Extended Study Data
+// ═══════════════════════════════════════════════════════════════
+class ChemDetail {
+  final String uses, properties, safety, occurrence;
+  final String? industrial, history, commonName, appearance, reactions;
+  final double? molarMass, boilingPoint, meltingPoint, density;
+  final String? ph;
+  final List<String> hazards; // hazard symbols: corrosive, toxic, flammable, oxidizer, carcinogen, irritant
+  final List<MoleculeAtom>? atoms; // for structure drawing
+  final List<MoleculeBond>? bonds;
+  const ChemDetail({
+    required this.uses,
+    required this.properties,
+    required this.safety,
+    required this.occurrence,
+    this.industrial,
+    this.history,
+    this.commonName,
+    this.appearance,
+    this.reactions,
+    this.molarMass,
+    this.boilingPoint,
+    this.meltingPoint,
+    this.density,
+    this.ph,
+    this.hazards = const [],
+    this.atoms,
+    this.bonds,
+  });
+}
+
+class MoleculeAtom {
+  final String symbol;
+  final double x, y, radius; // relative position (-1 to 1), radius in units
+  final int color; // ARGB int
+  const MoleculeAtom({required this.symbol, required this.x, required this.y,
+    this.radius = 0.5, this.color = 0xFFE0E0E0});
+}
+
+class MoleculeBond {
+  final int from, to;
+  final int order; // 1=single, 2=double, 3=triple
+  const MoleculeBond({required this.from, required this.to, this.order = 1});
+}
+
+const Map<String, ChemDetail> chemDetails = {
+  'hcl': ChemDetail(
+    uses: 'Cleaning metals, pH control, water treatment, food processing, leather tanning. Stomach acid (digestion).',
+    properties: 'Colorless/pale yellow liquid. Strong acid. pH ~1. Pungent smell. Fumes in moist air.',
+    safety: 'Corrosive. Wear goggles and gloves. Use fume hood. Do not mix with bleach (toxic Cl2 gas).',
+    occurrence: 'Found in stomach (gastric juice). Volcanic gases. Industrial by-product.',
+    industrial: 'Produced by chlor-alkali process or by reacting NaCl with H2SO4.',
+    history: 'Discovered by Jabir ibn Hayyan (~800 AD). Named by Davy (1810).',
+    commonName: 'Muriatic acid, Spirits of salt',
+    appearance: 'Colorless to pale yellow liquid, fuming in moist air',
+    molarMass: 36.46,
+    reactions: 'NaOH -> NaCl + H2O | Zn -> ZnCl2 + H2 | CaCO3 -> CaCl2 + CO2 + H2O | NaHCO3 -> NaCl + CO2 + H2O | AgNO3 -> AgCl(white ppt) + HNO3',
+    boilingPoint: -85.0,
+    meltingPoint: -114.2,
+    density: 1.18,
+    ph: '< 1',
+    hazards: ['corrosive', 'toxic'],
+    atoms: [
+      MoleculeAtom(symbol: 'H', x: -0.6, y: 0.0, radius: 0.55, color: 0xFFE0E0E0),
+      MoleculeAtom(symbol: 'Cl', x: 0.3, y: 0.0, radius: 0.75, color: 0xFF4CAF50),
+    ],
+    bonds: [
+      MoleculeBond(from: 0, to: 1),
+    ],
+  ),
+  'h2so4': ChemDetail(
+    uses: 'Car batteries, fertilizer production, petroleum refining, metal cleaning, dyes.',
+    properties: 'Oily colorless liquid. Highly corrosive. Density 1.84 g/mL. Mixes with water with huge heat release.',
+    safety: 'Extremely corrosive. NEVER add water to acid - always acid to water slowly.',
+    occurrence: 'Acid rain (from SO2). Small amounts in some mineral springs.',
+    industrial: 'Contact process: S + O2 -> SO2 -> SO3 -> H2SO4.',
+    history: 'Known since 8th century. Called oil of vitriol.',
+    commonName: 'Oil of vitriol',
+    appearance: 'Colorless oily liquid, dense, no odor',
+    molarMass: 98.08,
+    reactions: 'NaOH -> Na2SO4 + H2O | Zn -> ZnSO4 + H2 | CuO -> CuSO4 + H2O | BaCl2 -> BaSO4(white ppt) | NaCl -> NaHSO4 + HCl(g)',
+    boilingPoint: 337.0,
+    meltingPoint: 10.3,
+    density: 1.84,
+    ph: '< 1',
+    hazards: ['corrosive', 'toxic'],
+    atoms: [
+      MoleculeAtom(symbol: 'S', x: 0.0, y: 0.0, radius: 0.7, color: 0xFFFFEB3B),
+      MoleculeAtom(symbol: 'O', x: -0.7, y: 0.4, radius: 0.55, color: 0xFFE53935),
+      MoleculeAtom(symbol: 'O', x: 0.7, y: 0.4, radius: 0.55, color: 0xFFE53935),
+      MoleculeAtom(symbol: 'O', x: -0.7, y: -0.5, radius: 0.55, color: 0xFFE53935),
+      MoleculeAtom(symbol: 'O', x: 0.7, y: -0.5, radius: 0.55, color: 0xFFE53935),
+      MoleculeAtom(symbol: 'H', x: -1.2, y: 0.8, radius: 0.4, color: 0xFFE0E0E0),
+      MoleculeAtom(symbol: 'H', x: 1.2, y: 0.8, radius: 0.4, color: 0xFFE0E0E0),
+    ],
+    bonds: [
+      MoleculeBond(from: 0, to: 1, order: 2),
+      MoleculeBond(from: 0, to: 2, order: 2),
+      MoleculeBond(from: 0, to: 3),
+      MoleculeBond(from: 0, to: 4),
+      MoleculeBond(from: 3, to: 5),
+      MoleculeBond(from: 4, to: 6),
+    ],
+  ),
+  'naoh': ChemDetail(
+    uses: 'Soap making, paper production, drain cleaner, aluminum extraction, food preservation.',
+    properties: 'White solid. Strong base. Absorbs moisture from air. Dissolves in water with heat.',
+    safety: 'Very caustic. Causes severe burns. Store in airtight container.',
+    occurrence: 'Not found free in nature (too reactive).',
+    industrial: 'Chlor-alkali process: 2NaCl + 2H2O -> 2NaOH + Cl2 + H2.',
+    history: 'Industrial production started early 19th century.',
+    commonName: 'Caustic soda, Lye',
+    appearance: 'White waxy solid, absorbs moisture from air',
+    molarMass: 40.00,
+    reactions: 'HCl -> NaCl + H2O | CuSO4 -> Cu(OH)2(blue ppt) + Na2SO4 | AgNO3 -> Ag2O(brown ppt) + NaNO3 | Al -> NaAlO2 + H2 | Phenolphthalein -> Pink',
+    boilingPoint: 1388.0,
+    meltingPoint: 318.0,
+    density: 2.13,
+    ph: '13-14 (strong base)',
+    hazards: ['corrosive'],
+    atoms: [
+      MoleculeAtom(symbol: 'Na', x: -0.5, y: 0.0, radius: 0.7, color: 0xFF9C27B0),
+      MoleculeAtom(symbol: 'O', x: 0.1, y: 0.0, radius: 0.6, color: 0xFFE53935),
+      MoleculeAtom(symbol: 'H', x: 0.7, y: 0.0, radius: 0.45, color: 0xFFE0E0E0),
+    ],
+    bonds: [
+      MoleculeBond(from: 0, to: 1),
+      MoleculeBond(from: 1, to: 2),
+    ],
+  ),
+  'cuso4': ChemDetail(
+    uses: 'Fungicide (Bordeaux mixture), electroplating, dyeing, water treatment, Fehling test.',
+    properties: 'Blue crystals (pentahydrate). Turns white on heating (anhydrous). Turns blue again with water.',
+    safety: 'Harmful if swallowed. Irritant. Toxic to aquatic life. Avoid skin contact.',
+    occurrence: 'Blue vitriol. Found naturally in some caves.',
+    industrial: 'Made by reacting Cu with hot concentrated H2SO4.',
+    history: 'Known since ancient times. Used in Egypt for dyeing.',
+    commonName: 'Blue vitriol, Bluestone',
+    appearance: 'Bright blue crystals (pentahydrate), white when anhydrous',
+    molarMass: 249.69,
+    reactions: 'NaOH -> Cu(OH)2(blue ppt) | Fe -> FeSO4 + Cu | Zn -> ZnSO4 + Cu | NH4OH -> [Cu(NH3)4]SO4(deep blue)',
+    boilingPoint: null,
+    meltingPoint: 110.0,
+    density: 3.60,
+    ph: '4-5 (acidic)',
+    hazards: ['toxic', 'irritant'],
+    atoms: [
+      MoleculeAtom(symbol: 'Cu', x: 0.0, y: 0.0, radius: 0.65, color: 0xFF8D6E63),
+      MoleculeAtom(symbol: 'S', x: 0.0, y: 1.1, radius: 0.55, color: 0xFFFFEB3B),
+      MoleculeAtom(symbol: 'O', x: -0.9, y: 1.4, radius: 0.45, color: 0xFFE53935),
+      MoleculeAtom(symbol: 'O', x: 0.9, y: 1.4, radius: 0.45, color: 0xFFE53935),
+      MoleculeAtom(symbol: 'O', x: -0.9, y: 0.7, radius: 0.45, color: 0xFFE53935),
+      MoleculeAtom(symbol: 'O', x: 0.9, y: 0.7, radius: 0.45, color: 0xFFE53935),
+    ],
+    bonds: [
+      MoleculeBond(from: 0, to: 1),
+      MoleculeBond(from: 1, to: 2, order: 2),
+      MoleculeBond(from: 1, to: 3, order: 2),
+      MoleculeBond(from: 1, to: 4),
+      MoleculeBond(from: 1, to: 5),
+    ],
+  ),
+  'agno3': ChemDetail(
+    uses: 'Photography (old), antiseptic, precipitation tests (halide test), mirror making.',
+    properties: 'Colorless crystals. Soluble in water. Turns black on exposure to light.',
+    safety: 'Stains skin black. Strong oxidizer. Handle with gloves.',
+    occurrence: 'Found naturally as mineral chlorargyrite (AgCl).',
+    industrial: 'Made by dissolving Ag in dilute HNO3.',
+    history: 'Used in photography since 1839 (daguerreotype).',
+    boilingPoint: 444.0,
+    meltingPoint: 212.0,
+    density: 4.35,
+    ph: '5-6',
+    hazards: ['oxidizer', 'corrosive'],
+    atoms: [
+      MoleculeAtom(symbol: 'Ag', x: -0.5, y: 0.0, radius: 0.8, color: 0xFFE0E0E0),
+      MoleculeAtom(symbol: 'N', x: 0.4, y: 0.0, radius: 0.55, color: 0xFF3F51B5),
+      MoleculeAtom(symbol: 'O', x: 0.9, y: 0.4, radius: 0.5, color: 0xFFE53935),
+    ],
+    bonds: [
+      MoleculeBond(from: 0, to: 1),
+      MoleculeBond(from: 1, to: 2, order: 2),
+    ],
+  ),
+  'nacl': ChemDetail(
+    uses: 'Table salt, food preservation, chlorine production, water softening, de-icing roads.',
+    properties: 'White crystalline solid. Very soluble. Melts at 801C. Conducts electricity in molten state.',
+    safety: 'Safe in moderation. Excess can raise blood pressure.',
+    occurrence: 'Sea water (3.5%), rock salt (halite), saline lakes.',
+    industrial: 'Mined from rock salt deposits or evaporated from sea water.',
+    history: 'Used since 6000 BC. Once used as currency (salary).',
+    boilingPoint: 1465.0,
+    meltingPoint: 801.0,
+    density: 2.16,
+    ph: '7 (neutral)',
+    hazards: [],
+    atoms: [
+      MoleculeAtom(symbol: 'Na', x: -0.5, y: 0.0, radius: 0.75, color: 0xFF9C27B0),
+      MoleculeAtom(symbol: 'Cl', x: 0.5, y: 0.0, radius: 0.75, color: 0xFF4CAF50),
+    ],
+    bonds: [MoleculeBond(from: 0, to: 1)],
+  ),
+  'nahco3': ChemDetail(
+    uses: 'Baking (CO2 source), antacid, fire extinguisher, toothpaste, cleaning.',
+    properties: 'White powder. Mild alkaline. Decomposes at 50-100C to Na2CO3 + CO2 + H2O.',
+    safety: 'Safe. Avoid excess (can affect sodium balance).',
+    occurrence: 'Naturally in nahcolite mineral.',
+    industrial: 'Solvay process: NaCl + NH3 + CO2 + H2O -> NaHCO3 + NH4Cl.',
+    history: 'Commercial production since 1846.',
+    boilingPoint: null,
+    meltingPoint: 50.0,
+    density: 2.20,
+    ph: '8.3 (mild base)',
+    hazards: [],
+    atoms: [
+      MoleculeAtom(symbol: 'Na', x: -0.8, y: 0.0, radius: 0.65, color: 0xFF9C27B0),
+      MoleculeAtom(symbol: 'C', x: 0.2, y: 0.0, radius: 0.65, color: 0xFF424242),
+      MoleculeAtom(symbol: 'O', x: 0.9, y: 0.3, radius: 0.55, color: 0xFFE53935),
+    ],
+    bonds: [
+      MoleculeBond(from: 0, to: 1),
+      MoleculeBond(from: 1, to: 2, order: 2),
+    ],
+  ),
+  'caco3': ChemDetail(
+    uses: 'Cement, chalk, toothpaste, antacid, paper making, lime production.',
+    properties: 'White solid. Insoluble in water. Decomposes at 825C to CaO + CO2.',
+    safety: 'Generally safe. Inhalation of dust can irritate lungs.',
+    occurrence: 'Limestone, marble, chalk, shells, coral.',
+    industrial: 'Mined from quarries.',
+    history: 'Used since ancient times in construction.',
+    boilingPoint: null,
+    meltingPoint: 825.0,
+    density: 2.71,
+    ph: '9',
+    hazards: [],
+    atoms: [
+      MoleculeAtom(symbol: 'Ca', x: -0.5, y: 0.0, radius: 0.8, color: 0xFFE0E0E0),
+      MoleculeAtom(symbol: 'C', x: 0.4, y: 0.0, radius: 0.6, color: 0xFF424242),
+      MoleculeAtom(symbol: 'O', x: 1.0, y: 0.4, radius: 0.5, color: 0xFFE53935),
+    ],
+    bonds: [
+      MoleculeBond(from: 0, to: 1),
+      MoleculeBond(from: 1, to: 2, order: 2),
+    ],
+  ),
+  'na': ChemDetail(
+    uses: 'Nuclear reactor coolant, street lamps (yellow light), organic synthesis, Na-K alloy.',
+    properties: 'Soft silvery metal. Reacts violently with water producing H2 gas + fire. Reacts with air.',
+    safety: 'DANGEROUS. Store in kerosene. Never touch with bare hands. Reacts explosively with water.',
+    occurrence: 'Not found free in nature (too reactive). 2.6% of Earth crust as compounds.',
+    industrial: 'Electrolysis of molten NaCl (Downs cell).',
+    history: 'Isolated by Humphry Davy in 1807.',
+    commonName: 'Natrium, Table salt metal',
+    appearance: 'Soft silvery-white metal, tarnishes quickly in air',
+    molarMass: 22.99,
+    reactions: 'H2O -> NaOH + H2 + FIRE | HCl -> NaCl + H2 | H2SO4 -> Na2SO4 + H2 | Cl2 -> NaCl (bright yellow flame)',
+    boilingPoint: 883.0,
+    meltingPoint: 97.8,
+    density: 0.97,
+    ph: null,
+    hazards: ['flammable', 'corrosive'],
+    atoms: [
+      MoleculeAtom(symbol: 'Na', x: 0.0, y: 0.0, radius: 0.8, color: 0xFF9C27B0),
+    ],
+    bonds: [],
+  ),
+  'mg': ChemDetail(
+    uses: 'Lightweight alloys, fireworks (bright white light), flashlight powder, reducing agent.',
+    properties: 'Silvery-white metal. Burns with brilliant white flame. Reacts slowly with cold water, fast with hot.',
+    safety: 'Burns at very high temperature (~3000C). Do not look directly at flame. Keep away from water.',
+    occurrence: 'Sea water (0.13%), dolomite, magnesite, carnallite.',
+    industrial: 'Electrolysis of MgCl2.',
+    history: 'Isolated by Davy in 1808. Named after Magnesia region (Greece).',
+    boilingPoint: 1090.0,
+    meltingPoint: 650.0,
+    density: 1.74,
+    ph: null,
+    hazards: ['flammable'],
+    atoms: [MoleculeAtom(symbol: 'Mg', x: 0.0, y: 0.0, radius: 0.85, color: 0xFF9E9E9E)],
+    bonds: [],
+  ),
+  'h2o': ChemDetail(
+    uses: 'Universal solvent, drinking, cooling, agriculture, industry, life.',
+    properties: 'Colorless, odorless, tasteless liquid. Boils at 100C, freezes at 0C. High heat capacity.',
+    safety: 'Safe. Distilled water for reactions to avoid contamination.',
+    occurrence: '70% of Earth surface. Ice caps, oceans, rivers, atmosphere.',
+    industrial: 'Purified by distillation, deionization, reverse osmosis.',
+    history: 'Composition discovered by Cavendish (1781) and Lavoisier.',
+    boilingPoint: 100.0,
+    meltingPoint: 0.0,
+    density: 1.00,
+    ph: '7 (neutral)',
+    hazards: [],
+    atoms: [
+      MoleculeAtom(symbol: 'O', x: 0.0, y: -0.1, radius: 0.7, color: 0xFFE53935),
+      MoleculeAtom(symbol: 'H', x: -0.55, y: 0.35, radius: 0.5, color: 0xFFE0E0E0),
+      MoleculeAtom(symbol: 'H', x: 0.55, y: 0.35, radius: 0.5, color: 0xFFE0E0E0),
+    ],
+    bonds: [
+      MoleculeBond(from: 0, to: 1),
+      MoleculeBond(from: 0, to: 2),
+    ],
+  ),
+  'ki': ChemDetail(
+    uses: 'Elephant toothpaste catalyst, iodized salt, photographic chemicals, medicine.',
+    properties: 'White crystalline solid. Soluble in water. Turns yellowish on exposure to air (I2 liberation).',
+    safety: 'Safe in small amounts. Excess can affect thyroid.',
+    occurrence: 'Sea water (trace), seaweed (brown algae).',
+    industrial: 'Made by reacting I2 with KOH.',
+    history: 'Used for iodine supplementation since 1920s.',
+    boilingPoint: 1330.0,
+    meltingPoint: 681.0,
+    density: 3.13,
+    ph: '7 (neutral)',
+    hazards: [],
+    atoms: [
+      MoleculeAtom(symbol: 'K', x: -0.5, y: 0.0, radius: 0.75, color: 0xFF9C27B0),
+      MoleculeAtom(symbol: 'I', x: 0.5, y: 0.0, radius: 0.8, color: 0xFF4A2800),
+    ],
+    bonds: [MoleculeBond(from: 0, to: 1)],
+  ),
+  'pbno3': ChemDetail(
+    uses: 'Precipitation tests (PbI2 golden rain), explosives (lead azide), matches, dyes.',
+    properties: 'Colorless crystals. Soluble in water. Decomposes on heating to PbO + NO2 + O2.',
+    safety: 'TOXIC. Causes lead poisoning. Handle with gloves. Dispose properly.',
+    occurrence: 'Rare mineral (nitromagnesite is Mg salt).',
+    industrial: 'Made by reacting Pb with dilute HNO3.',
+    history: 'Known since ancient times (lead compounds used in paints).',
+    boilingPoint: null,
+    meltingPoint: 470.0,
+    density: 4.53,
+    ph: '3-4',
+    hazards: ['toxic', 'oxidizer'],
+    atoms: [
+      MoleculeAtom(symbol: 'Pb', x: 0.0, y: 0.0, radius: 1.0, color: 0xFF757575),
+      MoleculeAtom(symbol: 'N', x: -0.8, y: 0.6, radius: 0.5, color: 0xFF3F51B5),
+      MoleculeAtom(symbol: 'N', x: 0.8, y: 0.6, radius: 0.5, color: 0xFF3F51B5),
+    ],
+    bonds: [
+      MoleculeBond(from: 0, to: 1),
+      MoleculeBond(from: 0, to: 2),
+    ],
+  ),
+  'zn': ChemDetail(
+    uses: 'Galvanizing steel (rust prevention), batteries (Zn-C), alloys (brass), dietary supplement.',
+    properties: 'Bluish-white metal. Reacts with acids releasing H2. Moderately reactive.',
+    safety: 'Safe in solid form. Zinc fumes can cause metal fume fever.',
+    occurrence: 'Zinc blende (ZnS), calamine (ZnCO3), franklinite.',
+    industrial: 'Extracted by roasting ZnS then reducing with carbon.',
+    history: 'Known in India since 12th century. Named by Paracelsus.',
+    boilingPoint: 907.0,
+    meltingPoint: 419.5,
+    density: 7.14,
+    ph: null,
+    hazards: [],
+    atoms: [MoleculeAtom(symbol: 'Zn', x: 0.0, y: 0.0, radius: 0.85, color: 0xFF9E9E9E)],
+    bonds: [],
+  ),
+  'fe': ChemDetail(
+    uses: 'Steel and iron production (>90% of metal use), construction, machinery, tools.',
+    properties: 'Grey metal. Magnetic. Reacts with acids releasing H2. Rusts in moist air.',
+    safety: 'Safe. Iron dust can be flammable.',
+    occurrence: 'Most abundant element on Earth (core). Hematite, magnetite.',
+    industrial: 'Blast furnace: Fe2O3 + 3CO -> 2Fe + 3CO2.',
+    history: 'Used since 3000 BC (Iron Age).',
+    boilingPoint: 2861.0,
+    meltingPoint: 1538.0,
+    density: 7.87,
+    ph: null,
+    hazards: [],
+    atoms: [MoleculeAtom(symbol: 'Fe', x: 0.0, y: 0.0, radius: 0.85, color: 0xFF424242)],
+    bonds: [],
+  ),
+  'cu': ChemDetail(
+    uses: 'Electrical wiring, plumbing, coins, alloys (brass, bronze), catalysts.',
+    properties: 'Reddish-brown metal. Excellent conductor. Reacts with HNO3 releasing brown NO2.',
+    safety: 'Safe in small amounts. Copper fumes cause metal fume fever.',
+    occurrence: 'Native copper, chalcopyrite (CuFeS2), malachite.',
+    industrial: 'Extracted by roasting + smelting.',
+    history: 'Used since 9000 BC (Copper Age).',
+    boilingPoint: 2562.0,
+    meltingPoint: 1085.0,
+    density: 8.96,
+    ph: null,
+    hazards: [],
+    atoms: [MoleculeAtom(symbol: 'Cu', x: 0.0, y: 0.0, radius: 0.85, color: 0xFFB87333)],
+    bonds: [],
+  ),
+  'kmno4': ChemDetail(
+    uses: 'Oxidizing agent, water purification, disinfectant, analytical chemistry (titration).',
+    properties: 'Dark purple crystals. Strong oxidizer. Dissolves in water to purple solution.',
+    safety: 'Strong oxidizer. Reacts with organic matter. Stains skin brown.',
+    occurrence: 'Not natural (synthetic).',
+    industrial: 'Made by oxidizing MnO2 with KOH + air.',
+    history: 'Discovered in 1659. Industrial production 19th century.',
+    boilingPoint: null, meltingPoint: 240.0, density: 2.70, ph: '7-8 (neutral)',
+    hazards: ['oxidizer', 'irritant'],
+  ),
+  'h2o2': ChemDetail(
+    uses: 'Disinfectant, bleaching (hair, paper), rocket fuel, elephant toothpaste.',
+    properties: 'Colorless liquid. Decomposes to H2O + O2 (slowly, fast with catalyst).',
+    safety: 'Corrosive in high concentration (30%+). Store in dark bottle.',
+    occurrence: 'Rain (small amount), some biological processes.',
+    industrial: 'Made by anthraquinone process.',
+    history: 'Discovered by Thenard in 1818.',
+    commonName: 'Peroxide, Hydrogen dioxide',
+    appearance: 'Colorless liquid, slightly more viscous than water',
+    molarMass: 34.01,
+    reactions: 'KI -> H2O + O2 (foam!) | KMnO4 -> MnO2 + O2 | FeCl3 -> O2 | Catalase -> H2O + O2',
+    boilingPoint: 150.2,
+    meltingPoint: -0.4,
+    density: 1.45,
+    ph: '4-5 (weak acid)',
+    hazards: ['oxidizer', 'corrosive'],
+    atoms: [
+      MoleculeAtom(symbol: 'O', x: -0.5, y: 0.0, radius: 0.65, color: 0xFFE53935),
+      MoleculeAtom(symbol: 'O', x: 0.5, y: 0.0, radius: 0.65, color: 0xFFE53935),
+      MoleculeAtom(symbol: 'H', x: -1.05, y: 0.4, radius: 0.45, color: 0xFFE0E0E0),
+      MoleculeAtom(symbol: 'H', x: 1.05, y: 0.4, radius: 0.45, color: 0xFFE0E0E0),
+    ],
+    bonds: [
+      MoleculeBond(from: 0, to: 1),
+      MoleculeBond(from: 0, to: 2),
+      MoleculeBond(from: 1, to: 3),
+    ],
+  ),
+  'i2': ChemDetail(
+    uses: 'Antiseptic (tincture), photography, starch test, salt iodization, dyes.',
+    properties: 'Dark grey solid. Sublimes to purple vapor. Forms blue-black complex with starch.',
+    safety: 'Harmful if inhaled. Stains skin brown.',
+    occurrence: 'Sea water (trace), seaweed, Chilean saltpeter.',
+    industrial: 'Extracted from seaweed ash or caliche ore.',
+    history: 'Discovered by Courtois in 1811.',
+    boilingPoint: 184.3, meltingPoint: 113.7, density: 4.93, ph: '5-6 (weak acid)',
+    hazards: ['toxic', 'irritant'],
+  ),
+  'phenol': ChemDetail(
+    uses: 'Disinfectant (carbolic soap), plastics (bakelite), herbicides, dyes.',
+    properties: 'Colorless crystals. Weakly acidic. Turns pink on oxidation. Purple complex with FeCl3.',
+    safety: 'Corrosive to skin. Poisonous. Absorbs through skin.',
+    occurrence: 'Coal tar, some plant oils.',
+    industrial: 'Cumene process.',
+    history: 'Discovered in coal tar (1834). Used by Lister as antiseptic (1867).',
+    boilingPoint: 181.7, meltingPoint: 40.5, density: 1.07, ph: '5-6 (weak acid)',
+    hazards: ['corrosive', 'toxic'],
+  ),
+  'acetone': ChemDetail(
+    uses: 'Solvent (nail polish, paint), lab solvent, plastics (PMMA), chemical intermediate.',
+    properties: 'Colorless liquid. Sweet smell. Flammable. Mixes with water. Volatile.',
+    safety: 'Flammable. Inhaling high concentration causes dizziness.',
+    occurrence: 'Produced in body during fat metabolism (ketosis).',
+    industrial: 'Cumene process (co-product with phenol).',
+    history: 'Discovered in 1606. Industrial production in WWI.',
+    boilingPoint: 56.0, meltingPoint: -95.0, density: 0.79, ph: '7 (neutral)',
+    hazards: ['flammable', 'irritant'],
+  ),
+  'glucose': ChemDetail(
+    uses: 'Energy source, IV drip, food sweetener, fermentation (alcohol), Benedict test.',
+    properties: 'White crystalline solid. Sweet. Soluble in water. Reducing sugar.',
+    safety: 'Safe. Excess affects blood sugar.',
+    occurrence: 'Fruits, honey, blood (4-6 mM in humans).',
+    industrial: 'Hydrolysis of starch with enzymes.',
+    history: 'Isolated by Lowitz in 1792.',
+    boilingPoint: null, meltingPoint: 146.0, density: 1.54, ph: '7 (neutral)',
+    hazards: [],
+  ),
+  'sucrose': ChemDetail(
+    uses: 'Table sugar, food sweetener, fermentation, preservative.',
+    properties: 'White crystalline solid. Sweet. Turns black with concentrated H2SO4 (dehydration).',
+    safety: 'Safe. Excess causes tooth decay + obesity.',
+    occurrence: 'Sugarcane, sugar beet.',
+    industrial: 'Extracted from sugarcane or sugar beet.',
+    history: 'Used in India since 500 BC.',
+    boilingPoint: null, meltingPoint: 186.0, density: 1.59, ph: '7 (neutral)',
+    hazards: [],
+  ),
+  'c2h5oh': ChemDetail(
+    uses: 'Disinfectant, fuel (bio-ethanol), solvent, beverages, industrial processes.',
+    properties: 'Colorless liquid. Volatile. Flammable. Boils at 78C.',
+    safety: 'Flammable. Avoid breathing vapors. Do not drink pure.',
+    occurrence: 'Fermentation products (yeast).',
+    industrial: 'Fermentation or hydration of ethylene.',
+    history: 'Known since ancient times (fermented drinks).',
+    boilingPoint: 78.4, meltingPoint: -114.1, density: 0.789, ph: '7 (neutral)',
+    hazards: ['flammable', 'irritant'],
+  ),
+  'ch3cooh': ChemDetail(
+    uses: 'Vinegar (5%), food preservative, solvent, plastics (PVA), rubber.',
+    properties: 'Colorless liquid. Pungent. Weak acid. Boils at 118C. Freezes at 16.6C (glacial).',
+    safety: 'Corrosive in high concentration. Use gloves for glacial.',
+    occurrence: 'Vinegar, some fruits.',
+    industrial: 'Carbonylation of methanol.',
+    history: 'Known as vinegar since ancient times. Isolated by Lowitz (1788).',
+    boilingPoint: 118.1, meltingPoint: 16.6, density: 1.05, ph: '3 (weak acid)',
+    hazards: ['corrosive', 'flammable'],
+  ),
+  'k2cr2o7': ChemDetail(
+    uses: 'Oxidizing agent, leather tanning, photography, breathalyzer test, chromic acid.',
+    properties: 'Orange crystals. Strong oxidizer. Turns yellow in base. Turns green when reduced (Cr3+).',
+    safety: 'CARCINOGENIC. Hexavalent chromium. Handle carefully.',
+    occurrence: 'Not natural.',
+    industrial: 'Made from chromite ore (FeCr2O4).',
+    history: 'Discovered in 1830s.',
+    boilingPoint: 500.0,
+    meltingPoint: 398.0,
+    density: 2.68,
+    ph: '4 (acidic)',
+    hazards: ['oxidizer', 'carcinogen', 'toxic'],
+    atoms: [
+      MoleculeAtom(symbol: 'K', x: -0.9, y: 0.0, radius: 0.55, color: 0xFF9C27B0),
+      MoleculeAtom(symbol: 'K', x: 0.9, y: 0.0, radius: 0.55, color: 0xFF9C27B0),
+      MoleculeAtom(symbol: 'Cr', x: -0.3, y: 0.2, radius: 0.65, color: 0xFFE65100),
+      MoleculeAtom(symbol: 'Cr', x: 0.3, y: -0.2, radius: 0.65, color: 0xFFE65100),
+      MoleculeAtom(symbol: 'O', x: 0.0, y: 0.6, radius: 0.5, color: 0xFFE53935),
+    ],
+    bonds: [
+      MoleculeBond(from: 0, to: 2),
+      MoleculeBond(from: 1, to: 3),
+      MoleculeBond(from: 2, to: 3),
+      MoleculeBond(from: 3, to: 4),
+    ],
+  ),
+  'nh4oh': ChemDetail(
+    uses: 'Cleaning agents, fertilizers, pH control, complex formation (Cu-tetraammine).',
+    properties: 'Colorless solution. Pungent ammonia smell. Weak base. Forms deep blue complex with Cu2+.',
+    safety: 'Irritant. Pungent fumes. Use in ventilated area.',
+    occurrence: 'Naturally in some biological processes.',
+    industrial: 'Made by dissolving NH3 gas in water.',
+    history: 'Known as spirits of hartshorn in ancient times.',
+    boilingPoint: 38.0, meltingPoint: -57.0, density: 0.91, ph: '11-12 (weak base)',
+    hazards: ['irritant', 'corrosive'],
+  ),
+  'k': ChemDetail(
+    uses: 'Nuclear reactor coolant, street lamps (yellow light), organic synthesis, Na-K alloy.',
+    properties: 'Soft silvery metal. Reacts violently with water producing H2 gas + lilac flame.',
+    safety: 'DANGEROUS. Store in kerosene. Never touch with bare hands.',
+    occurrence: 'Not free in nature. 2.6% of Earth crust as compounds.',
+    commonName: 'Kalium',
+    appearance: 'Soft silvery-white metal, tarnishes in air',
+    molarMass: 39.10,
+    boilingPoint: 759.0, meltingPoint: 63.5, density: 0.86, ph: null,
+    hazards: ['flammable', 'corrosive'],
+    industrial: 'Electrolysis of molten KCl.',
+    history: 'Isolated by Humphry Davy in 1807.',
+    reactions: 'H2O -> KOH + H2 + FIRE | HCl -> KCl + H2 | H2SO4 -> K2SO4 + H2',
+    atoms: [MoleculeAtom(symbol: 'K', x: 0.0, y: 0.0, radius: 0.85, color: 0xFF9C27B0)],
+    bonds: [],
+  ),
+  'ca': ChemDetail(
+    uses: 'Alloying agent, reducing agent, drying agent, cement production.',
+    properties: 'Silvery-white metal. Reacts slowly with cold water, fast with hot water.',
+    safety: 'Flammable. Store in oil. Protect from moisture.',
+    occurrence: 'Limestone, gypsum, fluorite, 3.6 percent of Earth crust.',
+    commonName: 'Calcium',
+    appearance: 'Soft silvery-white metal',
+    molarMass: 40.08,
+    boilingPoint: 1484.0, meltingPoint: 842.0, density: 1.55, ph: null,
+    hazards: ['flammable'],
+    industrial: 'Electrolysis of fused CaCl2.',
+    history: 'Isolated by Davy in 1808.',
+    reactions: 'H2O -> Ca(OH)2 + H2 (slow) | HCl -> CaCl2 + H2',
+    atoms: [MoleculeAtom(symbol: 'Ca', x: 0.0, y: 0.0, radius: 0.85, color: 0xFFE0E0E0)],
+    bonds: [],
+  ),
+  'pb': ChemDetail(
+    uses: 'Car batteries (70 percent), radiation shielding, bullets, soldering, pigments.',
+    properties: 'Dense bluish-grey metal. Very soft. Poor conductor of electricity.',
+    safety: 'TOXIC. Causes lead poisoning. Cumulative poison. Avoid contact.',
+    occurrence: 'Galena (PbS), cerussite, anglesite.',
+    commonName: 'Plumbum',
+    appearance: 'Bluish-grey soft metal',
+    molarMass: 207.2,
+    boilingPoint: 1749.0, meltingPoint: 327.5, density: 11.34, ph: null,
+    hazards: ['toxic'],
+    industrial: 'Roasting PbS then reducing with carbon/coke.',
+    history: 'Used since 7000 BC. Symbol Pb from Latin plumbum.',
+    reactions: 'HCl -> PbCl2 + H2 (very slow) | AgNO3 -> Pb(NO3)2 + Ag',
+    atoms: [MoleculeAtom(symbol: 'Pb', x: 0.0, y: 0.0, radius: 0.95, color: 0xFF757575)],
+    bonds: [],
+  ),
+  'ag': ChemDetail(
+    uses: 'Jewelry, coins, photography, electrical contacts, mirrors, antibacterial.',
+    properties: 'Bright white metal. Best conductor of heat + electricity. Tarnishes in air.',
+    safety: 'Not toxic in solid form. Silver salts are harmful.',
+    occurrence: 'Native silver, argentite, horn silver (AgCl).',
+    commonName: 'Argentum',
+    appearance: 'Brilliant white lustrous metal',
+    molarMass: 107.87,
+    boilingPoint: 2162.0, meltingPoint: 961.8, density: 10.49, ph: null,
+    hazards: [],
+    industrial: 'Extracted from argentite by cyanide process.',
+    history: 'Used since 4000 BC. Symbol Ag from Latin argentum.',
+    reactions: 'HNO3 -> AgNO3 + NO2 + H2O | H2S -> Ag2S (black tarnish)',
+    atoms: [MoleculeAtom(symbol: 'Ag', x: 0.0, y: 0.0, radius: 0.85, color: 0xFFE0E0E0)],
+    bonds: [],
+  ),
+  'bacl2': ChemDetail(
+    uses: 'Analytical test for sulfate, fireworks (green color), pigments.',
+    properties: 'White crystalline solid. Soluble in water. Toxic.',
+    safety: 'TOXIC. Barium ions affect heart + nervous system.',
+    occurrence: 'Witherite, barite.',
+    commonName: 'Barium chloride',
+    appearance: 'White crystalline solid',
+    molarMass: 208.23,
+    boilingPoint: 1560.0, meltingPoint: 962.0, density: 3.86, ph: '7',
+    hazards: ['toxic'],
+    industrial: 'Made by reacting BaCO3 with HCl.',
+    history: 'Used in analytical chemistry since 19th century.',
+    reactions: 'H2SO4 -> BaSO4 (white ppt) + HCl | Na2CO3 -> BaCO3 + NaCl',
+    atoms: [MoleculeAtom(symbol: 'Ba', x: -0.5, y: 0.0, radius: 0.85, color: 0xFFF5F5F5), MoleculeAtom(symbol: 'Cl', x: 0.5, y: 0.4, radius: 0.6, color: 0xFF4CAF50), MoleculeAtom(symbol: 'Cl', x: 0.5, y: -0.4, radius: 0.6, color: 0xFF4CAF50)],
+    bonds: [MoleculeBond(from: 0, to: 1), MoleculeBond(from: 0, to: 2)],
+  ),
+  'na2co3': ChemDetail(
+    uses: 'Glass making, water softening, soap/detergent, paper.',
+    properties: 'White powder. Soluble in water. Basic solution (pH ~11).',
+    safety: 'Irritant. Avoid eye contact.',
+    occurrence: 'Trona, natron, soda lakes.',
+    commonName: 'Washing soda, Soda ash',
+    appearance: 'White crystalline powder',
+    molarMass: 105.99,
+    boilingPoint: null, meltingPoint: 851.0, density: 2.54, ph: '11-12 (basic)',
+    hazards: ['irritant'],
+    industrial: 'Solvay process from NaCl + NH3 + CO2.',
+    history: 'Used by ancient Egyptians (4000 BC) for glass making.',
+    reactions: 'HCl -> NaCl + H2O + CO2 | CaCl2 -> CaCO3 (white ppt) + NaCl',
+    atoms: [MoleculeAtom(symbol: 'Na', x: -0.8, y: 0.0, radius: 0.55, color: 0xFF9C27B0), MoleculeAtom(symbol: 'Na', x: 0.8, y: 0.0, radius: 0.55, color: 0xFF9C27B0), MoleculeAtom(symbol: 'C', x: 0.0, y: 0.0, radius: 0.65, color: 0xFF424242), MoleculeAtom(symbol: 'O', x: 0.0, y: 0.6, radius: 0.55, color: 0xFFE53935)],
+    bonds: [MoleculeBond(from: 0, to: 2), MoleculeBond(from: 1, to: 2), MoleculeBond(from: 2, to: 3, order: 2)],
+  ),
+  'feso4': ChemDetail(
+    uses: 'Iron supplement, ink (iron gall), water treatment, wood preservative.',
+    properties: 'Pale green crystals. Turns white on heating. Oxidizes in air.',
+    safety: 'Harmful if swallowed. Irritant.',
+    occurrence: 'Melanterite, pyrite oxidation.',
+    commonName: 'Green vitriol, Copperas',
+    appearance: 'Pale green crystalline solid',
+    molarMass: 278.01,
+    boilingPoint: null, meltingPoint: 64.0, density: 2.84, ph: '3-4 (acidic)',
+    hazards: ['irritant'],
+    industrial: 'Made by reacting Fe with dilute H2SO4.',
+    history: 'Known since ancient Rome. Used in ink making.',
+    reactions: 'NaOH -> Fe(OH)2 (dirty green ppt) | BaCl2 -> BaSO4 (white ppt)',
+    atoms: [MoleculeAtom(symbol: 'Fe', x: -0.5, y: 0.0, radius: 0.8, color: 0xFF424242), MoleculeAtom(symbol: 'S', x: 0.4, y: 0.0, radius: 0.6, color: 0xFFFFEB3B), MoleculeAtom(symbol: 'O', x: 1.0, y: 0.4, radius: 0.5, color: 0xFFE53935)],
+    bonds: [MoleculeBond(from: 0, to: 1), MoleculeBond(from: 1, to: 2, order: 2)],
+  ),
+  'alcl3': ChemDetail(
+    uses: 'Catalyst (Friedel-Crafts), aluminum production, pharmaceuticals, dyes.',
+    properties: 'White solid. Sublimes at 180C. Fumes in moist air. Hydrolyzes to HCl.',
+    safety: 'Corrosive. Reacts violently with water. Handle in dry conditions.',
+    occurrence: 'Not natural. Made from bauxite.',
+    commonName: 'Aluminum trichloride',
+    appearance: 'White to pale yellow crystals',
+    molarMass: 133.34,
+    boilingPoint: 180.0, meltingPoint: 192.4, density: 2.48, ph: '2-3 (acidic)',
+    hazards: ['corrosive'],
+    industrial: 'Made from Al + Cl2 at 200C.',
+    history: 'Discovered by Oersted in 1825.',
+    reactions: 'NaOH -> Al(OH)3 (white ppt) | NH4OH -> Al(OH)3 (white ppt)',
+    atoms: [MoleculeAtom(symbol: 'Al', x: 0.0, y: 0.0, radius: 0.7, color: 0xFFB0BEC5), MoleculeAtom(symbol: 'Cl', x: -0.7, y: 0.5, radius: 0.55, color: 0xFF4CAF50), MoleculeAtom(symbol: 'Cl', x: 0.7, y: 0.5, radius: 0.55, color: 0xFF4CAF50), MoleculeAtom(symbol: 'Cl', x: 0.0, y: -0.7, radius: 0.55, color: 0xFF4CAF50)],
+    bonds: [MoleculeBond(from: 0, to: 1), MoleculeBond(from: 0, to: 2), MoleculeBond(from: 0, to: 3)],
+  ),
+  'nh4cl': ChemDetail(
+    uses: 'Soldering flux, batteries, fertilizer, textile printing, cough medicine.',
+    properties: 'White crystalline solid. Soluble in water. Sublimes on heating. Acidic solution.',
+    safety: 'Irritant. Avoid inhalation.',
+    occurrence: 'Volcanic fumaroles, guano deposits, sal ammoniac.',
+    commonName: 'Sal ammoniac',
+    appearance: 'White crystalline powder',
+    molarMass: 53.49,
+    boilingPoint: 520.0, meltingPoint: 338.0, density: 1.53, ph: '4.5-5.5 (acidic)',
+    hazards: ['irritant'],
+    industrial: 'Made by reacting NH3 with HCl.',
+    history: 'Known to ancient Egyptians as sal ammoniac.',
+    reactions: 'NaOH -> NaCl + NH3 + H2O (pungent gas)',
+    atoms: [MoleculeAtom(symbol: 'N', x: 0.0, y: 0.0, radius: 0.6, color: 0xFF3F51B5), MoleculeAtom(symbol: 'H', x: -0.7, y: 0.4, radius: 0.4, color: 0xFFE0E0E0), MoleculeAtom(symbol: 'Cl', x: 0.8, y: -0.3, radius: 0.55, color: 0xFF4CAF50)],
+    bonds: [MoleculeBond(from: 0, to: 1), MoleculeBond(from: 0, to: 2)],
+  ),
+  'znso4': ChemDetail(
+    uses: 'Electroplating, wood preservative, eye drops, dietary supplement.',
+    properties: 'Colorless crystals. Soluble in water. Acidic solution.',
+    safety: 'Harmful if swallowed. Irritant to eyes and skin.',
+    occurrence: 'Goslarite, zinc blende oxidation.',
+    commonName: 'White vitriol, Zinc sulfate',
+    appearance: 'Colorless to white crystals',
+    molarMass: 161.44,
+    boilingPoint: null, meltingPoint: 680.0, density: 3.54, ph: '4-5 (acidic)',
+    hazards: ['irritant'],
+    industrial: 'Made by reacting ZnO with H2SO4.',
+    history: 'Used medicinally since 16th century.',
+    reactions: 'NaOH -> Zn(OH)2 (white ppt) | BaCl2 -> BaSO4 (white ppt)',
+    atoms: [MoleculeAtom(symbol: 'Zn', x: -0.5, y: 0.0, radius: 0.8, color: 0xFF9E9E9E), MoleculeAtom(symbol: 'S', x: 0.4, y: 0.0, radius: 0.6, color: 0xFFFFEB3B), MoleculeAtom(symbol: 'O', x: 1.0, y: 0.4, radius: 0.5, color: 0xFFE53935)],
+    bonds: [MoleculeBond(from: 0, to: 1), MoleculeBond(from: 1, to: 2, order: 2)],
+  ),
+  'cucl2': ChemDetail(
+    uses: 'Catalyst, wood preservative, photography, fireworks (blue-green color).',
+    properties: 'Bluish-green crystals. Soluble in water. Absorbs moisture from air.',
+    safety: 'Toxic. Irritant. Harmful if swallowed.',
+    occurrence: 'Rare mineral tolbachite.',
+    commonName: 'Cupric chloride',
+    appearance: 'Blue-green crystals',
+    molarMass: 134.45,
+    boilingPoint: 993.0, meltingPoint: 498.0, density: 3.39, ph: '3-4 (acidic)',
+    hazards: ['toxic', 'irritant'],
+    industrial: 'Made by reacting Cu with Cl2 or CuO with HCl.',
+    history: 'Used in fireworks since 17th century.',
+    reactions: 'NaOH -> Cu(OH)2 (blue ppt) | Zn -> ZnCl2 + Cu',
+    atoms: [MoleculeAtom(symbol: 'Cu', x: -0.5, y: 0.0, radius: 0.8, color: 0xFFB87333), MoleculeAtom(symbol: 'Cl', x: 0.5, y: 0.3, radius: 0.6, color: 0xFF4CAF50), MoleculeAtom(symbol: 'Cl', x: 0.5, y: -0.3, radius: 0.6, color: 0xFF4CAF50)],
+    bonds: [MoleculeBond(from: 0, to: 1), MoleculeBond(from: 0, to: 2)],
+  ),
+  'fecl3': ChemDetail(
+    uses: 'Water treatment, etching copper, photography, catalyst, medicine.',
+    properties: 'Dark green/black crystals. Very soluble. Acidic solution.',
+    safety: 'Corrosive. Irritant. Stains skin.',
+    occurrence: 'Molysite (rare mineral).',
+    commonName: 'Ferric chloride',
+    appearance: 'Dark brown/green crystals',
+    molarMass: 162.20,
+    boilingPoint: 315.0, meltingPoint: 306.0, density: 2.80, ph: '2 (acidic)',
+    hazards: ['corrosive', 'irritant'],
+    industrial: 'Made by reacting Fe with Cl2.',
+    history: 'Used in medicine since 17th century.',
+    reactions: 'NaOH -> Fe(OH)3 (brown ppt) | Phenol -> Purple complex | KI -> I2 (brown)',
+    atoms: [MoleculeAtom(symbol: 'Fe', x: 0.0, y: 0.0, radius: 0.8, color: 0xFF8D6E63), MoleculeAtom(symbol: 'Cl', x: -0.7, y: 0.5, radius: 0.55, color: 0xFF4CAF50), MoleculeAtom(symbol: 'Cl', x: 0.7, y: 0.5, radius: 0.55, color: 0xFF4CAF50), MoleculeAtom(symbol: 'Cl', x: 0.0, y: -0.7, radius: 0.55, color: 0xFF4CAF50)],
+    bonds: [MoleculeBond(from: 0, to: 1), MoleculeBond(from: 0, to: 2), MoleculeBond(from: 0, to: 3)],
+  ),
+  'kcl': ChemDetail(
+    uses: 'Fertilizer (potash, ~95%), medicine, salt substitute, photography.',
+    properties: 'White crystalline solid. Soluble in water. Melts at 770C. Salty taste.',
+    safety: 'Safe in small amounts. Excess affects heart.',
+    occurrence: 'Sylvite, carnallite.',
+    commonName: 'Muriate of potash, Sylvite',
+    appearance: 'White crystalline solid',
+    molarMass: 74.55,
+    boilingPoint: 1420.0, meltingPoint: 770.0, density: 1.98, ph: '7',
+    hazards: [],
+    industrial: 'Extracted from sylvinite ore by froth flotation.',
+    history: 'Discovered as mineral in 1823.',
+    reactions: 'AgNO3 -> AgCl (white ppt) + KNO3 | H2SO4 -> KHSO4 + HCl(g)',
+    atoms: [MoleculeAtom(symbol: 'K', x: -0.5, y: 0.0, radius: 0.75, color: 0xFF9C27B0), MoleculeAtom(symbol: 'Cl', x: 0.5, y: 0.0, radius: 0.75, color: 0xFF4CAF50)],
+    bonds: [MoleculeBond(from: 0, to: 1)],
+  ),
+  'kno3': ChemDetail(
+    uses: 'Fertilizer, gunpowder (old), food preservative, toothpaste, glass.',
+    properties: 'White crystalline solid. Soluble in water. Strong oxidizer. Decomposes at 400C.',
+    safety: 'Oxidizer. Reacts with organic materials. Store away from fuels.',
+    occurrence: 'Niter (saltpeter), Chile saltpeter.',
+    commonName: 'Saltpeter, Niter',
+    appearance: 'White crystalline powder',
+    molarMass: 101.10,
+    boilingPoint: 400.0, meltingPoint: 334.0, density: 2.11, ph: '7',
+    hazards: ['oxidizer', 'irritant'],
+    industrial: 'Made by reacting KOH with HNO3.',
+    history: 'Used in gunpowder since 13th century.',
+    reactions: 'Heat -> KNO2 + O2 | H2SO4 -> KHSO4 + HNO3',
+    atoms: [MoleculeAtom(symbol: 'K', x: -0.6, y: 0.0, radius: 0.65, color: 0xFF9C27B0), MoleculeAtom(symbol: 'N', x: 0.3, y: 0.0, radius: 0.55, color: 0xFF3F51B5), MoleculeAtom(symbol: 'O', x: 0.9, y: 0.4, radius: 0.5, color: 0xFFE53935)],
+    bonds: [MoleculeBond(from: 0, to: 1), MoleculeBond(from: 1, to: 2, order: 2)],
+  ),
+  'caso4': ChemDetail(
+    uses: 'Plaster of Paris, cement, wallboard, fertilizer, toothpaste.',
+    properties: 'White solid. Slightly soluble in water. Sets to hard mass with water.',
+    safety: 'Safe. Dust may cause irritation.',
+    occurrence: 'Gypsum, anhydrite.',
+    commonName: 'Gypsum, Plaster of Paris',
+    appearance: 'White crystalline solid or powder',
+    molarMass: 136.14,
+    boilingPoint: null, meltingPoint: 1460.0, density: 2.96, ph: '7',
+    hazards: [],
+    industrial: 'Mined from gypsum deposits.',
+    history: 'Used in construction since ancient Egypt.',
+    reactions: 'Heat (150C) -> CaSO4.0.5H2O (Plaster of Paris)',
+    atoms: [MoleculeAtom(symbol: 'Ca', x: -0.5, y: 0.0, radius: 0.8, color: 0xFFE0E0E0), MoleculeAtom(symbol: 'S', x: 0.4, y: 0.0, radius: 0.6, color: 0xFFFFEB3B), MoleculeAtom(symbol: 'O', x: 1.0, y: 0.4, radius: 0.5, color: 0xFFE53935)],
+    bonds: [MoleculeBond(from: 0, to: 1), MoleculeBond(from: 1, to: 2, order: 2)],
+  ),
+  'mgso4': ChemDetail(
+    uses: 'Epsom salt (bath, laxative), fertilizer (Mg), brewing, paper.',
+    properties: 'Colorless crystals (Epsom salt). Soluble in water. Bitter taste.',
+    safety: 'Safe. Large amounts act as laxative.',
+    occurrence: 'Epsomite, kieserite, sea water.',
+    commonName: 'Epsom salt, Bitter salt',
+    appearance: 'Colorless to white crystals',
+    molarMass: 120.37,
+    boilingPoint: null, meltingPoint: 1124.0, density: 2.66, ph: '6-7',
+    hazards: [],
+    industrial: 'From sea water or kieserite.',
+    history: 'Discovered in Epsom, England (1618).',
+    reactions: 'NaOH -> Mg(OH)2 (white ppt) | BaCl2 -> BaSO4 (white ppt)',
+    atoms: [MoleculeAtom(symbol: 'Mg', x: -0.5, y: 0.0, radius: 0.8, color: 0xFF9E9E9E), MoleculeAtom(symbol: 'S', x: 0.4, y: 0.0, radius: 0.6, color: 0xFFFFEB3B), MoleculeAtom(symbol: 'O', x: 1.0, y: 0.4, radius: 0.5, color: 0xFFE53935)],
+    bonds: [MoleculeBond(from: 0, to: 1), MoleculeBond(from: 1, to: 2, order: 2)],
+  ),
+  'na2s2o3': ChemDetail(
+    uses: 'Photography (fixer), iodine titration, water dechlorination, gold extraction.',
+    properties: 'White crystals. Soluble in water. Reducing agent.',
+    safety: 'Safe. May irritate eyes.',
+    occurrence: 'Rare mineral (hydrated).',
+    commonName: 'Hypo, Sodium thiosulfate',
+    appearance: 'Colorless/white crystals',
+    molarMass: 158.11,
+    boilingPoint: null, meltingPoint: 48.0, density: 1.67, ph: '6.5-8',
+    hazards: ['irritant'],
+    industrial: 'Made from Na2SO3 + S.',
+    history: 'Used in photography since 1839.',
+    reactions: 'HCl -> S (yellow ppt) + SO2 + NaCl | I2 -> decolorization',
+    atoms: [MoleculeAtom(symbol: 'Na', x: -0.9, y: 0.0, radius: 0.55, color: 0xFF9C27B0), MoleculeAtom(symbol: 'Na', x: 0.9, y: 0.0, radius: 0.55, color: 0xFF9C27B0), MoleculeAtom(symbol: 'S', x: 0.0, y: 0.0, radius: 0.65, color: 0xFFFFEB3B), MoleculeAtom(symbol: 'O', x: -0.4, y: 0.5, radius: 0.5, color: 0xFFE53935)],
+    bonds: [MoleculeBond(from: 0, to: 2), MoleculeBond(from: 1, to: 2), MoleculeBond(from: 2, to: 3, order: 2)],
+  ),
+  'al': ChemDetail(
+    uses: 'Aircraft, packaging (foil), electrical wiring, construction, utensils.',
+    properties: 'Light silvery metal. Reacts with acids + bases (amphoteric).',
+    safety: 'Safe in solid. Aluminum dust is flammable.',
+    occurrence: 'Bauxite, cryolite. Most abundant metal in crust.',
+    commonName: 'Aluminium',
+    appearance: 'Silvery-white light metal',
+    molarMass: 26.98,
+    boilingPoint: 2519.0, meltingPoint: 660.3, density: 2.70, ph: null,
+    hazards: ['flammable'],
+    industrial: 'Hall-Heroult process: electrolysis of Al2O3 in molten cryolite.',
+    history: 'Isolated by Oersted (1825) and Wohler (1827).',
+    reactions: 'HCl -> AlCl3 + H2 | NaOH -> NaAlO2 + H2 (amphoteric)',
+    atoms: [MoleculeAtom(symbol: 'Al', x: 0.0, y: 0.0, radius: 0.75, color: 0xFFB0BEC5)],
+    bonds: [],
+  ),
+  'h2c2o4': ChemDetail(
+    uses: 'Cleaning (rust removal), bleaching, oxalate salts, analytical chemistry.',
+    properties: 'White crystalline solid. Soluble in water. Strong dicarboxylic acid. Toxic.',
+    safety: 'TOXIC. Forms insoluble calcium oxalate in body (kidney stones).',
+    occurrence: 'Wood sorrel, rhubarb, spinach, beet leaves.',
+    commonName: 'Ethanedioic acid, Oxalic acid',
+    appearance: 'White crystalline solid',
+    molarMass: 90.03,
+    boilingPoint: 365.0, meltingPoint: 189.5, density: 1.90, ph: '1-2 (strong acid)',
+    hazards: ['toxic', 'corrosive'],
+    industrial: 'Made from sodium formate or from CO + NaOH.',
+    history: 'Discovered in wood sorrel in 1776.',
+    reactions: 'NaOH -> Na2C2O4 + H2O | KMnO4 -> CO2 + Mn2+ (purple fades)',
+    atoms: [MoleculeAtom(symbol: 'C', x: -0.5, y: 0.0, radius: 0.6, color: 0xFF424242), MoleculeAtom(symbol: 'C', x: 0.5, y: 0.0, radius: 0.6, color: 0xFF424242), MoleculeAtom(symbol: 'O', x: -1.0, y: 0.3, radius: 0.5, color: 0xFFE53935), MoleculeAtom(symbol: 'O', x: 1.0, y: 0.3, radius: 0.5, color: 0xFFE53935)],
+    bonds: [MoleculeBond(from: 0, to: 1), MoleculeBond(from: 0, to: 2, order: 2), MoleculeBond(from: 1, to: 3, order: 2)],
+  ),
+  'h3po4': ChemDetail(
+    uses: 'Fertilizers (70%), food acid (cola), rust remover, dental products.',
+    properties: 'Colorless syrupy liquid. Soluble in water. Triprotic acid. Non-toxic.',
+    safety: 'Mildly corrosive in concentrated form.',
+    occurrence: 'Phosphate rock (apatite), bones, teeth, DNA.',
+    commonName: 'Orthophosphoric acid',
+    appearance: 'Colorless syrupy liquid',
+    molarMass: 98.00,
+    boilingPoint: 158.0, meltingPoint: 42.4, density: 1.88, ph: '1-2 (acidic)',
+    hazards: ['corrosive'],
+    industrial: 'Wet process: phosphate rock + H2SO4.',
+    history: 'Discovered by Scheele (1770) from bone ash.',
+    reactions: 'NaOH -> Na3PO4 + H2O | Ca(OH)2 -> Ca3(PO4)2 (white ppt)',
+    atoms: [MoleculeAtom(symbol: 'P', x: 0.0, y: 0.0, radius: 0.7, color: 0xFFFF9800), MoleculeAtom(symbol: 'O', x: 0.7, y: 0.4, radius: 0.5, color: 0xFFE53935), MoleculeAtom(symbol: 'O', x: -0.7, y: 0.4, radius: 0.5, color: 0xFFE53935), MoleculeAtom(symbol: 'O', x: 0.0, y: -0.7, radius: 0.5, color: 0xFFE53935)],
+    bonds: [MoleculeBond(from: 0, to: 1, order: 2), MoleculeBond(from: 0, to: 2), MoleculeBond(from: 0, to: 3)],
+  ),
+  'hcooh': ChemDetail(
+    uses: 'Leather tanning, textile dyeing, preservative, antibacterial, lab reagent.',
+    properties: 'Colorless liquid. Pungent smell. Strongest simple carboxylic acid.',
+    safety: 'Corrosive. Toxic. Causes burns. Handle with gloves.',
+    occurrence: 'Ant stings, bee stings, nettles, some plants.',
+    commonName: 'Methanoic acid, Formic acid',
+    appearance: 'Colorless fuming liquid',
+    molarMass: 46.03,
+    boilingPoint: 100.8, meltingPoint: 8.4, density: 1.22, ph: '2 (acidic)',
+    hazards: ['corrosive', 'toxic'],
+    industrial: 'Made from CO + NaOH -> HCOONa -> HCOOH.',
+    history: 'Discovered in ant distillate (1671).',
+    reactions: 'NaOH -> HCOONa + H2O | Na2CO3 -> CO2 + H2O',
+    atoms: [MoleculeAtom(symbol: 'C', x: 0.0, y: 0.0, radius: 0.6, color: 0xFF424242), MoleculeAtom(symbol: 'O', x: 0.7, y: 0.3, radius: 0.55, color: 0xFFE53935), MoleculeAtom(symbol: 'H', x: -0.7, y: -0.3, radius: 0.4, color: 0xFFE0E0E0)],
+    bonds: [MoleculeBond(from: 0, to: 1, order: 2), MoleculeBond(from: 0, to: 2)],
+  ),
+  'citric': ChemDetail(
+    uses: 'Food acid (lemon flavor), cleaning, cosmetics, pH control, antioxidant.',
+    properties: 'White crystalline solid. Soluble in water. Triprotic acid. Sour taste.',
+    safety: 'Safe. May irritate eyes.',
+    occurrence: 'Citrus fruits (lemon, lime, orange), tomatoes.',
+    commonName: 'Citric acid',
+    appearance: 'White crystalline solid',
+    molarMass: 192.12,
+    boilingPoint: null, meltingPoint: 153.0, density: 1.66, ph: '2-3 (acidic)',
+    hazards: [],
+    industrial: 'Fermentation of glucose by Aspergillus niger.',
+    history: 'Isolated from lemon juice by Scheele (1784).',
+    reactions: 'NaOH -> Na3C6H5O7 + H2O | NaHCO3 -> CO2 (fizz)',
+    atoms: [MoleculeAtom(symbol: 'C', x: 0.0, y: 0.0, radius: 0.6, color: 0xFF424242), MoleculeAtom(symbol: 'O', x: 0.7, y: 0.4, radius: 0.5, color: 0xFFE53935), MoleculeAtom(symbol: 'O', x: -0.7, y: -0.4, radius: 0.5, color: 0xFFE53935)],
+    bonds: [MoleculeBond(from: 0, to: 1, order: 2), MoleculeBond(from: 0, to: 2)],
+  ),
+  'glycerol': ChemDetail(
+    uses: 'Moisturizer, soap, nitroglycerin, food additive, antifreeze, pharmaceutical.',
+    properties: 'Colorless viscous liquid. Sweet taste. Non-toxic. Mixes with water.',
+    safety: 'Safe. Large amounts may cause digestive upset.',
+    occurrence: 'Fats and oils (triglycerides), soap-making by-product.',
+    commonName: 'Glycerin, Glycerine',
+    appearance: 'Colorless viscous syrupy liquid',
+    molarMass: 92.09,
+    boilingPoint: 290.0, meltingPoint: 17.8, density: 1.26, ph: '7',
+    hazards: [],
+    industrial: 'Saponification of fats or from propylene.',
+    history: 'Discovered by Scheele in 1779.',
+    reactions: 'KMnO4 -> Oxalic acid | HNO3 -> Nitroglycerin',
+    atoms: [MoleculeAtom(symbol: 'C', x: 0.0, y: 0.0, radius: 0.55, color: 0xFF424242), MoleculeAtom(symbol: 'O', x: -0.7, y: 0.3, radius: 0.5, color: 0xFFE53935), MoleculeAtom(symbol: 'O', x: 0.7, y: 0.3, radius: 0.5, color: 0xFFE53935)],
+    bonds: [MoleculeBond(from: 0, to: 1), MoleculeBond(from: 0, to: 2)],
+  ),
+  'urea': ChemDetail(
+    uses: 'Fertilizer (46% N), plastics (urea-formaldehyde), animal feed, medicine.',
+    properties: 'White crystalline solid. Soluble in water. Non-toxic. Decomposes on heating.',
+    safety: 'Safe. Decomposes to NH3 + CO2 with urease enzyme.',
+    occurrence: 'Urine of mammals (2-3%).',
+    commonName: 'Carbamide, Urea',
+    appearance: 'White crystalline solid',
+    molarMass: 60.06,
+    boilingPoint: null, meltingPoint: 133.0, density: 1.32, ph: '7 (neutral)',
+    hazards: [],
+    industrial: 'Made from NH3 + CO2 at high pressure.',
+    history: 'First organic compound synthesized from inorganic (Wohler, 1828).',
+    reactions: 'H2O (urease) -> NH3 + CO2 | Heat -> Biuret + NH3',
+    atoms: [MoleculeAtom(symbol: 'C', x: 0.0, y: 0.0, radius: 0.6, color: 0xFF424242), MoleculeAtom(symbol: 'O', x: 0.0, y: -0.7, radius: 0.5, color: 0xFFE53935), MoleculeAtom(symbol: 'N', x: -0.7, y: 0.4, radius: 0.55, color: 0xFF3F51B5), MoleculeAtom(symbol: 'N', x: 0.7, y: 0.4, radius: 0.55, color: 0xFF3F51B5)],
+    bonds: [MoleculeBond(from: 0, to: 1, order: 2), MoleculeBond(from: 0, to: 2), MoleculeBond(from: 0, to: 3)],
+  ),
+  'benzene': ChemDetail(
+    uses: 'Industrial solvent, precursor to plastics, dyes, detergents.',
+    properties: 'Colorless aromatic liquid. Sweet smell. Flammable. Immiscible with water.',
+    safety: 'CARCINOGENIC. Causes leukemia. Avoid inhalation + skin contact.',
+    occurrence: 'Petroleum, coal tar, crude oil.',
+    commonName: 'Benzol, Cyclohexatriene',
+    appearance: 'Colorless liquid with sweet smell',
+    molarMass: 78.11,
+    boilingPoint: 80.1, meltingPoint: 5.5, density: 0.88, ph: null,
+    hazards: ['flammable', 'carcinogen', 'toxic'],
+    industrial: 'Catalytic reforming of naphtha or from coal tar.',
+    history: 'Discovered by Faraday (1825). Structure by Kekule (1865).',
+    reactions: 'Br2 (FeBr3) -> Bromobenzene + HBr | HNO3 (H2SO4) -> Nitrobenzene',
+    atoms: [MoleculeAtom(symbol: 'C', x: 0.0, y: -0.5, radius: 0.5, color: 0xFF424242), MoleculeAtom(symbol: 'C', x: 0.5, y: -0.2, radius: 0.5, color: 0xFF424242), MoleculeAtom(symbol: 'C', x: 0.5, y: 0.3, radius: 0.5, color: 0xFF424242), MoleculeAtom(symbol: 'C', x: 0.0, y: 0.5, radius: 0.5, color: 0xFF424242), MoleculeAtom(symbol: 'C', x: -0.5, y: 0.3, radius: 0.5, color: 0xFF424242), MoleculeAtom(symbol: 'C', x: -0.5, y: -0.2, radius: 0.5, color: 0xFF424242)],
+    bonds: [MoleculeBond(from: 0, to: 1), MoleculeBond(from: 1, to: 2), MoleculeBond(from: 2, to: 3), MoleculeBond(from: 3, to: 4), MoleculeBond(from: 4, to: 5), MoleculeBond(from: 5, to: 0)],
+  ),
+};
+
+// ═══════════════════════════════════════════════════════════════
+// MOLECULE PAINTER — ball-stick model
+// ═══════════════════════════════════════════════════════════════
+class MoleculePainter extends CustomPainter {
+  final List<MoleculeAtom> atoms;
+  final List<MoleculeBond> bonds;
+  MoleculePainter({required this.atoms, required this.bonds});
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    if (atoms.isEmpty) return;
+    final cx = size.width / 2;
+    final cy = size.height / 2;
+    
+    // Compute bounding box
+    double minX = double.infinity, maxX = -double.infinity;
+    double minY = double.infinity, maxY = -double.infinity;
+    for (var a in atoms) {
+      if (a.x - a.radius < minX) minX = a.x - a.radius;
+      if (a.x + a.radius > maxX) maxX = a.x + a.radius;
+      if (a.y - a.radius < minY) minY = a.y - a.radius;
+      if (a.y + a.radius > maxY) maxY = a.y + a.radius;
+    }
+    final w = (maxX - minX).clamp(0.5, 10.0);
+    final h = (maxY - minY).clamp(0.5, 10.0);
+    final centerX = (minX + maxX) / 2;
+    final centerY = (minY + maxY) / 2;
+    
+    // Fit into canvas (75% — bigger than before)
+    final availableW = size.width * 0.88;
+    final availableH = size.height * 0.88;
+    final scale = [availableW / w, availableH / h].reduce((a, b) => a < b ? a : b);
+    
+    // Compute pixel positions
+    List<Offset> pixelPos = [];
+    List<double> pixelR = [];
+    for (var a in atoms) {
+      pixelPos.add(Offset(
+        cx + (a.x - centerX) * scale,
+        cy + (a.y - centerY) * scale,
+      ));
+      pixelR.add(a.radius * scale * 0.50); // small balls - lots of gap
+    }
+    
+    // ═══ DRAW BONDS (behind atoms) ═══
+    for (var b in bonds) {
+      if (b.from >= atoms.length || b.to >= atoms.length) continue;
+      final p1Center = pixelPos[b.from];
+      final p2Center = pixelPos[b.to];
+      final r1 = pixelR[b.from];
+      final r2 = pixelR[b.to];
+      
+      final dx = p2Center.dx - p1Center.dx;
+      final dy = p2Center.dy - p1Center.dy;
+      final len = sqrt(dx * dx + dy * dy);
+      if (len < 1) continue;
+      
+      // Direction unit vector
+      final ux = dx / len;
+      final uy = dy / len;
+      // Perpendicular unit vector
+      final px = -uy;
+      final py = ux;
+      
+      // Bond start/end at atom edges
+      final p1 = Offset(p1Center.dx + ux * r1 * 0.95, p1Center.dy + uy * r1 * 0.95);
+      final p2 = Offset(p2Center.dx - ux * r2 * 0.95, p2Center.dy - uy * r2 * 0.95);
+      
+      final bondPaint = Paint()
+        ..color = const Color(0xFF444444)
+        ..strokeCap = StrokeCap.round
+        ..style = PaintingStyle.stroke;
+      
+      if (b.order == 1) {
+        bondPaint.strokeWidth = 4;
+        canvas.drawLine(p1, p2, bondPaint);
+      } else {
+        // Double bond — two parallel lines
+        final sep = 3.5;
+        bondPaint.strokeWidth = 3.5;
+        canvas.drawLine(
+          Offset(p1.dx + px * sep, p1.dy + py * sep),
+          Offset(p2.dx + px * sep, p2.dy + py * sep),
+          bondPaint,
+        );
+        canvas.drawLine(
+          Offset(p1.dx - px * sep, p1.dy - py * sep),
+          Offset(p2.dx - px * sep, p2.dy - py * sep),
+          bondPaint,
+        );
+      }
+    }
+    
+    // ═══ DRAW ATOMS on top ═══
+    for (int i = 0; i < atoms.length; i++) {
+      final a = atoms[i];
+      final pos = pixelPos[i];
+      final r = pixelR[i];
+      
+      // Drop shadow
+      canvas.drawCircle(Offset(pos.dx + 2, pos.dy + 4), r,
+        Paint()
+          ..color = Colors.black.withValues(alpha: 0.35)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
+      
+      // Base fill
+      canvas.drawCircle(pos, r, Paint()..color = Color(a.color));
+      
+      // Radial gradient for 3D shine (top-left highlight)
+      final shinePaint = Paint()
+        ..shader = RadialGradient(
+          center: const Alignment(-0.45, -0.45),
+          radius: 1.4,
+          colors: [
+            Colors.white.withValues(alpha: 0.85),
+            Colors.white.withValues(alpha: 0.0),
+          ],
+          stops: const [0.0, 0.55],
+        ).createShader(Rect.fromCircle(center: pos, radius: r));
+      canvas.drawCircle(pos, r, shinePaint);
+      
+      // Darker bottom-right
+      final shadowPaint = Paint()
+        ..shader = RadialGradient(
+          center: const Alignment(0.55, 0.55),
+          radius: 1.5,
+          colors: [
+            Colors.black.withValues(alpha: 0.3),
+            Colors.black.withValues(alpha: 0.0),
+          ],
+          stops: const [0.0, 0.7],
+        ).createShader(Rect.fromCircle(center: pos, radius: r));
+      canvas.drawCircle(pos, r, shadowPaint);
+      
+      // Bold dark outline (matches reference style)
+      canvas.drawCircle(pos, r,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 2.5
+          ..color = Colors.black.withValues(alpha: 0.75));
+      
+      // Symbol text
+      final symbolStyle = TextStyle(
+        color: Colors.black.withValues(alpha: 0.9),
+        fontSize: r * 0.88,
+        fontWeight: FontWeight.w900,
+        letterSpacing: -0.5,
+        height: 1.0,
+      );
+      final tp = TextPainter(
+        text: TextSpan(text: a.symbol, style: symbolStyle),
+        textDirection: TextDirection.ltr,
+      )..layout();
+      tp.paint(canvas, Offset(pos.dx - tp.width / 2, pos.dy - tp.height / 2));
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant MoleculePainter old) =>
+      old.atoms != atoms || old.bonds != bonds;
+}
+
 class ChemLabApp extends StatelessWidget {
   const ChemLabApp({super.key});
   @override
@@ -1567,6 +2665,10 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
   bool showInventory = false;
   bool showToolbox = false;
   bool showExperiments = false;
+  bool showChemInfo = false; // NEW: chemical encyclopedia
+  String? selectedChemInfo; // currently viewed chemical
+  String chemInfoSearch = ''; // search filter
+  String chemInfoTab = 'PROPERTIES'; // active tab
   String experimentName = 'Neutralization Reaction';
 
   final List<EquipItem> equipment = [
@@ -2024,6 +3126,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                       _sidebar(),
                       if (showInventory) _inventoryPanel(),
                       if (showExperiments) _experimentsPanel(),
+          if (showChemInfo) _chemInfoPanel(),
                       Expanded(child: _labArea()),
                       if (showToolbox) _toolboxPanel(),
                     ])),
@@ -2162,6 +3265,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
       (Icons.science_outlined, 'Virtual Lab', -1),
       (Icons.biotech_outlined, 'Experiments', 2),
       (Icons.inventory_2_outlined, 'Inventory', 0),
+    (Icons.menu_book_outlined, 'Chem Info', 3),
       (Icons.build_circle_outlined, 'Toolbox', 1),
       (Icons.history, 'History', -1),
       (Icons.settings_outlined, 'Settings', -1),
@@ -2185,6 +3289,10 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
               } else if (e.value.$3 == 2) {
                 showExperiments = !showExperiments;
                 if (showExperiments) { showInventory = false; showToolbox = false; }
+              }
+              else if (e.value.$3 == 3) {
+                showChemInfo = !showChemInfo;
+                if (showChemInfo) { showInventory = false; showToolbox = false; showExperiments = false; }
               }
             }),
             child: AnimatedContainer(duration: const Duration(milliseconds: 180),
@@ -2308,6 +3416,273 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
           ])),
       ]));
   }
+  
+  
+  
+  // ═══════════════════════════════════════════════════════════════
+  
+  // ═══════════════════════════════════════════════════════════════
+  // CHEM INFO PANEL — reference style
+  // ═══════════════════════════════════════════════════════════════
+  Widget _chemInfoPanel() {
+    final filtered = allChemicals.where((c) {
+      if (chemInfoSearch.isEmpty) return true;
+      final q = chemInfoSearch.toLowerCase();
+      return c.name.toLowerCase().contains(q) || c.formula.toLowerCase().contains(q);
+    }).toList();
+    final selected = selectedChemInfo != null
+        ? allChemicals.firstWhere((c) => c.id == selectedChemInfo, orElse: () => allChemicals.first)
+        : null;
+    final detail = selected != null ? chemDetails[selected.id] : null;
+    return Container(width: 640,
+      decoration: const BoxDecoration(color: LC.panel,
+        border: Border(right: BorderSide(color: LC.border))),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
+        // HEADER
+        Container(padding: const EdgeInsets.fromLTRB(20, 16, 16, 14),
+          child: Row(children: [
+            const Icon(Icons.menu_book_rounded, size: 20, color: LC.accentBright),
+            const SizedBox(width: 10),
+            const Text('Chemical Encyclopedia',
+              style: TextStyle(color: LC.text, fontSize: 16, fontWeight: FontWeight.w700)),
+            const Spacer(),
+            GestureDetector(onTap: () => setState(() => showChemInfo = false),
+              child: Container(width: 30, height: 30,
+                decoration: BoxDecoration(color: LC.panelElev,
+                  borderRadius: BorderRadius.circular(8)),
+                child: const Icon(Icons.close, color: LC.textDim, size: 16))),
+          ])),
+        Container(height: 1, color: LC.border),
+        Expanded(child: Row(children: [
+          // LEFT: Chem list
+          Container(width: 180,
+            decoration: BoxDecoration(border: Border(right: BorderSide(color: LC.border))),
+            child: Column(children: [
+              Padding(padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
+                child: Container(height: 38,
+                  decoration: BoxDecoration(color: LC.panelElev,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: LC.border)),
+                  child: TextField(
+                    onChanged: (v) => setState(() => chemInfoSearch = v),
+                    style: const TextStyle(color: LC.text, fontSize: 12),
+                    decoration: InputDecoration(
+                      hintText: 'Search...',
+                      hintStyle: TextStyle(color: LC.textDim, fontSize: 11),
+                      prefixIcon: const Icon(Icons.search, size: 16, color: LC.textDim),
+                      border: InputBorder.none,
+                      contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                    ),
+                  ))),
+              Expanded(child: ListView.builder(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                itemCount: filtered.length,
+                itemBuilder: (ctx, idx) {
+                  final c = filtered[idx];
+                  final active = selectedChemInfo == c.id;
+                  return GestureDetector(
+                    onTap: () => setState(() { selectedChemInfo = c.id; chemInfoTab = 'PROPERTIES'; }),
+                    child: Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: active ? LC.panelElev : Colors.transparent,
+                        borderRadius: BorderRadius.circular(6)),
+                      child: Row(children: [
+                        Container(width: 3, height: 28,
+                          decoration: BoxDecoration(color: c.color,
+                            borderRadius: BorderRadius.circular(2))),
+                        const SizedBox(width: 10),
+                        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                          Text(c.formula,
+                            style: TextStyle(
+                              color: active ? LC.accentBright : LC.text,
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700)),
+                          Text(c.name,
+                            style: TextStyle(color: LC.textDim, fontSize: 10),
+                            overflow: TextOverflow.ellipsis),
+                        ])),
+                      ]),
+                    ),
+                  );
+                })),
+            ]),
+          ),
+          // RIGHT: Details (reference style)
+          Expanded(child: selected == null
+            ? Center(child: Text('Select a chemical',
+                style: TextStyle(color: LC.textDim, fontSize: 14)))
+            : SingleChildScrollView(
+                padding: const EdgeInsets.all(20),
+                child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                  // Chem name (big)
+                  Text(selected.name,
+                    style: const TextStyle(color: LC.text, fontSize: 26,
+                      fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 16),
+                  // Molecule diagram + data table (side by side)
+                  Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+                    // Molecule
+                    if (detail?.atoms != null && detail!.atoms!.isNotEmpty)
+                      Container(width: 200, height: 150,
+                        child: CustomPaint(
+                          painter: MoleculePainter(
+                            atoms: detail.atoms!,
+                            bonds: detail.bonds ?? [],
+                          ),
+                        )),
+                    const SizedBox(width: 12),
+                    // Data table
+                    Expanded(child: Column(children: [
+                      _dataRow('Molar Mass', detail?.molarMass != null ? '${detail!.molarMass} g/mol' : '—'),
+                      if (detail?.boilingPoint != null)
+                        _dataRow('Boiling Point', '${detail!.boilingPoint}°C'),
+                      if (detail?.meltingPoint != null)
+                        _dataRow('Melting Point', '${detail!.meltingPoint}°C'),
+                      if (detail?.density != null)
+                        _dataRow('Density', '${detail!.density} g/cm³'),
+                      if (detail?.ph != null)
+                        _dataRow('pH', detail!.ph!),
+                      if (detail?.hazards != null && detail!.hazards.isNotEmpty)
+                        _dataRow('Hazards', detail.hazards.join(', ')),
+                    ])),
+                  ]),
+                  const SizedBox(height: 20),
+                  // TABS
+                  if (detail != null) ...[
+                    Row(children: [
+                      _chemTab('PROPERTIES', const Color(0xFF4A90E2)),
+                      _chemTab('USES', const Color(0xFF4CAF50)),
+                      _chemTab('SAFETY', const Color(0xFFE85D5D)),
+                    ]),
+                    Container(height: 2, color: LC.border),
+                    const SizedBox(height: 16),
+                    // Tab content
+                    if (chemInfoTab == 'PROPERTIES') ...[
+                      _refCard(Icons.info_outline, 'Properties', detail.properties, const Color(0xFF2196F3)),
+                      if (detail.reactions != null)
+                        _refCard(Icons.compare_arrows, 'Key Reactions', detail.reactions!, const Color(0xFF9C27B0)),
+                    ] else if (chemInfoTab == 'USES') ...[
+                      _refCard(Icons.science_outlined, 'Uses', detail.uses, const Color(0xFF4CAF50)),
+                      if (detail.industrial != null)
+                        _refCard(Icons.factory_outlined, 'Industrial', detail.industrial!, const Color(0xFF607D8B)),
+                    ] else ...[
+                      _refCard(Icons.warning_amber_rounded, 'Safety', detail.safety, const Color(0xFFF44336)),
+                      if (detail.history != null)
+                        _refCard(Icons.history_edu, 'History', detail.history!, const Color(0xFF8BC34A)),
+                    ],
+                    const SizedBox(height: 16),
+                    // Bottom cards
+                    Row(children: [
+                      if (detail.commonName != null)
+                        Expanded(child: _refCard(Icons.label_outline, 'COMMON NAME', detail.commonName!, const Color(0xFF00BCD4))),
+                      if (detail.commonName != null && detail.appearance != null)
+                        const SizedBox(width: 12),
+                      if (detail.appearance != null)
+                        Expanded(child: _refCard(Icons.visibility_outlined, 'APPEARANCE', detail.appearance!, const Color(0xFF3F51B5))),
+                    ]),
+                    if (detail.occurrence.isNotEmpty) ...[
+                      const SizedBox(height: 16),
+                      _refCard(Icons.public_outlined, 'Occurrence', detail.occurrence, const Color(0xFF795548)),
+                    ],
+                  ],
+                ]),
+              ),
+          ),
+        ])),
+      ]),
+    );
+  }
+  
+  Widget _dataRow(String label, String value) {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
+      decoration: BoxDecoration(
+        color: const Color(0xFF14141E),
+        border: Border(bottom: BorderSide(color: LC.border, width: 0.5))),
+      child: Row(children: [
+        Text(label,
+          style: TextStyle(color: LC.textSub, fontSize: 13,
+            fontWeight: FontWeight.w500)),
+        const Spacer(),
+        Flexible(child: Text(value,
+          style: const TextStyle(color: LC.text, fontSize: 13,
+            fontWeight: FontWeight.w700),
+          overflow: TextOverflow.ellipsis, textAlign: TextAlign.end)),
+      ]),
+    );
+  }
+  
+  Widget _chemTab(String tabName, Color color) {
+    final active = chemInfoTab == tabName;
+    return Expanded(child: GestureDetector(
+      onTap: () => setState(() => chemInfoTab = tabName),
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 12),
+        decoration: BoxDecoration(
+          border: Border(bottom: BorderSide(
+            color: active ? color : Colors.transparent,
+            width: 3))),
+        child: Text(tabName,
+          textAlign: TextAlign.center,
+          style: TextStyle(
+            color: active ? color : LC.textDim,
+            fontSize: 12,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.8)),
+      ),
+    ));
+  }
+  
+  Widget _bullets(String content) {
+    final items = content.split(' | ').where((s) => s.trim().isNotEmpty).toList();
+    if (items.length <= 1) {
+      return Text(content,
+        style: TextStyle(color: LC.text, fontSize: 13, height: 1.5));
+    }
+    return Column(crossAxisAlignment: CrossAxisAlignment.start,
+      children: items.map((item) => Padding(
+        padding: const EdgeInsets.only(bottom: 6),
+        child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Container(
+            margin: const EdgeInsets.only(top: 6, right: 8),
+            width: 5, height: 5,
+            decoration: BoxDecoration(
+              color: LC.accentBright,
+              shape: BoxShape.circle)),
+          Expanded(child: Text(item.trim(),
+            style: TextStyle(color: LC.text, fontSize: 13, height: 1.5))),
+        ]),
+      )).toList());
+  }
+  
+  Widget _refCard(IconData icon, String title, String content, Color accentColor) {
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: const Color(0xFF14141E),
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: LC.border, width: 0.5)),
+      child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
+        Container(width: 34, height: 34,
+          decoration: BoxDecoration(
+            color: accentColor.withValues(alpha: 0.15),
+            borderRadius: BorderRadius.circular(8)),
+          child: Icon(icon, size: 17, color: accentColor)),
+        const SizedBox(width: 12),
+        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
+          Text(title.toUpperCase(),
+            style: TextStyle(color: accentColor, fontSize: 11,
+              fontWeight: FontWeight.w800, letterSpacing: 1.0)),
+          const SizedBox(height: 6),
+          _bullets(content),
+        ])),
+      ]),
+    );
+  }
+  
   Widget _inventoryPanel() {
     return Container(width: 280,
       decoration: const BoxDecoration(color: LC.panel,
@@ -2620,19 +3995,20 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
       child: Row(children: [
         const Icon(Icons.science_outlined, size: 15, color: LC.accentBright),
         const SizedBox(width: 8),
-        const Text('Virtual Laboratory',
-          style: TextStyle(color: LC.text, fontSize: 12, fontWeight: FontWeight.w600)),
+        Flexible(child: Text('Virtual Laboratory',
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(color: LC.text, fontSize: 12, fontWeight: FontWeight.w600))),
         const SizedBox(width: 16),
-        Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        Flexible(child: Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
           decoration: BoxDecoration(color: LC.panel,
             borderRadius: BorderRadius.circular(6),
             border: Border.all(color: LC.border)),
           child: Row(children: [
-            Text('Experiment: $experimentName',
-              style: const TextStyle(color: LC.textSub, fontSize: 10)),
-            const SizedBox(width: 6),
+            Flexible(child: Text('Experiment: $experimentName',
+              overflow: TextOverflow.ellipsis,
+              style: const TextStyle(color: LC.textSub, fontSize: 10))),
             const Icon(Icons.keyboard_arrow_down, color: LC.textDim, size: 13),
-          ])),
+          ]))),
         const Spacer(),
         _headerBtn(Icons.refresh, 'Reset', reset, false),
         const SizedBox(width: 8),
@@ -2862,11 +4238,12 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
         borderRadius: BorderRadius.circular(8),
         border: Border.all(color: LC.border)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: const [
+        Row(children: [
           Icon(Icons.play_circle_outline, color: LC.accentBright, size: 11),
           SizedBox(width: 6),
-          Text('Current Experiment',
-            style: TextStyle(color: LC.text, fontSize: 10, fontWeight: FontWeight.w600)),
+          Flexible(child: Text('Current Experiment',
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(color: LC.text, fontSize: 10, fontWeight: FontWeight.w600))),
         ]),
         const SizedBox(height: 8),
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -2882,7 +4259,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
   }
 
   Widget _stepDot(String n, String t, bool active) {
-    return Column(children: [
+    return Flexible(child: Column(mainAxisSize: MainAxisSize.min, children: [
       Container(width: 18, height: 18,
         decoration: BoxDecoration(
           color: active ? LC.success : LC.panelElev, shape: BoxShape.circle,
@@ -2891,8 +4268,9 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
         child: Text(n, style: TextStyle(
           color: active ? LC.bgDeep : LC.textDim, fontSize: 9, fontWeight: FontWeight.w600))),
       const SizedBox(height: 3),
-      Text(t, style: TextStyle(color: active ? LC.text : LC.textDim, fontSize: 8)),
-    ]);
+      Flexible(child: Text(t, overflow: TextOverflow.ellipsis, maxLines: 1,
+        softWrap: false, style: TextStyle(color: active ? LC.text : LC.textDim, fontSize: 8))),
+      ]));
   }
 
   Widget _dotLine() => Expanded(child: Container(height: 1, color: LC.border,
@@ -2910,8 +4288,9 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
           Icon(rxn != null ? Icons.check_circle : Icons.science_outlined,
             color: rxn != null ? LC.success : LC.textDim, size: 11),
           const SizedBox(width: 6),
-          const Text('Reaction Result',
-            style: TextStyle(color: LC.text, fontSize: 10, fontWeight: FontWeight.w600)),
+          Flexible(child: Text('Reaction Result',
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(color: LC.text, fontSize: 10, fontWeight: FontWeight.w600))),
         ]),
         const SizedBox(height: 6),
         if (rxn == null)
