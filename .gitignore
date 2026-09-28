@@ -22,3 +22,5 @@ lib/main_before_*.txt
 
 # Local backups (do not push)
 backups/
+
+*.back
