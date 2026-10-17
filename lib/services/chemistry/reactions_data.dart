@@ -90,7 +90,7 @@ final Map<String, ReactionInfo> reactions = {
   ),
 
   // ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã ... [Corrupted comment cleaned]
-  'naoh+phenol': const ReactionInfo(
+  'naoh+phenolphthalein': const ReactionInfo(
     name: 'Indicator - Pink',
     equation: 'NaOH + Phenolphthalein -> Pink',
     type: 'Indicator',
@@ -101,7 +101,7 @@ final Map<String, ReactionInfo> reactions = {
         colorChange: Color(0xFFF06292),
         startColor: Color(0x00000000),
       ),
-  'hcl+phenol': const ReactionInfo(
+  'hcl+phenolphthalein': const ReactionInfo(
     name: 'Indicator - Colorless',
     equation: 'HCl + Phenolphthalein -> Colorless',
     type: 'Indicator',

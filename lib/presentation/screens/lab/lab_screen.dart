@@ -1925,7 +1925,8 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
         else
           Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisAlignment: MainAxisAlignment.center, children: [
-            Text(rxn.equation, style: const TextStyle(color: LC.accentBright,
+            Text(rxn.isViolent ? '⚠️ ILLUSTRATIVE & HAZARDOUS DEMO' : '', style: TextStyle(color: Colors.red, fontSize: 10, fontWeight: FontWeight.bold)),
+                Text(rxn.equation, style: const TextStyle(color: LC.accentBright,
               fontSize: 11, fontWeight: FontWeight.w600)),
             const SizedBox(height: 3),
             Text(rxn.name, style: const TextStyle(color: LC.textSub, fontSize: 9)),
