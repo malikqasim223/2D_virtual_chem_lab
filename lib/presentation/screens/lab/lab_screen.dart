@@ -556,7 +556,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
         const Column(crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Virtual Chemistry Lab',
+            Text('Virtual Chemistry Lab (Illustrative)',
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: LC.text)),
             SizedBox(height: 2),
             Text('Explore / Experiment / Learn',
@@ -602,7 +602,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
         const Column(crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Virtual Chemistry Lab',
+            Text('Virtual Chemistry Lab (Illustrative)',
               style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: LC.text)),
             SizedBox(height: 2),
             Text('Explore / Experiment / Learn',
