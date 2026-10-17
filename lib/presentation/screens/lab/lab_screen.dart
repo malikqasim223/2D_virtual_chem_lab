@@ -56,7 +56,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _shakeCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 3485));
-    _flashCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 3800));
+    _flashCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 13500));
     _tick = Timer.periodic(const Duration(milliseconds: 33), (_) {
       if (!mounted) return;
       _time += 0.033;
@@ -82,7 +82,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
         final chemIds = eq.layers.map((l) => l.chemId).toList();
         final sideFx = chemIds.length >= 3 ? detectSideEffect(chemIds) : null;
         if (sideFx != null && !eq.reactionComplete) {
-          eq.reactionProgress = (eq.reactionProgress + 0.0012).clamp(0.0, 1.0);
+          eq.reactionProgress = (eq.reactionProgress + 0.0030).clamp(0.0, 1.0);
           if (sideFx.heatUp) eq.temperature = (eq.temperature + 0.4).clamp(25.0, 150.0);
           if (sideFx.coolDown) eq.temperature = (eq.temperature - 0.4).clamp(0.0, 150.0);
           if (eq.reactionProgress >= 1.0) eq.reactionComplete = true;
@@ -508,16 +508,16 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                         final v = _flashCtrl.value;
                         if (v == 0 || v >= 1) return const SizedBox.shrink();
                         double intensity;
-                        if (v < 0.15) {
-                          // Fast fade IN (0 -> 0.75) - matches beaker flash appearance
-                          final ft = v / 0.15;
+                        if (v < 0.10) {
+                          // Fast fade IN
+                          final ft = v / 0.10;
                           intensity = 0.95 * ft * ft;
-                        } else if (v < 0.45) {
-                          // Short peak hold - same time as beaker fire flash
+                        } else if (v < 0.25) {
+                          // Peak hold (thora aur lamba)
                           intensity = 0.95;
                         } else {
-                          // LONG smooth fade OUT (0.75 -> 0) - fire takes over
-                          final ft = (v - 0.45) / 0.55;
+                          // SUPER LONG fade OUT (10 seconds!)
+                          final ft = (v - 0.25) / 0.75;
                           intensity = 0.95 * (1 - ft) * (1 - ft) * (1 - ft);
                         }
                         Color flashColor;
