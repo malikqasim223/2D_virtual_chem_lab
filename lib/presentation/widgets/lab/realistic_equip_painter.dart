@@ -40,6 +40,9 @@ class RealisticEquipPainter extends CustomPainter {
     canvas.save();
     canvas.clipPath(path);
     if (item.layers.isNotEmpty) {
+      // Strips BEHIND liquid (submerged look)
+      if (item.hasLitmus) _paintLitmusStrip(canvas, w, h);
+      if (item.hasPhPaper) _paintPhPaperStrip(canvas, w, h);
       _paintLayers(canvas, w, h);
       _paintSolidPile(canvas, w, h); // AFTER layers â€” residue on top
       _paintWave(canvas, w, h);
@@ -627,6 +630,266 @@ class RealisticEquipPainter extends CustomPainter {
     canvas.drawOval(
       Rect.fromCenter(center: rodBot, width: 18, height: 6),
       Paint()..color = Colors.white.withValues(alpha: 0.85));
+  }
+
+  void _paintLitmusStrip(Canvas canvas, double w, double h) {
+    final stripW = w * 0.14;
+    final stripH = h * 0.58;
+    final fillRatio = item.fillRatio;
+    final liquidTop = h * (1 - fillRatio);
+    final stripTop = (liquidTop - stripH * 0.50).clamp(h * 0.05, h * 0.85);
+    // Float physics — subtle movement like real liquid
+    final floatY = sin(time * 2.8) * h * 0.005;
+    final floatX = sin(time * 2.2 + 0.5) * w * 0.008;
+    final floatTilt = sin(time * 1.8) * 0.04;
+    canvas.save();
+    canvas.translate((w - stripW) / 2 + floatX, stripTop + floatY);
+    canvas.rotate(floatTilt);
+    canvas.translate(-(w - stripW) / 2, -stripTop);
+    final strip = Rect.fromLTWH((w - stripW) / 2, stripTop, stripW, stripH);
+
+    // Drop shadow
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(strip.shift(const Offset(1.5, 2.5)), const Radius.circular(2)),
+      Paint()..color = Colors.black.withValues(alpha: 0.5)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5),
+    );
+
+    // DRY LITMUS BASE — purple/blue color (real litmus paper)
+    const dryColor = Color(0xFF8E6BB0);
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(strip, const Radius.circular(2)),
+      Paint()..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          const Color(0xFF9B7BC0),
+          dryColor,
+          const Color(0xFF7A5A9A),
+        ],
+      ).createShader(strip),
+    );
+
+    // Paper texture
+    final rng = Random(42);
+    for (int i = 0; i < 20; i++) {
+      final y = strip.top + rng.nextDouble() * strip.height;
+      canvas.drawLine(
+        Offset(strip.left + 1, y),
+        Offset(strip.right - 1, y),
+        Paint()..color = Colors.black.withValues(alpha: 0.04)..strokeWidth = 0.3,
+      );
+    }
+
+    // COLOR DEVELOP — from tip upward (submerged in liquid)
+    final ph = LabPhService.calculatePh(item);
+    if (ph != null && item.layers.isNotEmpty) {
+      final color = PhCalculator.litmusColor(ph);
+      // Color the WHOLE strip (capillary action rises through paper)
+      final colorH = strip.height * item.stripColorProgress;
+      final submergedH = colorH;
+      if (submergedH > 0) {
+        final developRect = Rect.fromLTWH(
+          strip.left, strip.bottom - submergedH, strip.width, submergedH);
+
+        // Gradient color — strong at tip, fade upward
+        canvas.drawRect(
+          developRect,
+          Paint()..shader = LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [
+              color,
+              Color.lerp(color, dryColor, 0.05)!,
+              Color.lerp(color, dryColor, 0.20)!,
+            ],
+            stops: const [0.0, 0.6, 1.0],
+          ).createShader(developRect),
+        );
+
+        // Wet shine
+        canvas.drawRect(
+          developRect,
+          Paint()..shader = LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              Colors.white.withValues(alpha: 0.0),
+              Colors.white.withValues(alpha: 0.3),
+              Colors.white.withValues(alpha: 0.0),
+            ],
+            stops: const [0.0, 0.4, 1.0],
+          ).createShader(developRect),
+        );
+
+        // Meniscus
+        canvas.drawLine(
+          Offset(strip.left, liquidTop),
+          Offset(strip.right, liquidTop),
+          Paint()
+            ..color = color.withValues(alpha: 0.7)
+            ..strokeWidth = 1.2,
+        );
+        canvas.drawLine(
+          Offset(strip.left, liquidTop - 1),
+          Offset(strip.right, liquidTop - 1),
+          Paint()
+            ..color = Colors.white.withValues(alpha: 0.4)
+            ..strokeWidth = 0.6,
+        );
+      }
+    }
+
+    // White label at top (like real litmus book)
+    canvas.drawRect(
+      Rect.fromLTWH(strip.left + 2, strip.top + 2, strip.width - 4, 5),
+      Paint()..color = Colors.white.withValues(alpha: 0.9),
+    );
+    // "LITMUS" text bars
+    canvas.drawRect(
+      Rect.fromLTWH(strip.left + 4, strip.top + 3.5, strip.width - 8, 1.2),
+      Paint()..color = const Color(0xFF5E35B1),
+    );
+    canvas.drawRect(
+      Rect.fromLTWH(strip.left + 5, strip.top + 5.5, strip.width - 10, 0.8),
+      Paint()..color = const Color(0xFF5E35B1).withValues(alpha: 0.6),
+    );
+
+    // Outer border
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(strip, const Radius.circular(2)),
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.8
+        ..color = Colors.black.withValues(alpha: 0.35),
+    );
+    canvas.restore();
+  }
+
+  void _paintPhPaperStrip(Canvas canvas, double w, double h) {
+    final stripW = w * 0.14;
+    final stripH = h * 0.58;
+    final fillRatio = item.fillRatio;
+    final liquidTop = h * (1 - fillRatio);
+    // Strip hangs from above — top portion out of liquid
+    final stripTop = (liquidTop - stripH * 0.50).clamp(h * 0.05, h * 0.85);
+    // Float physics — subtle movement like real liquid
+    final floatY = sin(time * 2.8 + 0.3) * h * 0.005;
+    final floatX = sin(time * 2.2 + 0.8) * w * 0.008;
+    final floatTilt = sin(time * 1.8 + 0.2) * 0.04;
+    canvas.save();
+    canvas.translate((w - stripW) / 2 + floatX, stripTop + floatY);
+    canvas.rotate(floatTilt);
+    canvas.translate(-(w - stripW) / 2, -stripTop);
+    final strip = Rect.fromLTWH((w - stripW) / 2, stripTop, stripW, stripH);
+
+    // Drop shadow
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(strip.shift(const Offset(1.5, 2.5)), const Radius.circular(2)),
+      Paint()..color = Colors.black.withValues(alpha: 0.5)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5),
+    );
+
+    // WHITE BASE (dry pH paper is always white)
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(strip, const Radius.circular(2)),
+      Paint()..shader = LinearGradient(
+        begin: Alignment.topLeft,
+        end: Alignment.bottomRight,
+        colors: [
+          const Color(0xFFFFFEF8),
+          const Color(0xFFF8F8EC),
+          const Color(0xFFF0EBD8),
+        ],
+      ).createShader(strip),
+    );
+
+    // Paper texture — subtle horizontal fibers
+    final rng = Random(42);
+    for (int i = 0; i < 20; i++) {
+      final y = strip.top + rng.nextDouble() * strip.height;
+      canvas.drawLine(
+        Offset(strip.left + 1, y),
+        Offset(strip.right - 1, y),
+        Paint()..color = Colors.black.withValues(alpha: 0.03)..strokeWidth = 0.3,
+      );
+    }
+
+    // COLOR DEVELOP — from TIP upward (like real capillary action)
+    final ph = LabPhService.calculatePh(item);
+    if (ph != null && item.layers.isNotEmpty) {
+      final color = PhCalculator.colorForPh(ph);
+      // Only submerged portion gets colored
+      // Color the WHOLE strip (capillary action rises through paper)
+      final colorH = strip.height * item.stripColorProgress;
+      final submergedH = colorH;
+      if (submergedH > 0) {
+        final developRect = Rect.fromLTWH(
+          strip.left, strip.bottom - submergedH, strip.width, submergedH);
+
+        // Main color with gradient (strong at tip, fade upward)
+        canvas.drawRect(
+          developRect,
+          Paint()..shader = LinearGradient(
+            begin: Alignment.bottomCenter,
+            end: Alignment.topCenter,
+            colors: [
+              color,
+              Color.lerp(color, const Color(0xFFFAFAF5), 0.05)!,
+              Color.lerp(color, const Color(0xFFFAFAF5), 0.20)!,
+            ],
+            stops: const [0.0, 0.6, 1.0],
+          ).createShader(developRect),
+        );
+
+        // Wet shine (submerged portion is wet & glossy)
+        canvas.drawRect(
+          developRect,
+          Paint()..shader = LinearGradient(
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+            colors: [
+              Colors.white.withValues(alpha: 0.0),
+              Colors.white.withValues(alpha: 0.35),
+              Colors.white.withValues(alpha: 0.0),
+            ],
+            stops: const [0.0, 0.4, 1.0],
+          ).createShader(developRect),
+        );
+
+        // Meniscus line — where paper meets liquid
+        canvas.drawLine(
+          Offset(strip.left, liquidTop),
+          Offset(strip.right, liquidTop),
+          Paint()
+            ..color = color.withValues(alpha: 0.7)
+            ..strokeWidth = 1.2,
+        );
+        canvas.drawLine(
+          Offset(strip.left, liquidTop - 1),
+          Offset(strip.right, liquidTop - 1),
+          Paint()
+            ..color = Colors.white.withValues(alpha: 0.4)
+            ..strokeWidth = 0.6,
+        );
+      }
+    }
+
+    // Top white reference band
+    canvas.drawRect(
+      Rect.fromLTWH(strip.left + 1, strip.top + 2, strip.width - 2, 3),
+      Paint()..color = Colors.white.withValues(alpha: 0.95),
+    );
+
+    // Outer border
+    canvas.drawRRect(
+      RRect.fromRectAndRadius(strip, const Radius.circular(2)),
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 0.8
+        ..color = Colors.black.withValues(alpha: 0.35),
+    );
+    canvas.restore();
   }
 
   void _paintFrost(Canvas canvas, double w, double h) {
@@ -1980,5 +2243,7 @@ class RealisticEquipPainter extends CustomPainter {
   @override
   bool shouldRepaint(covariant RealisticEquipPainter old) => true;
 }
+
+
 
 

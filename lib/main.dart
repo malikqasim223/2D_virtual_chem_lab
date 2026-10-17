@@ -27,4 +27,13 @@ part 'data/models/enums.dart';
 part 'data/models/chemical_model.dart';
 part 'data/models/molecule_model.dart';
 
+part 'services/chemistry/ph_calculator.dart';
+part 'services/chemistry/lab_ph_service.dart';
+part 'presentation/widgets/lab/ph_color_book.dart';
+part 'presentation/widgets/lab/litmus_color_book.dart';
 void main() => runApp(const ChemLabApp());
+
+
+
+
+

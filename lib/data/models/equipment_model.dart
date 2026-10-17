@@ -15,6 +15,7 @@ class EquipItem {
   double foamRamp = 0; // 0â†’1 smoothly after pour â€” prevents foam jump
   bool reactionComplete = false;
   double sloshPhase = 0;
+  double stripColorProgress = 0.0; // 0-1 color development on litmus/pH paper
   Color pourColor = Colors.transparent;
   bool wasHeated = false;
   HeatingEffect? activeHeatingEffect;
@@ -31,6 +32,8 @@ class EquipItem {
   bool get isStirring => effects.contains(LabEffect.stir);
   bool get hasThermo => effects.contains(LabEffect.thermometer);
   bool get hasDropper => effects.contains(LabEffect.dropper);
+  bool get hasLitmus => effects.contains(LabEffect.litmus);
+  bool get hasPhPaper => effects.contains(LabEffect.phPaper);
   bool get isHeatedTransform => wasHeated && temperature > 60;
 
   Color get blendedColor {
@@ -74,5 +77,7 @@ class EquipItem {
     temperature = 25.0;
   }
 }
+
+
 
 

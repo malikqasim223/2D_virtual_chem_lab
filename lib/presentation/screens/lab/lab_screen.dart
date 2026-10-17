@@ -61,6 +61,15 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
       _time += 0.033;
       bool needs = false;
       for (final eq in equipment) {
+        // Strip color animation — slow capillary action (like real lab)
+        if (eq.effects.contains(LabEffect.litmus) || eq.effects.contains(LabEffect.phPaper)) {
+          if (eq.stripColorProgress < 1.0 && eq.layers.isNotEmpty) {
+            eq.stripColorProgress = (eq.stripColorProgress + 0.006).clamp(0.0, 1.0);
+            needs = true;
+          }
+        } else {
+          eq.stripColorProgress = 0.0;
+        }
         // === Per-equipment chemistry ===
         String myKey = '';
         if (eq.layers.length >= 2) {
@@ -72,7 +81,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
         final chemIds = eq.layers.map((l) => l.chemId).toList();
         final sideFx = chemIds.length >= 3 ? detectSideEffect(chemIds) : null;
         if (sideFx != null && !eq.reactionComplete) {
-          eq.reactionProgress = (eq.reactionProgress + 0.004).clamp(0.0, 1.0);
+          eq.reactionProgress = (eq.reactionProgress + 0.0009).clamp(0.0, 1.0);
           if (sideFx.heatUp) eq.temperature = (eq.temperature + 0.4).clamp(25.0, 150.0);
           if (sideFx.coolDown) eq.temperature = (eq.temperature - 0.4).clamp(0.0, 150.0);
           if (eq.reactionProgress >= 1.0) eq.reactionComplete = true;
@@ -88,7 +97,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
             if (needsHeat && !hasEnoughHeat) {
               // Heat required but not provided â€” skip for now
             } else {
-              eq.reactionProgress = (eq.reactionProgress + 0.002).clamp(0.0, 1.0);
+              eq.reactionProgress = (eq.reactionProgress + 0.0004).clamp(0.0, 1.0);
               if (eq.reactionProgress >= 1.0) eq.reactionComplete = true;
               if (rxnForThis != null && rxnForThis.releasesHeat) {
                 eq.temperature = (eq.temperature + 0.6).clamp(25.0, 150.0);
@@ -239,6 +248,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
       final delta = draggingEquip!.position - oldPos;
       // Attached tools bhi saath move karein
       for (final tool in benchTools) {
+        // Dipping tool — move dip targets with equipment         if (tool.isDipping && tool.dippedEqId == draggingEquip!.id) {           tool.dipStartPos += delta;           tool.dipTargetPos += delta;           tool.position += delta;           continue;         }
         if (tool.attachedTo == draggingEquip!.id) {
           tool.position += delta;
         }
@@ -292,7 +302,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
       benchTools.add(BenchTool(
         id: 'tool_${DateTime.now().microsecondsSinceEpoch}',
         type: type,
-        position: pos - const Offset(35, 35),
+        position: pos - const Offset(27.5, 27.5),
       ));
       _updateToolAttachments();
     });
@@ -327,12 +337,13 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
   void _updateToolAttachments() {
     for (final eq in equipment) { eq.effects.clear(); }
     for (final tool in benchTools) {
-      final center = tool.position + const Offset(35, 35);
+      final center = tool.position + const Offset(27.5, 27.5);
       String? found;
       for (final eq in equipment) {
         final s = eq.shape.size;
-        final rect = Rect.fromLTWH(eq.position.dx - 20, eq.position.dy - 20, s.width + 40, s.height + 40);
-        if (rect.contains(center)) { found = eq.id; break; }
+        final rect = Rect.fromLTWH(eq.position.dx - 20, eq.position.dy - 20,
+            s.width + 40, s.height + 40);
+        if (rect.contains(center) && eq.layers.isNotEmpty) { found = eq.id; break; }
       }
       tool.attachedTo = found;
       if (found != null) {
@@ -1165,6 +1176,49 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
           const SizedBox(height: 16),
           _sectionLabel('QUICK ACTIONS'),
           Padding(padding: const EdgeInsets.symmetric(horizontal: 12),
+            child: Wrap(spacing: 6, runSpacing: 6, children: [
+              Material(color: Colors.transparent,
+                child: InkWell(
+                  onTap: () => PhColorBook.show(context),
+                  borderRadius: BorderRadius.circular(7),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: LC.panelElev,
+                      borderRadius: BorderRadius.circular(7),
+                      border: Border.all(color: LC.border)),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      const Icon(Icons.menu_book, size: 14, color: LC.accentBright),
+                      const SizedBox(width: 6),
+                      Text('pH Color Chart',
+                        style: TextStyle(color: LC.textSub, fontSize: 10)),
+              const SizedBox(width: 6),
+              Material(color: Colors.transparent,
+                child: InkWell(
+                  onTap: () => LitmusColorBook.show(context),
+                  borderRadius: BorderRadius.circular(7),
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    decoration: BoxDecoration(
+                      color: LC.panelElev,
+                      borderRadius: BorderRadius.circular(7),
+                      border: Border.all(color: LC.border)),
+                    child: Row(mainAxisSize: MainAxisSize.min, children: [
+                      const Icon(Icons.description, size: 14, color: Color(0xFFE53935)),
+                      const SizedBox(width: 6),
+                      Text('Litmus Chart',
+                        style: TextStyle(color: LC.textSub, fontSize: 10)),
+                    ]),
+                  ),
+                ),
+              ),
+                    ]),
+                  ),
+                ),
+              ),
+            ])),
+          const SizedBox(height: 12),
+          Padding(padding: const EdgeInsets.symmetric(horizontal: 12),
             child: _actionChip(Icons.cleaning_services, 'Clear', LC.danger, reset)),
           const SizedBox(height: 16),
           _reactionInfoBox(),
@@ -1220,6 +1274,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
     );
   }
 
+  // ============ PH TEST HELPERS ============
   Widget _reactionInfoBox() {
     final rxn = currentReaction;
     // Detect active side effects across all equipment
@@ -1434,6 +1489,69 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
     return null;
   }
 
+  // ============ PH OVERLAY ============
+  Widget _buildPhOverlay(EquipItem eq) {
+    if (eq.layers.isEmpty) return const SizedBox.shrink();
+    
+    final hasLitmus = eq.effects.contains(LabEffect.litmus);
+    final hasPhPaper = eq.effects.contains(LabEffect.phPaper);
+    
+    if (!hasLitmus && !hasPhPaper) return const SizedBox.shrink();
+    
+    final ph = LabPhService.calculatePh(eq);
+    if (ph == null) return const SizedBox.shrink();
+    
+    Color bgColor;
+    String label;
+    String value;
+    
+    if (hasLitmus) {
+      final result = PhCalculator.litmusResult(ph);
+      bgColor = PhCalculator.litmusColor(ph);
+      label = 'Litmus';
+      value = result == 'red' ? 'ACID' : result == 'blue' ? 'BASE' : 'NEUTRAL';
+    } else {
+      bgColor = PhCalculator.colorForPh(ph);
+      label = 'pH Paper';
+      value = ph.toStringAsFixed(1);
+    }
+    
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      decoration: BoxDecoration(
+        color: bgColor.withValues(alpha: 0.9),
+        borderRadius: BorderRadius.circular(6),
+        border: Border.all(color: Colors.white.withValues(alpha: 0.7), width: 1),
+        boxShadow: [
+          BoxShadow(
+            color: bgColor.withValues(alpha: 0.5),
+            blurRadius: 8,
+            spreadRadius: 1,
+          ),
+        ],
+      ),
+      child: Row(mainAxisSize: MainAxisSize.min, children: [
+        Container(
+          width: 8, height: 8,
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(2),
+          ),
+        ),
+        const SizedBox(width: 5),
+        Column(mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(label, style: const TextStyle(
+              color: Colors.white, fontSize: 8,
+              fontWeight: FontWeight.w500, height: 1.1)),
+            Text(value, style: const TextStyle(
+              color: Colors.white, fontSize: 10,
+              fontWeight: FontWeight.w700, height: 1.1)),
+          ]),
+      ]),
+    );
+  }
   Widget _equipmentWidget(EquipItem eq) {
     final isHovered = hoveredEquipId == eq.id;
     final isDragging = draggingEquip?.id == eq.id;
@@ -1455,9 +1573,23 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
           child: _buildEquipmentVisual(eq, isHovered, s))));
   }
 
+  Color _getStripColor(EquipItem eq, LabEffect type) {
+    final ph = LabPhService.calculatePh(eq) ?? 7.0;
+    return type == LabEffect.litmus
+        ? PhCalculator.litmusColor(ph)
+        : PhCalculator.colorForPh(ph);
+  }
+
   Widget _buildEquipmentVisual(EquipItem eq, bool isHovered, Size s) {
     final totalH = s.height + 175;
     return Column(mainAxisSize: MainAxisSize.min, children: [
+      if (eq.layers.isNotEmpty &&
+          (eq.effects.contains(LabEffect.litmus) ||
+           eq.effects.contains(LabEffect.phPaper)))
+        Padding(
+          padding: const EdgeInsets.only(bottom: 6),
+          child: _buildPhOverlay(eq),
+        ),
       if (eq.isHot || eq.isCold)
         Row(mainAxisSize: MainAxisSize.min, children: [
           if (eq.isHot) const Padding(padding: EdgeInsets.only(right: 6),
@@ -1545,12 +1677,30 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                 onDoubleTap: () => _detachTool(eq, LabEffect.thermometer),
                 child: const SizedBox())),
           if (eq.hasDropper)
-            Positioned(top: s.height * 0.15, left: 45 + s.width * 0.05, width: 55, height: s.height * 0.55,
-              child: GestureDetector(behavior: HitTestBehavior.opaque,
+            Positioned(top: s.height * (1 - eq.fillRatio) - 30, left: 45 + s.width * 0.05, width: 55, height: s.height * 0.55,
+              child: GestureDetector(behavior: HitTestBehavior.translucent,
                 onDoubleTap: () => _detachTool(eq, LabEffect.dropper),
                 child: const SizedBox())),
+          if (eq.hasLitmus)
+            Positioned(
+              top: (s.height * (1 - eq.fillRatio) - 45).clamp(7.5, s.height - 47.5).toDouble(),
+              left: (s.width + 140) / 2 - 22.5,
+              width: 45, height: 55,
+              child: GestureDetector(behavior: HitTestBehavior.opaque,
+                onTap: () {},
+                onDoubleTap: () => _detachTool(eq, LabEffect.litmus),
+                child: const SizedBox())),
+          if (eq.hasPhPaper)
+            Positioned(
+              top: (s.height * (1 - eq.fillRatio) - 45).clamp(7.5, s.height - 47.5).toDouble(),
+              left: (s.width + 140) / 2 - 22.5,
+              width: 45, height: 55,
+              child: GestureDetector(behavior: HitTestBehavior.opaque,
+                onTap: () {},
+                onDoubleTap: () => _detachTool(eq, LabEffect.phPaper),
+                child: const SizedBox())),
           if (eq.isStirring)
-            Positioned(top: s.height * 0.55, left: (s.width + 140) / 2 - 50, width: 100, height: s.height * 0.40,
+            Positioned(top: s.height * (1 - eq.fillRatio) - 30, left: (s.width + 140) / 2 - 50, width: 100, height: s.height * 0.40,
               child: GestureDetector(behavior: HitTestBehavior.opaque,
                 onDoubleTap: () => _detachTool(eq, LabEffect.stir),
                 child: const SizedBox())),
@@ -1558,10 +1708,78 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
     ]);
   }
 
+  void _dockTool(BenchTool tool) {
+    setState(() {
+      EquipItem? target;
+
+      // 1) active equipment
+      if (activeEquipId != null) {
+        for (final e in equipment) {
+          if (e.id == activeEquipId) { target = e; break; }
+        }
+      }
+      // 2) hovered equipment
+      if (target == null && hoveredEquipId != null) {
+        for (final e in equipment) {
+          if (e.id == hoveredEquipId) { target = e; break; }
+        }
+      }
+      // 3) nearest equipment jisme chemical ho
+      if (target == null || target.layers.isEmpty) {
+        double best = double.infinity;
+        for (final eq in equipment) {
+          if (eq.layers.isEmpty) continue;
+          final d = (eq.position - tool.position).distance;
+          if (d < best) { best = d; target = eq; }
+        }
+      }
+      if (target == null || target.layers.isEmpty) return;
+
+      // Purane dock se hatao
+      for (final eq in equipment) {
+        if (eq.id != target.id) eq.effects.remove(tool.type);
+      }
+
+      // Naya dock
+      tool.attachedTo = target.id;
+      tool.position = Offset(
+        target.position.dx + target.shape.size.width / 2 - 27.5,
+        target.position.dy + target.shape.size.height / 2 - 27.5,
+      );
+
+      target.effects.add(tool.type);
+      if (tool.type == LabEffect.heat) target.effects.remove(LabEffect.cool);
+      if (tool.type == LabEffect.cool) target.effects.remove(LabEffect.heat);
+      if (tool.type == LabEffect.heat && target.targetTemp < 25.0) target.targetTemp = 25.0;
+      if (tool.type == LabEffect.cool && target.targetTemp > 0.0) target.targetTemp = 0.0;
+
+      _updateToolAttachments();
+    });
+  }
+
+  void _detachStripTool(BenchTool tool) {
+    setState(() {
+      // Remove effect from equipment
+      for (final eq in equipment) {
+        eq.effects.remove(tool.type);
+      }
+      // Reset tool state
+      tool.attachedTo = null;
+      tool.dippedEqId = null;
+      tool.isDipping = false;
+      tool.wetness = 0.0;
+      tool.capillaryProgress = 0.0;
+      tool.dropFormation = 0.0;
+      tool.tilt = 0;
+      // Move to dock
+      tool.position = _toolDockPosition(tool.type);
+    });
+  }
+
   Widget _benchToolWidget(BenchTool tool) {
     if (tool.attachedTo != null) return const SizedBox.shrink();
     final isDragging = draggingBenchTool?.id == tool.id;
-    return MouseRegion(
+    final content = MouseRegion(
       cursor: SystemMouseCursors.grab,
       child: GestureDetector(
         behavior: HitTestBehavior.opaque,
@@ -1571,16 +1789,37 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
         onPanCancel: _endToolDrag,
         onSecondaryTap: () => _removeBenchTool(tool.id),
         onLongPress: () => _removeBenchTool(tool.id),
-        onDoubleTap: () => setState(() => tool.position = _toolDockPosition(tool.type)),
+        onDoubleTap: () => _dockTool(tool),
         child: Opacity(opacity: isDragging ? 0.85 : 1.0,
           child: _buildToolVisual(tool)),
       ),
     );
+    // During dip, ignore pointer so beaker can be dragged
+    if (tool.isDipping) {
+      return IgnorePointer(child: content);
+    }
+    return content;
   }
 
   Widget _buildToolVisual(BenchTool tool) {
-    return SizedBox(width: 55, height: 55,
-      child: CustomPaint(painter: BenchToolPainter(type: tool.type, time: _time)));
+    final m = Matrix4.identity();
+    if (tool.tilt != 0) {
+      m.translate(27.5, 27.5);
+      m.rotateZ(tool.tilt);
+      m.translate(-27.5, -27.5);
+    }
+    return Transform(
+      transform: m,
+      alignment: Alignment.center,
+      child: SizedBox(width: 55, height: 55,
+        child: CustomPaint(painter: BenchToolPainter(
+          type: tool.type,
+          time: _time,
+          wetness: tool.wetness,
+          colorProgress: tool.capillaryProgress,
+          developedColor: tool.resultColor,
+        ))),
+    );
   }
 
   Widget _dustbin() {
@@ -1694,5 +1933,31 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
       ]));
   }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
