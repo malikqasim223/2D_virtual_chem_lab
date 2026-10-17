@@ -82,19 +82,19 @@ class LabPhService {
 
     // === 1. Check for NEUTRALIZATION (Acid + Base) ===
     final hasStrongAcid = ids.any((id) => 
-      id == 'HCl' || id == 'H2SO4' || id == 'HNO3' || id == 'HBr' || id == 'HI');
+      id == 'hcl' || id == 'h2so4' || id == 'hno3' || id == 'hbr' || id == 'hi');
     final hasStrongBase = ids.any((id) => 
-      id == 'NaOH' || id == 'KOH' || id == 'LiOH' || id == 'Ba(OH)2' || id == 'Ca(OH)2');
-    final hasWeakBase = ids.contains('NH4OH') || ids.contains('NH3');
+      id == 'naoh' || id == 'koh' || id == 'lioh' || id == 'baoh2' || id == 'caoh2');
+    final hasWeakBase = ids.contains('nh4oh') || ids.contains('nh3');
     final hasWeakAcid = ids.any((id) => 
-      id == 'CH3COOH' || id == 'H2CO3' || id == 'HCOOH');
+      id == 'ch3cooh' || id == 'h2co3' || id == 'hcooh');
 
     if ((hasStrongAcid || hasWeakAcid) && (hasStrongBase || hasWeakBase)) {
       // Calculate excess volume
       final acidVol = eq.layers.where((l) =>
-        l.chemId == 'HCl' || l.chemId == 'H2SO4' || l.chemId == 'HNO3' ||
-        l.chemId == 'HBr' || l.chemId == 'HI' || l.chemId == 'CH3COOH' ||
-        l.chemId == 'H2CO3' || l.chemId == 'HCOOH')
+        l.chemId == 'hcl' || l.chemId == 'h2so4' || l.chemId == 'hno3' ||
+        l.chemId == 'hbr' || l.chemId == 'hi' || l.chemId == 'ch3cooh' ||
+        l.chemId == 'h2co3' || l.chemId == 'hcooh')
         .fold(0.0, (a, b) => a + b.volume);
       
       final baseVol = eq.layers.where((l) =>

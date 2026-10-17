@@ -104,6 +104,9 @@ const List<Chemical> allChemicals = [
   Chemical(id: 'sr', name: 'Strontium Metal', formula: 'Sr', state: 'Solid', category: 'Others', color: Color(0xFFB0BEC5)),
   Chemical(id: 'methylorange', name: 'Methyl Orange', formula: 'C14H14N3NaO3S', state: 'Liquid', category: 'Indicator', color: Color(0xFFFF9800)),
   Chemical(id: 'litmus', name: 'Litmus Solution', formula: 'Natural', state: 'Liquid', category: 'Indicator', color: Color(0xFF7B1FA2)),
+  Chemical(id: 'cacl2', name: 'Calcium Chloride', formula: 'CaCl2', state: 'Solid', category: 'Salts', color: Color(0xFFFFFFFF)),
+  Chemical(id: 'br2', name: 'Bromine Water', formula: 'Br2', state: 'Liquid', category: 'Others', color: Color(0xFFD84315)),
+  Chemical(id: 'co2', name: 'Carbon Dioxide', formula: 'CO2', state: 'Gas', category: 'Others', color: Color(0xFFE0E0E0)),
 ];
 
 // ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â ... [Corrupted comment cleaned]

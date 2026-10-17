@@ -193,12 +193,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
         if (multiReactions.containsKey(key)) { currentReaction = multiReactions[key]; return; }
         if (reactions.containsKey(key)) { currentReaction = reactions[key]; return; }
         // Fallback: any 2-subset
-        for (int i = 0; i < ids.length; i++) {
-          for (int j = i + 1; j < ids.length; j++) {
-            final pk = [ids[i], ids[j]].join('+');
-            if (reactions.containsKey(pk)) { currentReaction = reactions[pk]; return; }
-          }
-        }
+        // Pairwise fallback removed for 3+ chemical safety (Audit Fix)
       }
     }
   }
@@ -1284,11 +1279,15 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
   Widget _reactionInfoBox() {
     final rxn = currentReaction;
     // Detect active side effects across all equipment
-    final allChemIds = <String>{};
-    for (final eq in equipment) {
-      for (final l in eq.layers) { allChemIds.add(l.chemId); }
-    }
-    final sideFx = allChemIds.length >= 3 ? detectSideEffect(allChemIds.toList()) : null;
+    // Audit Fix: Only check side effects for the specific vessel with 3+ chemicals
+      List<String>? multiMix;
+      for (final eq in equipment) {
+        if (eq.layers.length >= 3) {
+          multiMix = eq.layers.map((l) => l.chemId).toList();
+          break;
+        }
+      }
+      final sideFx = multiMix != null ? detectSideEffect(multiMix) : null;
 
     // Detect "no reaction but mixed"
     final anyEquipment = equipment.any((e) => e.layers.length >= 2);

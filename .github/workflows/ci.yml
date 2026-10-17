@@ -17,7 +17,5 @@ jobs:
           channel: 'stable'
       - run: flutter pub get
       - run: flutter analyze
-        continue-on-error: true
       - run: flutter test
-        continue-on-error: true
       - run: flutter build windows
