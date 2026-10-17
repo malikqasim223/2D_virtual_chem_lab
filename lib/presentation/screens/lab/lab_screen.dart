@@ -1486,12 +1486,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
     final key = ids.join('+');
     if (multiReactions.containsKey(key)) return multiReactions[key];
     if (reactions.containsKey(key)) return reactions[key];
-    for (int i = 0; i < ids.length; i++) {
-      for (int j = i + 1; j < ids.length; j++) {
-        final pk = [ids[i], ids[j]].join('+');
-        if (reactions.containsKey(pk)) return reactions[pk];
-      }
-    }
+    // Pairwise fallback removed for 3+ chemical safety (Audit Fix)
     return null;
   }
 

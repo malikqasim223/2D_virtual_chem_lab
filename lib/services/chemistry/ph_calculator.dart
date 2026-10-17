@@ -18,17 +18,37 @@ class PhCalculator {
     'Na': 7.0, 'K': 7.0, 'Ca': 7.0,
   };
 
-  static double forFormula(String formula) {
-    if (formula.isEmpty) return 7.0;
-    if (_phValues.containsKey(formula)) return _phValues[formula]!;
+  static double forFormula(String input) {
+    if (input.isEmpty) return 7.0;
+    
+    // 1. Direct Match
+    if (_phValues.containsKey(input)) return _phValues[input]!;
+    
+    // 2. Case-Insensitive Match
     for (final entry in _phValues.entries) {
-      if (entry.key.toLowerCase() == formula.toLowerCase()) return entry.value;
+      if (entry.key.toLowerCase() == input.toLowerCase()) return entry.value;
     }
-    if (formula.startsWith('H') && formula != 'H2O') return 2.0;
-    if (formula.endsWith('OH') && !formula.contains('CH3')) return 12.0;
+
+    // 3. ID to Formula Resolution (Audit Fix)
+    try {
+      final chemical = allChemicals.firstWhere((c) => c.id == input.toLowerCase());
+      if (_phValues.containsKey(chemical.formula)) return _phValues[chemical.formula]!;
+      
+      // If formula is not in _phValues, check case-insensitively
+      for (final entry in _phValues.entries) {
+        if (entry.key.toLowerCase() == chemical.formula.toLowerCase()) return entry.value;
+      }
+    } catch (_) {
+      // Ignore if not found in inventory
+    }
+
+    // 4. Fallbacks
+    final lowInput = input.toLowerCase();
+    if (lowInput.startsWith('h') && lowInput != 'h2o') return 2.0;
+    if (lowInput.endsWith('oh') && !lowInput.contains('ch3')) return 12.0;
+    
     return 7.0;
   }
-
   static double blendedPh(List<String> formulas, List<double> volumes) {
     if (formulas.isEmpty || volumes.isEmpty) return 7.0;
     if (formulas.length != volumes.length) return 7.0;
