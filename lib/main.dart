@@ -7,7 +7,11 @@ import 'package:flutter/material.dart';
 
 part 'presentation/widgets/lab/realistic_equip_painter.dart';
 part 'data/models/bench_tool_model.dart';
-part 'services/chemistry/heating_effect.dart';
+part 'services/chemistry/heating_effect_model.dart';
+part 'services/chemistry/heating_effects_data.dart';
+part 'services/chemistry/reactions_data.dart';
+part 'services/chemistry/heat_decompose_chems_data.dart';
+part 'services/chemistry/multi_reactions_data.dart';
 part 'data/models/experiment_model.dart';
 part 'presentation/widgets/lab/heating_setup_painter.dart';
 part 'presentation/widgets/lab/ice_painter.dart';
@@ -23,7 +27,10 @@ part 'presentation/widgets/lab/amount_picker_dialog.dart';
 part 'presentation/widgets/lab/mini_bottle_painter.dart';
 part 'core/theme/lab_colors.dart';
 part 'services/chemistry/side_effect.dart';
-part 'data/models/enums.dart';
+part 'data/models/lab_effect.dart';
+part 'data/models/lab_effect_ext.dart';
+part 'data/models/equip_shape.dart';
+part 'data/models/equip_shape_ext.dart';
 part 'data/models/chemical_model.dart';
 part 'data/models/molecule_model.dart';
 

@@ -24,3 +24,18 @@ lib/main_before_*.txt
 backups/
 
 *.back
+
+# ===== Refactor temp files (never commit) =====
+backups/
+_empty_backup_*/
+analyze_output.txt
+diagnostic_report.txt
+*.tmp
+*.bak
+
+# ===== Flutter generated =====
+.dart_tool/
+build/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
