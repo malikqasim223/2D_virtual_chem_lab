@@ -39,3 +39,11 @@ build/
 .flutter-plugins
 .flutter-plugins-dependencies
 .packages
+
+# Audit & Test Artifacts
+reactions_catalog.html
+reactions_catalog.csv
+chemicals_audit.csv
+reactions_audit.csv
+diagnostic_report.txt
+analyze_output.txt
