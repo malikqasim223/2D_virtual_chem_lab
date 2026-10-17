@@ -46,6 +46,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
   ReactionInfo? currentReaction;
   Timer? _tick;
   late AnimationController _shakeCtrl;
+  ReactionInfo? _currentReaction;
   late AnimationController _flashCtrl;
   double _time = 0;
   Size _benchSize = const Size(800, 600);
@@ -55,7 +56,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
   void initState() {
     super.initState();
     _shakeCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 3485));
-    _flashCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 3485));
+    _flashCtrl = AnimationController(vsync: this, duration: const Duration(milliseconds: 3800));
     _tick = Timer.periodic(const Duration(milliseconds: 33), (_) {
       if (!mounted) return;
       _time += 0.033;
@@ -81,7 +82,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
         final chemIds = eq.layers.map((l) => l.chemId).toList();
         final sideFx = chemIds.length >= 3 ? detectSideEffect(chemIds) : null;
         if (sideFx != null && !eq.reactionComplete) {
-          eq.reactionProgress = (eq.reactionProgress + 0.0009).clamp(0.0, 1.0);
+          eq.reactionProgress = (eq.reactionProgress + 0.0012).clamp(0.0, 1.0);
           if (sideFx.heatUp) eq.temperature = (eq.temperature + 0.4).clamp(25.0, 150.0);
           if (sideFx.coolDown) eq.temperature = (eq.temperature - 0.4).clamp(0.0, 150.0);
           if (eq.reactionProgress >= 1.0) eq.reactionComplete = true;
@@ -97,7 +98,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
             if (needsHeat && !hasEnoughHeat) {
               // Heat required but not provided â€” skip for now
             } else {
-              eq.reactionProgress = (eq.reactionProgress + 0.0004).clamp(0.0, 1.0);
+              eq.reactionProgress = (eq.reactionProgress + 0.0006).clamp(0.0, 1.0);
               if (eq.reactionProgress >= 1.0) eq.reactionComplete = true;
               if (rxnForThis != null && rxnForThis.releasesHeat) {
                 eq.temperature = (eq.temperature + 0.6).clamp(25.0, 150.0);
@@ -449,6 +450,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
       activeEquipId = equipId;
       _recomputeReaction(); // Original timing â€” blast fires immediately
       final _rxnCheck = _reactionFor(eq);
+        _currentReaction = _rxnCheck;
       if (_rxnCheck != null && _rxnCheck.isViolent) {
         _flashCtrl.forward(from: 0);
         _shakeCtrl.forward(from: 0);
@@ -506,22 +508,26 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                         final v = _flashCtrl.value;
                         if (v == 0 || v >= 1) return const SizedBox.shrink();
                         double intensity;
-                        if (v < 0.40) {
-                          final ft = v / 0.40;
-                          intensity = ft * ft;
-                        } else if (v < 0.65) {
-                          intensity = 1.0;
+                        if (v < 0.15) {
+                          // Fast fade IN (0 -> 0.75) - matches beaker flash appearance
+                          final ft = v / 0.15;
+                          intensity = 0.95 * ft * ft;
+                        } else if (v < 0.45) {
+                          // Short peak hold - same time as beaker fire flash
+                          intensity = 0.95;
                         } else {
-                          final ft = (v - 0.65) / 0.35;
-                          intensity = (1 - ft) * (1 - ft) * (1 - ft);
+                          // LONG smooth fade OUT (0.75 -> 0) - fire takes over
+                          final ft = (v - 0.45) / 0.55;
+                          intensity = 0.95 * (1 - ft) * (1 - ft) * (1 - ft);
                         }
                         Color flashColor;
+                          final _flashBase = _currentReaction?.explosion?.flashColor ?? const Color(0xFFFFEB3B);
                         if (v < 0.45) {
                           flashColor = Colors.white;
                         } else if (v < 0.75) {
-                          flashColor = Color.lerp(Colors.white, const Color(0xFFFFEB3B), (v - 0.45) / 0.30)!;
+                          flashColor = Color.lerp(Colors.white, _flashBase, (v - 0.45) / 0.30)!;
                         } else if (v < 0.95) {
-                          flashColor = Color.lerp(const Color(0xFFFFEB3B), const Color(0xFFFF6B35), (v - 0.75) / 0.20)!;
+                          flashColor = Color.lerp(_flashBase, const Color(0xFFFF6B35), (v - 0.75) / 0.20)!;
                         } else {
                           flashColor = Color.lerp(const Color(0xFFFF6B35), Colors.transparent, (v - 0.95) / 0.05)!;
                         }

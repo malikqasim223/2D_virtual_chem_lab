@@ -440,7 +440,7 @@ class RealisticEquipPainter extends CustomPainter {
       case 'metal-deposit': return 0.7;
       case 'milky': return 2.0;
       case 'heavy-brown': return 1.6;
-      default: return 1.0;
+      default: return 1.25;
     }
   }
 
@@ -458,7 +458,7 @@ class RealisticEquipPainter extends CustomPainter {
       case 'metal-deposit': return 2.0;
       case 'milky': return 0.8;
       case 'heavy-brown': return 1.0;
-      default: return 1.0;
+      default: return 1.25;
     }
   }
 
@@ -474,7 +474,7 @@ class RealisticEquipPainter extends CustomPainter {
       case 'granular-yellow': return 0.9;
       case 'metal-deposit': return 1.2;
       case 'milky': return 0.5;         // very fine
-      default: return 1.0;
+      default: return 1.25;
     }
   }
 
@@ -976,21 +976,21 @@ class RealisticEquipPainter extends CustomPainter {
   double _fireIntensity() {
     final style = _fireStyle();
     switch (style) {
-      case 'dancing-lilac': return 1.15;   // K more vigorous than Na
-      case 'dancing-orange': return 1.0;   // Na = baseline
-      case 'explosion-white': return 1.2;  // HCl more violent
-      case 'explosion-intense': return 1.3;// H2SO4 most violent
-      case 'glow-white': return 0.7;       // Mg = steady glow
-      case 'gentle-yellow': return 0.6;    // Ca = mild
-      default: return 1.0;
+      case 'dancing-lilac': return 1.40;   // K more vigorous than Na
+      case 'dancing-orange': return 1.25;   // Na = baseline
+      case 'explosion-white': return 1.45;  // HCl more violent
+      case 'explosion-intense': return 1.55;// H2SO4 most violent
+      case 'glow-white': return 0.85;       // Mg = steady glow
+      case 'gentle-yellow': return 0.75;    // Ca = mild
+      default: return 1.25;
     }
   }
 
   // Flame wobble amount (dancing reactions wobble more)
   double _fireWobble() {
     final style = _fireStyle();
-    if (style.contains('dancing')) return 1.8;
-    if (style.contains('explosion')) return 0.3;
+    if (style.contains('dancing')) return 2.4;
+    if (style.contains('explosion')) return 0.45;
     if (style.contains('glow')) return 0.1;
     return 1.0;
   }
@@ -998,8 +998,8 @@ class RealisticEquipPainter extends CustomPainter {
   // Horizontal drift (metal moves across water surface)
   double _fireDrift() {
     final style = _fireStyle();
-    if (style == 'dancing-lilac') return 0.6;
-    if (style == 'dancing-orange') return 0.4;
+    if (style == 'dancing-lilac') return 0.85;
+    if (style == 'dancing-orange') return 0.65;
     return 0.0;
   }
 
@@ -1069,17 +1069,26 @@ class RealisticEquipPainter extends CustomPainter {
     // PHASE 1 (0.0-0.25): REALISTIC EXPLOSION (gradient blobs)
     if (progress < 0.35) {
       final p = progress / 0.35;
-      if (p < 0.2) {
+      final shockP = ((p - 0.15) / 0.35).clamp(0.0, 1.0);
+      if (shockP > 0.0 && shockP < 1.0) {
+        final ringR = w * 0.15 + shockP * w * 0.35;
+        canvas.drawCircle(Offset(cx, cy), ringR, Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = (3.5 * (1 - shockP)).clamp(0.5, 3.5)
+          ..color = Colors.white.withValues(alpha: 0.85 * (1 - shockP))
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3.0));
+      }
+      if (p < 0.15) {
         final pp = p / 0.2;
         final r = w * 0.04 + pp * w * 0.04;
-        canvas.drawCircle(Offset(flameX, cy), r * 4 * fireIntensity * burstMult, Paint()
+        canvas.drawCircle(Offset(flameX, cy), r * 6 * fireIntensity * burstMult, Paint()
           ..color = _fireColors()[0].withValues(alpha: 0.5 * pp)
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15));
-        canvas.drawCircle(Offset(flameX, cy), r * 1.5 * fireIntensity * burstMult, Paint()
+        canvas.drawCircle(Offset(flameX, cy), r * 2.5 * fireIntensity * burstMult, Paint()
           ..color = _fireColors()[0].withValues(alpha: 0.9 * pp));
-        canvas.drawCircle(Offset(flameX, cy), r * 0.7 * fireIntensity * burstMult, Paint()..color = Colors.white);
-      } else if (p < 0.55) {
-        final pp = (p - 0.2) / 0.35;
+        canvas.drawCircle(Offset(flameX, cy), r * 1.2 * fireIntensity * burstMult, Paint()..color = Colors.white);
+      } else if (p < 0.45) {
+        final pp = (p - 0.15) / 0.30;
         final baseR = w * 0.08 + pp * w * 0.18;
 
         // [SMOKE REMOVED]
@@ -1246,7 +1255,7 @@ class RealisticEquipPainter extends CustomPainter {
         canvas.drawCircle(Offset(cx, cy), coreR * 0.5, Paint()..color = Colors.white);
 
         // LAYER 8: Sparks with glow
-        for (int i = 0; i < 25; i++) {
+        for (int i = 0; i < 45; i++) {
           final seed = rng.nextDouble();
           final ang = rng.nextDouble() * 6.28;
           final dist = baseR * (0.9 + rng.nextDouble() * 1.0);

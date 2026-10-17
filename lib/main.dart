@@ -16,6 +16,7 @@ part 'data/models/experiment_model.dart';
 part 'presentation/widgets/lab/heating_setup_painter.dart';
 part 'presentation/widgets/lab/ice_painter.dart';
 part 'data/models/reaction_model.dart';
+part 'data/models/reaction_details.dart';
 part 'presentation/widgets/lab/drag_bottle_painter.dart';
 part 'app.dart';
 part 'data/models/equipment_model.dart';
