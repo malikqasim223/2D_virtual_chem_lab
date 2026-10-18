@@ -8,6 +8,7 @@ class ReactionInfo {
   final bool bubbles, precipitate;
   final Color? colorChange;
   final bool requiresHeat;
+  final bool needsAcid;
   final bool releasesHeat;
   final String? gasEvolution;
   final Color? precipitateColor;
@@ -63,6 +64,7 @@ class ReactionInfo {
     this.precipitate = false,
     this.colorChange,
     this.requiresHeat = false,
+    this.needsAcid = false,
     this.releasesHeat = false,
     this.gasEvolution,
     this.precipitateColor,

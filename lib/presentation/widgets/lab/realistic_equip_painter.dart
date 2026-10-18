@@ -1,4 +1,4 @@
-﻿part of chem_lab;
+part of chem_lab;
 
 class RealisticEquipPainter extends CustomPainter {
   final EquipShape shape;
@@ -126,7 +126,25 @@ class RealisticEquipPainter extends CustomPainter {
     return path;
   }
 
-  void _paintLayers(Canvas canvas, double w, double h) {
+  void _paintLayers(Canvas canvas, double w, double h) {    // Calculate blended color of all layers
+
+    // === Reaction Color Blending (Audit Fix) ===
+    Color blendedLayerColor = item.layers.isEmpty ? Colors.transparent : item.layers.first.color;
+    if (item.layers.length > 1) {
+      for (int i = 1; i < item.layers.length; i++) {
+        blendedLayerColor = Color.lerp(blendedLayerColor, item.layers[i].color, 0.5)!;
+      }
+    }
+    
+    // If a reaction is in progress, blend towards reaction color
+    Color finalLiquidColor = blendedLayerColor;
+    if (reaction != null && item.reactionProgress > 0) {
+      final Color? targetCol = reaction!.endColor ?? reaction!.colorChange;
+      if (targetCol != null) {
+        final double prog = item.reactionProgress.clamp(0.0, 1.0);
+        finalLiquidColor = Color.lerp(blendedLayerColor, targetCol, prog)!;
+      }
+    }
     final slosh = sin(item.sloshPhase) * item.sloshAmp;
     final baseTop = _liquidTop(h);
 

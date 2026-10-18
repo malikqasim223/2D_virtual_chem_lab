@@ -1,4 +1,4 @@
-﻿part of chem_lab;
+part of chem_lab;
 
 class LabScreen extends StatefulWidget {
   const LabScreen({super.key});
@@ -166,6 +166,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
 
   @override
   void dispose() {
+    _alertOverlay?.remove(); _alertOverlay = null; // Dispose
     _alertOverlay?.remove(); _alertOverlay = null; // Dispose
     _tick?.cancel();
     dragOverlay?.remove();
@@ -437,7 +438,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
     if (amount != null) _pourInto(equipId, c, amount);
   }
 
-    void _showRedAlert(String message) {
+        void _showRedAlert(String message) {
     _alertOverlay?.remove();
     _alertOverlay = null;
     _alertOverlay = OverlayEntry(
@@ -1326,7 +1327,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
   }
 
   // ============ PH TEST HELPERS ============
-          Widget _reactionInfoBox() {
+            Widget _reactionInfoBox() {
     final rxn = currentReaction;
     List<String>? multiMix;
     for (final eq in equipment) {
@@ -1351,94 +1352,105 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                  hasNoReaction ? LC.warning.withValues(alpha: 0.4) : LC.border
         ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                sideFx != null ? Icons.warning_amber :
-                rxn != null ? Icons.check_circle_outline :
-                hasNoReaction ? Icons.block : Icons.info_outline,
-                size: 12,
-                color: sideFx != null ? LC.danger :
-                       rxn != null ? LC.success :
-                       hasNoReaction ? LC.warning : LC.accent,
-              ),
-              const SizedBox(width: 8),
-              Text(
-                sideFx != null ? 'Side Effect' :
-                rxn != null ? 'Reaction Info' :
-                hasNoReaction ? 'No Reaction' : 'Reaction Info',
-                style: TextStyle(
-                  color: sideFx != null ? LC.danger : LC.text,
-                  fontSize: 11, fontWeight: FontWeight.w600,
+      child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  sideFx != null ? Icons.warning_amber :
+                  rxn != null ? Icons.check_circle_outline :
+                  hasNoReaction ? Icons.block : Icons.info_outline,
+                  size: 12,
+                  color: sideFx != null ? LC.danger :
+                         rxn != null ? LC.success :
+                         hasNoReaction ? LC.warning : LC.accent,
+                ),
+                const SizedBox(width: 8),
+                Text(
+                  sideFx != null ? 'Side Effect' :
+                  rxn != null ? 'Reaction Info' :
+                  hasNoReaction ? 'No Reaction' : 'Reaction Info',
+                  style: TextStyle(
+                    color: sideFx != null ? LC.danger : LC.text,
+                    fontSize: 11, fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 6),
+            if (sideFx != null) ...[
+              Text(sideFx.label, style: TextStyle(color: LC.danger, fontSize: 11, fontWeight: FontWeight.w600)),
+              const SizedBox(height: 4),
+              Text(sideFx.description, style: const TextStyle(color: LC.textSub, fontSize: 10, height: 1.3)),
+              const SizedBox(height: 6),
+              Wrap(spacing: 4, runSpacing: 4, children: [
+                if (sideFx.fizz) _badge('FIZZ', LC.info),
+                if (sideFx.smoke) _badge('SMOKE', LC.textSub),
+                if (sideFx.heatUp) _badge('HEAT', LC.danger),
+                if (sideFx.coolDown) _badge('COOL', LC.info),
+                if (sideFx.colorPulse) _badge('COLOR', LC.warning),
+                if (sideFx.smallPop) _badge('POP', LC.danger),
+              ]),
+            ] else if (rxn == null && !hasNoReaction)
+              const Text('Drag chemicals to equipment to see reaction', style: TextStyle(color: LC.textDim, fontSize: 10))
+            else if (hasNoReaction) ...[
+              const Text('Chemicals mixed but no reaction occurs.', style: TextStyle(color: LC.textSub, fontSize: 10, height: 1.3)),
+            ] else ...[
+              Text(rxn!.name, style: const TextStyle(color: LC.text, fontSize: 10)),
+              const SizedBox(height: 4),
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(6),
+                decoration: BoxDecoration(
+                  color: LC.bg,
+                  borderRadius: BorderRadius.circular(5),
+                  border: Border.all(color: LC.border),
+                ),
+                child: Text(
+                  rxn.equation,
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: LC.accentBright, fontSize: 11, fontWeight: FontWeight.w600),
+                  textAlign: TextAlign.center,
                 ),
               ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          if (sideFx != null) ...[
-            Text(sideFx.label, style: TextStyle(color: LC.danger, fontSize: 11, fontWeight: FontWeight.w600)),
-            const SizedBox(height: 4),
-            Text(sideFx.description, style: const TextStyle(color: LC.textSub, fontSize: 10, height: 1.3)),
-          ] else if (rxn == null && !hasNoReaction)
-            const Text('Drag chemicals to equipment to see reaction', style: TextStyle(color: LC.textDim, fontSize: 10))
-          else if (hasNoReaction) ...[
-            const Text('Chemicals mixed but no reaction occurs.', style: TextStyle(color: LC.textSub, fontSize: 10, height: 1.3)),
-          ] else ...[
-            Text(rxn!.name, style: const TextStyle(color: LC.text, fontSize: 10)),
-            const SizedBox(height: 4), 
-            Container(
-              width: double.infinity,
-              padding: const EdgeInsets.all(6),
-              decoration: BoxDecoration(
-                color: LC.bg,
-                borderRadius: BorderRadius.circular(5),
-                border: Border.all(color: LC.border),
-              ),
-              child: Text(
-                rxn.equation,
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-                style: const TextStyle(color: LC.accentBright, fontSize: 11, fontWeight: FontWeight.w600),
-                textAlign: TextAlign.center,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(rxn.description, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: LC.textSub, fontSize: 9, height: 1.3)),
-            if (rxn.releasesHeat) ...[
               const SizedBox(height: 4),
-              Row(
-                children: [
-                  Icon(Icons.thermostat, size: 11, color: LC.danger),
-                  const SizedBox(width: 4),
-                  const Text('Exothermic reaction', style: TextStyle(color: LC.danger, fontSize: 9)),
-                ],
-              ),
-            ],
-            if (rxn.bubbles) ...[
-              const SizedBox(height: 2),
-              Row(
-                children: [
-                  Icon(Icons.bubble_chart, size: 11, color: LC.info),
-                  const SizedBox(width: 4),
-                  const Text('Gas bubbles evolve', style: TextStyle(color: LC.info, fontSize: 9)),
-                ],
-              ),
-            ],
-            if (rxn.precipitate) ...[
-              const SizedBox(height: 2),
-              Row(
-                children: [
-                  Icon(Icons.water_drop, size: 11, color: LC.warning),
-                  const SizedBox(width: 4),
-                  const Text('Precipitate forms', style: TextStyle(color: LC.warning, fontSize: 9)),
-                ],
-              ),
+              Text(rxn.description, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: LC.textSub, fontSize: 9, height: 1.3)),
+              if (rxn.releasesHeat) ...[
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Icon(Icons.thermostat, size: 11, color: LC.danger),
+                    const SizedBox(width: 4),
+                    const Text('Exothermic reaction', style: TextStyle(color: LC.danger, fontSize: 9)),
+                  ],
+                ),
+              ],
+              if (rxn.bubbles) ...[
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Icon(Icons.bubble_chart, size: 11, color: LC.info),
+                    const SizedBox(width: 4),
+                    const Text('Gas bubbles evolve', style: TextStyle(color: LC.info, fontSize: 9)),
+                  ],
+                ),
+              ],
+              if (rxn.precipitate) ...[
+                const SizedBox(height: 4),
+                Row(
+                  children: [
+                    Icon(Icons.water_drop, size: 11, color: LC.warning),
+                    const SizedBox(width: 4),
+                    const Text('Precipitate forms', style: TextStyle(color: LC.warning, fontSize: 9)),
+                  ],
+                ),
+              ],
             ],
           ],
-        ],
+        ),
       ),
     );
   }
@@ -1529,12 +1541,41 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
 
   // Determine reaction specific to this equipment only
   ReactionInfo? _reactionFor(EquipItem eq) {
+    // Audit Fix: check conditions before returning reaction
+    final rx = _getRawReaction(eq);
+    if (rx != null && rx.needsAcid) {
+      final hasAcid = eq.layers.any((l) => ['hcl', 'h2so4', 'hno3', 'ch3cooh'].contains(l.chemId));
+      if (!hasAcid) {
+        return const ReactionInfo(
+          name: 'Condition Not Met',
+          equation: 'Requires acidic medium',
+          type: 'Condition',
+          description: 'Add an acid (e.g. H2SO4) to proceed.',
+          products: [],
+        );
+      }
+    }
+    return rx;
+  }
+
+  ReactionInfo? _getRawReaction(EquipItem eq) {
     if (eq.layers.length < 2) return null;
     final ids = eq.layers.map((l) => l.chemId).toList()..sort();
     final key = ids.join('+');
     if (multiReactions.containsKey(key)) return multiReactions[key];
     if (reactions.containsKey(key)) return reactions[key];
-    // Pairwise fallback removed for 3+ chemical safety (Audit Fix)
+    
+    // Safe pairwise fallback ONLY for needsAcid reactions
+    // This allows 3+ chemicals like KMnO4+H2O2+H2SO4 to match KMnO4+H2O2 reaction
+    // (which needs acid as a condition)
+    for (int i = 0; i < ids.length; i++) {
+      for (int j = i + 1; j < ids.length; j++) {
+        final pk = [ids[i], ids[j]].join('+');
+        if (reactions.containsKey(pk) && reactions[pk]!.needsAcid) {
+          return reactions[pk];
+        }
+      }
+    }
     return null;
   }
 

@@ -1,0 +1,735 @@
+﻿[MAIN #1]
+  Name: Neutralization
+  Eq: HCl + NaOH -> NaCl + H2O
+  Products: 'NaCl', 'H2O'
+  Type: Neutralization
+  Effects: EXOTHERMIC
+
+[MAIN #2]
+  Name: Acid-Base Neutralization
+  Eq: H2SO4 + 2NaOH -> Na2SO4 + 2H2O
+  Products: 'Na2SO4', 'H2O'
+  Type: Neutralization
+  Effects: EXOTHERMIC
+
+[MAIN #3]
+  Name: Precipitation (AgCl)
+  Eq: AgNO3 + NaCl -> AgCl + NaNO3
+  Products: 'AgCl', 'NaNO3'
+  Type: Double Displacement
+  Effects: PRECIPITATE
+
+[MAIN #4]
+  Name: Precipitation (AgCl)
+  Eq: HCl + AgNO3 -> AgCl + HNO3
+  Products: 'AgCl', 'HNO3'
+  Type: Double Displacement
+  Effects: PRECIPITATE
+
+[MAIN #5]
+  Name: Copper Hydroxide
+  Eq: CuSO4 + 2NaOH -> Cu(OH)2 + Na2SO4
+  Products: 'Cu(OH)2', 'Na2SO4'
+  Type: Double Displacement
+  Effects: PRECIPITATE
+
+[MAIN #6]
+  Name: Complex
+  Eq: CuSO4 + 2NaOH -> Cu(OH)2
+  Products: 'Cu(OH)2'
+  Type: Precipitation
+  Effects: PRECIPITATE
+
+[MAIN #7]
+  Name: HCl Gas Evolution
+  Eq: NaCl + H2SO4 (conc.) -> NaHSO4 + HCl (g)
+  Products: 'NaHSO4', 'HCl'
+  Type: Acid-Base Displacement
+  Effects: BUBBLES, SMOKE, GAS:HCl
+
+[MAIN #8]
+  Name: No Reaction
+  Eq: CuSO4 + H2SO4 -> no reaction
+  Products: 'CuSO4', 'H2SO4'
+  Type: None
+  Effects: (none)
+
+[MAIN #9]
+  Name: Indicator - Pink
+  Eq: NaOH + Phenolphthalein -> Pink
+  Products: 'Phenolphthalein (pink)'
+  Type: Indicator
+  Effects: (none)
+
+[MAIN #10]
+  Name: Indicator - Colorless
+  Eq: HCl + Phenolphthalein -> Colorless
+  Products: 'Phenolphthalein (colorless)'
+  Type: Indicator
+  Effects: (none)
+
+[MAIN #11]
+  Name: No Reaction
+  Eq: HCl + CuSO4 -> no reaction
+  Products: 'HCl', 'CuSO4'
+  Type: None
+  Effects: (none)
+
+[MAIN #12]
+  Name: No Reaction
+  Eq: HCl + NaCl -> no reaction
+  Products: 'HCl', 'NaCl'
+  Type: None
+  Effects: (none)
+
+[MAIN #13]
+  Name: No Reaction
+  Eq: NaOH + NaCl -> no reaction
+  Products: 'NaOH', 'NaCl'
+  Type: None
+  Effects: (none)
+
+[MAIN #14]
+  Name: May form Ag2SO4 (Condition-Dependent)
+  Eq: 2AgNO3 + CuSO4 -> Ag2SO4 (slight ppt) + Cu(NO3)2
+  Products: 'Ag2SO4', 'Cu(NO3)2'
+  Type: Precipitation
+  Effects: PRECIPITATE
+
+[MAIN #15]
+  Name: No Reaction
+  Eq: CuSO4 + NaCl -> no reaction
+  Products: 'CuSO4', 'NaCl'
+  Type: None
+  Effects: (none)
+
+[MAIN #16]
+  Name: No Reaction
+  Eq: C2H5OH + NaOH -> no reaction
+  Products: 'C2H5OH', 'NaOH'
+  Type: None
+  Effects: (none)
+
+[MAIN #17]
+  Name: No Reaction
+  Eq: C2H5OH + HCl -> no reaction (room temp)
+  Products: 'C2H5OH', 'HCl'
+  Type: None
+  Effects: (none)
+
+[MAIN #18]
+  Name: Ag2SO4 Precipitation
+  Eq: H2SO4 + 2AgNO3 -> Ag2SO4 + 2HNO3
+  Products: 'Ag2SO4', 'HNO3'
+  Type: Double Displacement
+  Effects: PRECIPITATE
+
+[MAIN #19]
+  Name: Brown Precipitate (Ag2O)
+  Eq: 2AgNO3 + 2NaOH -> Ag2O + 2NaNO3 + H2O
+  Products: 'Ag2O', 'NaNO3', 'H2O'
+  Type: Precipitation
+  Effects: PRECIPITATE, SMOKE, EXOTHERMIC
+
+[MAIN #20]
+  Name: Sodium + Water (Vigorous)
+  Eq: 2Na + 2H2O -> 2NaOH + H2 + heat
+  Products: 'NaOH', 'H2'
+  Type: Explosive
+  Effects: BUBBLES, SMOKE, VIOLENT, EXOTHERMIC
+
+[MAIN #21]
+  Name: Magnesium + Water
+  Eq: Mg + 2H2O -> Mg(OH)2 + H2
+  Products: 'Mg(OH)2', 'H2'
+  Type: Metal + Water
+  Effects: BUBBLES, SMOKE, EXOTHERMIC, NEEDS-HEAT
+
+[MAIN #22]
+  Name: VIOLENT: Sodium + HCl
+  Eq: 2Na + 2HCl -> 2NaCl + H2 + heat
+  Products: 'NaCl', 'H2'
+  Type: Explosive
+  Effects: BUBBLES, SMOKE, VIOLENT, EXOTHERMIC
+
+[MAIN #23]
+  Name: Magnesium + HCl
+  Eq: Mg + 2HCl -> MgCl2 + H2
+  Products: 'MgCl2', 'H2'
+  Type: Metal + Acid
+  Effects: BUBBLES, SMOKE, EXOTHERMIC
+
+[MAIN #24]
+  Name: VIOLENT: Sodium + H2SO4
+  Eq: 2Na + H2SO4 -> Na2SO4 + H2 + heat
+  Products: 'Na2SO4', 'H2'
+  Type: Explosive
+  Effects: BUBBLES, SMOKE, VIOLENT, EXOTHERMIC
+
+[MAIN #25]
+  Name: Magnesium + H2SO4
+  Eq: Mg + H2SO4 -> MgSO4 + H2
+  Products: 'MgSO4', 'H2'
+  Type: Metal + Acid
+  Effects: BUBBLES, SMOKE, EXOTHERMIC
+
+[MAIN #26]
+  Name: Golden Rain (Lead Iodide)
+  Eq: 2KI + Pb(NO3)2 -> PbI2 (ppt) + 2KNO3
+  Products: 'PbI2', 'KNO3'
+  Type: Precipitation
+  Effects: PRECIPITATE
+
+[MAIN #27]
+  Name: Copper + Silver Nitrate
+  Eq: Cu + 2AgNO3 -> Cu(NO3)2 + 2Ag
+  Products: 'Cu(NO3)2', 'Ag'
+  Type: Single Displacement
+  Effects: (none)
+
+[MAIN #28]
+  Name: Zinc Displacement
+  Eq: Zn + CuSO4 -> ZnSO4 + Cu
+  Products: 'ZnSO4', 'Cu'
+  Type: Single Displacement
+  Effects: PRECIPITATE
+
+[MAIN #29]
+  Name: Iron Displacement
+  Eq: Fe + CuSO4 -> FeSO4 + Cu
+  Products: 'FeSO4', 'Cu'
+  Type: Single Displacement
+  Effects: PRECIPITATE
+
+[MAIN #30]
+  Name: Purple Fades (KMnO4 + H2O2)
+  Eq: 2KMnO4 + 5H2O2 + 3H2SO4 -> K2SO4 + 2MnSO4 + 5O2 + 8H2O
+  Products: 'MnSO4', 'O2'
+  Type: Redox
+  Effects: BUBBLES, EXOTHERMIC, NEEDS-ACID, GAS:O2
+
+[MAIN #31]
+  Name: Elephant Toothpaste (with soap)
+  Eq: 2H2O2 ->(KI catalyst) 2H2O + O2
+  Products: 'H2O', 'O2'
+  Type: Catalytic Decomposition
+  Effects: BUBBLES, FOAM, EXOTHERMIC, GAS:O2
+
+[MAIN #32]
+  Name: Zinc + Hydrochloric Acid
+  Eq: Zn + 2HCl -> ZnCl2 + H2
+  Products: 'ZnCl2', 'H2'
+  Type: Single Displacement
+  Effects: BUBBLES, EXOTHERMIC, GAS:H2
+
+[MAIN #33]
+  Name: Iron + Hydrochloric Acid
+  Eq: Fe + 2HCl -> FeCl2 + H2
+  Products: 'FeCl2', 'H2'
+  Type: Single Displacement
+  Effects: BUBBLES, GAS:H2
+
+[MAIN #34]
+  Name: Baking Soda + HCl
+  Eq: NaHCO3 + HCl -> NaCl + H2O + CO2
+  Products: 'NaCl', 'H2O', 'CO2'
+  Type: Gas Evolution
+  Effects: BUBBLES, GAS:CO2
+
+[MAIN #35]
+  Name: Marble + HCl (Volcano)
+  Eq: CaCO3 + 2HCl -> CaCl2 + H2O + CO2
+  Products: 'CaCl2', 'H2O', 'CO2'
+  Type: Gas Evolution
+  Effects: BUBBLES, GAS:CO2
+
+[MAIN #36]
+  Name: Barium Sulfate Precipitate
+  Eq: BaCl2 + CuSO4 -> BaSO4 + CuCl2
+  Products: 'BaSO4', 'CuCl2'
+  Type: Precipitation
+  Effects: PRECIPITATE
+
+[MAIN #37]
+  Name: Vinegar + Baking Soda
+  Eq: CH3COOH + NaHCO3 -> CH3COONa + H2O + CO2
+  Products: 'CH3COONa', 'H2O', 'CO2'
+  Type: Gas Evolution
+  Effects: BUBBLES, GAS:CO2
+
+[MAIN #38]
+  Name: Ammonium Chloride (Neutralization)
+  Eq: HCl + NH4OH -> NH4Cl + H2O
+  Products: 'NH4Cl', 'H2O'
+  Type: Neutralization
+  Effects: EXOTHERMIC
+
+[MAIN #39]
+  Name: Two-Stage: Blue ppt â†’ Deep Blue Complex
+  Eq: CuSO4 + 2NH4OH -> Cu(OH)2 ppt + (NH4)2SO4; Cu(OH)2 + 4NH3 (excess) -> [Cu(NH3)4](OH)2
+  Products: '[Cu(NH3)4
+  Type: Complex Formation
+  Effects: PRECIPITATE
+
+[MAIN #40]
+  Name: Iodine-Starch Test
+  Eq: I2 + Starch -> Blue-Black Complex
+  Products: 'Iodine-Starch complex'
+  Type: Complex Formation
+  Effects: (none)
+
+[MAIN #41]
+  Name: BaSO4 Precipitate
+  Eq: H2SO4 + BaCl2 -> BaSO4 + 2HCl
+  Products: 'BaSO4', 'HCl'
+  Type: Precipitation
+  Effects: PRECIPITATE
+
+[MAIN #42]
+  Name: AgCl Precipitate
+  Eq: 2AgNO3 + BaCl2 -> 2AgCl + Ba(NO3)2
+  Products: 'AgCl', 'Ba(NO3)2'
+  Type: Precipitation
+  Effects: PRECIPITATE
+
+[MAIN #43]
+  Name: Neutralization (HNO3)
+  Eq: HNO3 + NaOH -> NaNO3 + H2O
+  Products: 'NaNO3', 'H2O'
+  Type: Neutralization
+  Effects: EXOTHERMIC
+
+[MAIN #44]
+  Name: Brown Gas (NO2)
+  Eq: Cu + 4HNO3 (conc.) -> Cu(NO3)2 + 2NO2 + 2H2O
+  Products: 'Cu(NO3)2', 'NO2', 'H2O'
+  Type: Redox
+  Effects: SMOKE, GAS:NO2
+
+[MAIN #45]
+  Name: Fizzing (CO2)
+  Eq: 2HNO3 + CaCO3 -> Ca(NO3)2 + H2O + CO2
+  Products: 'Ca(NO3)2', 'H2O', 'CO2'
+  Type: Acid-Carbonate
+  Effects: BUBBLES, GAS:CO2
+
+[MAIN #46]
+  Name: Neutralization (KOH)
+  Eq: KOH + HCl -> KCl + H2O
+  Products: 'KCl', 'H2O'
+  Type: Neutralization
+  Effects: EXOTHERMIC
+
+[MAIN #47]
+  Name: Blue Precipitate
+  Eq: CuSO4 + 2KOH -> Cu(OH)2 + K2SO4
+  Products: 'Cu(OH)2', 'K2SO4'
+  Type: Double Displacement
+  Effects: PRECIPITATE
+
+[MAIN #48]
+  Name: Milky (Limewater Test)
+  Eq: Ca(OH)2 + CO2 -> CaCO3 + H2O
+  Products: 'CaCO3', 'H2O'
+  Type: Precipitation
+  Effects: PRECIPITATE
+
+[MAIN #49]
+  Name: Neutralization (Ca(OH)2)
+  Eq: Ca(OH)2 + 2HCl -> CaCl2 + 2H2O
+  Products: 'CaCl2', 'H2O'
+  Type: Neutralization
+  Effects: EXOTHERMIC
+
+[MAIN #50]
+  Name: Vigorous Fizz
+  Eq: Na2CO3 + 2HCl -> 2NaCl + H2O + CO2
+  Products: 'NaCl', 'H2O', 'CO2'
+  Type: Acid-Carbonate
+  Effects: BUBBLES, GAS:CO2
+
+[MAIN #51]
+  Name: White Precipitate
+  Eq: Na2CO3 + CaCl2 -> CaCO3 + 2NaCl
+  Products: 'CaCO3', 'NaCl'
+  Type: Precipitation
+  Effects: PRECIPITATE
+
+[MAIN #52]
+  Name: Orange to Yellow
+  Eq: K2Cr2O7 + 2KOH -> 2K2CrO4 + H2O
+  Products: 'K2CrO4', 'H2O'
+  Type: Redox
+  Effects: (none)
+
+[MAIN #53]
+  Name: Orange to Green (Breathalyzer)
+  Eq: 2K2Cr2O7 + 8H2SO4 + 3C2H5OH -> 2Cr2(SO4)3 + 3CH3COOH + 2K2SO4 + 11H2O
+  Products: 'Cr2(SO4)3'
+  Type: Oxidation
+  Effects: (none)
+
+[MAIN #54]
+  Name: Dirty Green Precipitate
+  Eq: FeSO4 + 2NaOH -> Fe(OH)2 + Na2SO4
+  Products: 'Fe(OH)2', 'Na2SO4'
+  Type: Precipitation
+  Effects: PRECIPITATE
+
+[MAIN #55]
+  Name: White Precipitate (BaSO4)
+  Eq: FeSO4 + BaCl2 -> BaSO4 + FeCl2
+  Products: 'BaSO4', 'FeCl2'
+  Type: Precipitation
+  Effects: PRECIPITATE
+
+[MAIN #56]
+  Name: Hydrogen Gas (Al)
+  Eq: 2Al + 6HCl -> 2AlCl3 + 3H2
+  Products: 'AlCl3', 'H2'
+  Type: Single Displacement
+  Effects: BUBBLES, GAS:H2
+
+[MAIN #57]
+  Name: Amphoteric Reaction
+  Eq: 2Al + 2NaOH + 2H2O -> 2NaAlO2 + 3H2
+  Products: 'NaAlO2', 'H2'
+  Type: Amphoteric
+  Effects: BUBBLES, GAS:H2
+
+[MAIN #58]
+  Name: White Gelatinous Precipitate
+  Eq: AlCl3 + 3NaOH -> Al(OH)3 + 3NaCl
+  Products: 'Al(OH)3', 'NaCl'
+  Type: Precipitation
+  Effects: PRECIPITATE
+
+[MAIN #59]
+  Name: Ammonia Gas Released
+  Eq: NH4Cl + NaOH -> NaCl + NH3 + H2O
+  Products: 'NaCl', 'NH3', 'H2O'
+  Type: Gas Evolution
+  Effects: GAS:NH3
+
+[MAIN #60]
+  Name: Oxalic Neutralization
+  Eq: H2C2O4 + 2NaOH -> Na2C2O4 + 2H2O
+  Products: 'Na2C2O4', 'H2O'
+  Type: Neutralization
+  Effects: EXOTHERMIC
+
+[MAIN #61]
+  Name: White Oxalate Precipitate
+  Eq: H2C2O4 + CaCl2 -> CaC2O4 + 2HCl
+  Products: 'CaC2O4', 'HCl'
+  Type: Precipitation
+  Effects: PRECIPITATE
+
+[MAIN #62]
+  Name: Phosphate Neutralization
+  Eq: H3PO4 + 3NaOH -> Na3PO4 + 3H2O
+  Products: 'Na3PO4', 'H2O'
+  Type: Neutralization
+  Effects: EXOTHERMIC
+
+[MAIN #63]
+  Name: Yellow Phosphate Precipitate
+  Eq: H3PO4 + 3AgNO3 -> Ag3PO4 + 3HNO3
+  Products: 'Ag3PO4', 'HNO3'
+  Type: Precipitation
+  Effects: PRECIPITATE
+
+[MAIN #64]
+  Name: Formate Neutralization
+  Eq: HCOOH + NaOH -> HCOONa + H2O
+  Products: 'HCOONa', 'H2O'
+  Type: Neutralization
+  Effects: EXOTHERMIC
+
+[MAIN #65]
+  Name: Fizz (CO2)
+  Eq: 2HCOOH + Na2CO3 -> 2HCOONa + H2O + CO2
+  Products: 'HCOONa', 'H2O', 'CO2'
+  Type: Acid-Carbonate
+  Effects: BUBBLES, GAS:CO2
+
+[MAIN #66]
+  Name: VIOLENT: Potassium + Water
+  Eq: 2K + 2H2O -> 2KOH + H2 + heat
+  Products: 'KOH', 'H2'
+  Type: Alkali Metal
+  Effects: BUBBLES, SMOKE, VIOLENT, EXOTHERMIC, GAS:H2
+
+[MAIN #67]
+  Name: Calcium + Water
+  Eq: Ca + 2H2O -> Ca(OH)2 + H2
+  Products: 'Ca(OH)2', 'H2'
+  Type: Alkaline Earth
+  Effects: BUBBLES, GAS:H2
+
+[MAIN #68]
+  Name: Hydrogen Gas (Ca)
+  Eq: Ca + 2HCl -> CaCl2 + H2
+  Products: 'CaCl2', 'H2'
+  Type: Single Displacement
+  Effects: BUBBLES, GAS:H2
+
+[MAIN #69]
+  Name: Slow Bubbles (Pb)
+  Eq: Pb + 2HCl -> PbCl2 + H2
+  Products: 'PbCl2', 'H2'
+  Type: Single Displacement
+  Effects: BUBBLES, GAS:H2
+
+[MAIN #70]
+  Name: Silver Crystals (Pb)
+  Eq: Pb + 2AgNO3 -> Pb(NO3)2 + 2Ag
+  Products: 'Pb(NO3)2', 'Ag'
+  Type: Single Displacement
+  Effects: (none)
+
+[MAIN #71]
+  Name: Silver Dissolves
+  Eq: Ag + 2HNO3 (conc.) -> AgNO3 + NO2 + H2O
+  Products: 'AgNO3', 'NO2', 'H2O'
+  Type: Redox
+  Effects: SMOKE, GAS:NO2
+
+[MAIN #72]
+  Name: White Precipitate (Zn)
+  Eq: ZnSO4 + 2NaOH -> Zn(OH)2 + Na2SO4
+  Products: 'Zn(OH)2', 'Na2SO4'
+  Type: Precipitation
+  Effects: PRECIPITATE
+
+[MAIN #73]
+  Name: White Precipitate (BaSO4)
+  Eq: ZnSO4 + BaCl2 -> BaSO4 + ZnCl2
+  Products: 'BaSO4', 'ZnCl2'
+  Type: Precipitation
+  Effects: PRECIPITATE
+
+[MAIN #74]
+  Name: Blue Precipitate (CuCl2)
+  Eq: CuCl2 + 2NaOH -> Cu(OH)2 + 2NaCl
+  Products: 'Cu(OH)2', 'NaCl'
+  Type: Precipitation
+  Effects: PRECIPITATE
+
+[MAIN #75]
+  Name: Copper Displaced
+  Eq: CuCl2 + Zn -> ZnCl2 + Cu
+  Products: 'ZnCl2', 'Cu'
+  Type: Single Displacement
+  Effects: PRECIPITATE
+
+[MAIN #76]
+  Name: Brown Precipitate (Fe)
+  Eq: FeCl3 + 3NaOH -> Fe(OH)3 + 3NaCl
+  Products: 'Fe(OH)3', 'NaCl'
+  Type: Precipitation
+  Effects: PRECIPITATE
+
+[MAIN #77]
+  Name: Brown Precipitate (NH4OH)
+  Eq: FeCl3 + 3NH4OH -> Fe(OH)3 + 3NH4Cl
+  Products: 'Fe(OH)3', 'NH4Cl'
+  Type: Precipitation
+  Effects: PRECIPITATE
+
+[MAIN #78]
+  Name: Silver Crystals (Fe)
+  Eq: Fe + 2AgNO3 -> Fe(NO3)2 + 2Ag
+  Products: 'Fe(NO3)2', 'Ag'
+  Type: Single Displacement
+  Effects: (none)
+
+[MAIN #79]
+  Name: White Precipitate (AgCl)
+  Eq: KCl + AgNO3 -> AgCl + KNO3
+  Products: 'AgCl', 'KNO3'
+  Type: Precipitation
+  Effects: PRECIPITATE
+
+[MAIN #80]
+  Name: Decomposition (O2)
+  Eq: 2KNO3 -> 2KNO2 + O2 (heat)
+  Products: 'KNO2', 'O2'
+  Type: Decomposition
+  Effects: BUBBLES, NEEDS-HEAT, GAS:O2
+
+[MAIN #81]
+  Name: Lime Burning (CaO)
+  Eq: CaCO3 -> CaO + CO2 (heat)
+  Products: 'CaO', 'CO2'
+  Type: Decomposition
+  Effects: BUBBLES, NEEDS-HEAT, GAS:CO2
+
+[MAIN #82]
+  Name: Baking Soda Decomposition
+  Eq: 2NaHCO3 -> Na2CO3 + H2O + CO2 (heat)
+  Products: 'Na2CO3', 'H2O', 'CO2'
+  Type: Decomposition
+  Effects: BUBBLES, NEEDS-HEAT, GAS:CO2
+
+[MAIN #83]
+  Name: Silver Nitrate Decomposition
+  Eq: 2AgNO3 -> 2Ag + 2NO2 + O2 (heat)
+  Products: 'Ag', 'NO2', 'O2'
+  Type: Decomposition
+  Effects: SMOKE, NEEDS-HEAT, GAS:NO2
+
+[MAIN #84]
+  Name: White Precipitate (Mg)
+  Eq: MgSO4 + 2NaOH -> Mg(OH)2 + Na2SO4
+  Products: 'Mg(OH)2', 'Na2SO4'
+  Type: Precipitation
+  Effects: PRECIPITATE
+
+[MAIN #85]
+  Name: White Precipitate (BaSO4)
+  Eq: MgSO4 + BaCl2 -> BaSO4 + MgCl2
+  Products: 'BaSO4', 'MgCl2'
+  Type: Precipitation
+  Effects: PRECIPITATE
+
+[MAIN #86]
+  Name: Yellow Sulfur + SO2
+  Eq: Na2S2O3 + 2HCl -> 2NaCl + H2O + SO2 + S
+  Products: 'NaCl', 'H2O', 'SO2', 'S'
+  Type: Double Displacement
+  Effects: BUBBLES, PRECIPITATE, GAS:SO2
+
+[MAIN #87]
+  Name: Iodometric Titration
+  Eq: 2Na2S2O3 + I2 -> Na2S4O6 + 2NaI
+  Products: 'Na2S4O6', 'NaI'
+  Type: Redox
+  Effects: (none)
+
+[MAIN #88]
+  Name: Iodoform Test (Yellow)
+  Eq: CH3COCH3 + 3I2 + 4NaOH -> CHI3 + 3NaI + 3H2O + CH3COONa
+  Products: 'CHI3', 'NaI', 'CH3COONa'
+  Type: Haloform Reaction
+  Effects: PRECIPITATE
+
+[MAIN #89]
+  Name: Purple Complex (Phenol Test)
+  Eq: C6H5OH + FeCl3 -> [Fe(C6H5O)6]3- + H+ (purple)
+  Products: 'Fe-phenoxide complex'
+  Type: Complex Formation
+  Effects: (none)
+
+[MAIN #90]
+  Name: White Precipitate (2,4,6-Tribromophenol)
+  Eq: C6H5OH + 3Br2 -> C6H2Br3OH + 3HBr
+  Products: 'C6H2Br3OH', 'HBr'
+  Type: Electrophilic Substitution
+  Effects: PRECIPITATE
+
+[MAIN #91]
+  Name: Black Charring
+  Eq: C12H22O11 + H2SO4 -> 12C + 11H2O + heat
+  Products: 'C', 'H2O'
+  Type: Dehydration
+  Effects: EXOTHERMIC
+
+[MAIN #92]
+  Name: Benzoate Neutralization
+  Eq: C6H5COOH + NaOH -> C6H5COONa + H2O
+  Products: 'C6H5COONa', 'H2O'
+  Type: Neutralization
+  Effects: (none)
+
+[MAIN #93]
+  Name: Lactate Neutralization
+  Eq: C3H6O3 + NaOH -> C3H5O3Na + H2O
+  Products: 'C3H5O3Na', 'H2O'
+  Type: Neutralization
+  Effects: (none)
+
+[MAIN #94]
+  Name: Citrate Neutralization
+  Eq: C6H8O7 + 3NaOH -> Na3C6H5O7 + 3H2O
+  Products: 'Na3C6H5O7', 'H2O'
+  Type: Neutralization
+  Effects: (none)
+
+[MAIN #95]
+  Name: Urea Hydrolysis
+  Eq: CO(NH2)2 + H2O -> 2NH3 + CO2 (urease)
+  Products: 'NH3', 'CO2'
+  Type: Hydrolysis
+  Effects: GAS:NH3
+
+[MAIN #96]
+  Name: Bromobenzene (Substitution)
+  Eq: C6H6 + Br2 (FeBr3) -> C6H5Br + HBr
+  Products: 'C6H5Br', 'HBr'
+  Type: Electrophilic Substitution
+  Effects: (none)
+
+[MAIN #97]
+  Name: PURPLE FIRE BLAST
+  Eq: 14KMnO4 + 4C3H5(OH)3 -> 7K2CO3 + 7Mn2O3 + 5CO2 + 16H2O
+  Products: 'K2CO3', 'Mn2O3', 'CO2', 'H2O'
+  Type: Spontaneous Combustion
+  Effects: BUBBLES, SMOKE, VIOLENT, EXOTHERMIC
+
+[MULTI #98]
+  Name: Titration Endpoint
+  Eq: HCl + NaOH + Phenolphthalein -> Pink
+  Products: 'NaCl', 'H2O', 'Pink indicator'
+  Type: Titration
+  Effects: (none)
+
+[MULTI #99]
+  Name: Competitive Precipitation
+  Eq: AgNO3 + NaCl -> AgCl + NaNO3 (favored)
+  Products: 'AgCl', 'NaNO3', 'CuSO4'
+  Type: Selective Precipitation
+  Effects: PRECIPITATE
+
+[MULTI #100]
+  Name: Sequential Neutralization
+  Eq: HCl + NaOH -> NaCl; CuSO4 + 2NaOH -> Cu(OH)2
+  Products: 'NaCl', 'Cu(OH)2', 'H2O'
+  Type: Multi-step
+  Effects: PRECIPITATE, EXOTHERMIC
+
+[MULTI #101]
+  Name: Complex Precipitation
+  Eq: H2SO4 + 2NaOH -> Na2SO4; CuSO4 + 2NaOH -> Cu(OH)2
+  Products: 'Na2SO4', 'Cu(OH)2', 'H2O'
+  Type: Multi-step
+  Effects: PRECIPITATE, EXOTHERMIC
+
+[MULTI #102]
+  Name: Neutralization with spectator
+  Eq: HCl + NaOH -> NaCl + H2O
+  Products: 'NaCl', 'H2O'
+  Type: Neutralization
+  Effects: EXOTHERMIC
+
+[MULTI #103]
+  Name: Neutralization (Phenolphthalein)
+  Eq: HCl + NaOH + Phenolphthalein -> NaCl + H2O (Pink to Colorless)
+  Products: 'NaCl', 'H2O'
+  Type: Neutralization
+  Effects: (none)
+
+[MULTI #104]
+  Name: Copper Complex Dissolves
+  Eq: Cu(OH)2 + 2HCl -> CuCl2 + 2H2O
+  Products: 'CuCl2', 'H2O'
+  Type: Acid Dissolution
+  Effects: (none)
+
+[MULTI #105]
+  Name: Silver Complex Formation
+  Eq: AgCl + 2NH4OH -> [Ag(NH3)2]Cl + 2H2O
+  Products: '[Ag(NH3)2
+  Type: Complexation
+  Effects: (none)
+

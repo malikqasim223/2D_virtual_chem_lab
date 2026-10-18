@@ -1,4 +1,4 @@
-﻿part of chem_lab;
+part of chem_lab;
 
 class MoleculeAtom {
   final String symbol;
@@ -109,7 +109,7 @@ const Map<String, ChemDetail> chemDetails = {
     history: 'Known since ancient times. Used in Egypt for dyeing.',
     commonName: 'Blue vitriol, Bluestone',
     appearance: 'Bright blue crystals (pentahydrate), white when anhydrous',
-    molarMass: 249.69,
+    molarMass: 159.61,
     reactions: 'NaOH -> Cu(OH)2(blue ppt) | Fe -> FeSO4 + Cu | Zn -> ZnSO4 + Cu | NH4OH -> [Cu(NH3)4]SO4(deep blue)',
     boilingPoint: null,
     meltingPoint: 110.0,
@@ -606,7 +606,7 @@ const Map<String, ChemDetail> chemDetails = {
     occurrence: 'Melanterite, pyrite oxidation.',
     commonName: 'Green vitriol, Copperas',
     appearance: 'Pale green crystalline solid',
-    molarMass: 278.01,
+    molarMass: 151.91,
     boilingPoint: null, meltingPoint: 64.0, density: 2.84, ph: '3-4 (acidic)',
     hazards: ['irritant'],
     industrial: 'Made by reacting Fe with dilute H2SO4.',
@@ -1093,7 +1093,7 @@ const Map<String, ChemDetail> chemDetails = {
     properties: 'Purple/blue solution or paper. Transition pH 5.0-8.0.',
     safety: 'Safe. Non-toxic.',
     occurrence: 'Extracted from lichens (Roccella, Lecanora).',
-    molarMass: null,
+    molarMass: 58.44,
     hazards: [],
   ),
 };

@@ -1,4 +1,4 @@
-﻿part of chem_lab;
+part of chem_lab;
 
 const Map<String, HeatingEffect> heatingEffects = {
   'cuso4': HeatingEffect(
@@ -16,13 +16,13 @@ const Map<String, HeatingEffect> heatingEffects = {
   'caco3': HeatingEffect(
     label: 'Calcination',
     equation: 'CaCO3 -> CaO + CO2',
-    startTemp: 150,
+    startTemp: 825.0,
     bubbles: true,
   ),
   'agno3': HeatingEffect(
     label: 'Decomposition',
     equation: '2 AgNO3 -> 2 Ag + 2 NO2 + O2',
-    startTemp: 200,
+    startTemp: 440.0,
     brownFumes: true,
     smoke: true,
     colorChange: Color(0xFF8D6E63),

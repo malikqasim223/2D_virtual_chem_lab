@@ -1,4 +1,4 @@
-﻿part of chem_lab;
+part of chem_lab;
 
 final Map<String, ReactionInfo> reactions = {
   // ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã ... [Corrupted comment cleaned]
@@ -8,7 +8,7 @@ final Map<String, ReactionInfo> reactions = {
     type: 'Neutralization',
     description: 'Strong acid + strong base gives salt + water. Exothermic.',
     products: ['NaCl', 'H2O'],
-    colorChange: Color(0xFFC5D8E5),
+    colorChange: Color(0x00FFFFFF), // Audit Fix: Colorless
     releasesHeat: true,
   ),
   'h2so4+naoh': const ReactionInfo(
@@ -17,7 +17,7 @@ final Map<String, ReactionInfo> reactions = {
     type: 'Neutralization',
     description: 'Highly exothermic. Solution becomes warm.',
     products: ['Na2SO4', 'H2O'],
-    colorChange: Color(0xFFCFE0EA),
+    colorChange: Color(0x00FFFFFF), // Audit Fix: Colorless
     releasesHeat: true,
   ),
 
@@ -64,9 +64,9 @@ final Map<String, ReactionInfo> reactions = {
     equation: 'CuSO4 + 2NaOH -> Cu(OH)2',
     type: 'Precipitation',
     description: 'Blue precipitate.',
-    products: ['Cu(OH)2'],
+    products: ['Cu(OH)2', 'Na2SO4'],
     precipitate: true,
-    precipitateColor: Color(0xFF3D7FA8),
+    precipitateColor: Color(0xFF5DADE2),
     colorChange: Color(0xFF4A8FB8),
   ),
   'h2so4+nacl': const ReactionInfo(
@@ -138,10 +138,10 @@ final Map<String, ReactionInfo> reactions = {
     products: ['NaOH', 'NaCl'],
   ),
   'agno3+cuso4': const ReactionInfo(
-        name: 'Slight Precipitate (Ag2SO4)',
+        name: 'May form Ag2SO4 (Condition-Dependent)',
         equation: '2AgNO3 + CuSO4 -> Ag2SO4 (slight ppt) + Cu(NO3)2',
         type: 'Precipitation',
-        description: 'Ag2SO4 is slightly soluble. Depending on concentration, a slight white precipitate may form.',
+        description: 'Ag2SO4 is sparingly soluble. Precipitate forms only at sufficient concentration.',
         products: ['Ag2SO4', 'Cu(NO3)2'],
         precipitate: true,
         precipitateColor: Color(0xFFFFFFFF),
@@ -186,21 +186,21 @@ final Map<String, ReactionInfo> reactions = {
     description: 'Violent reaction! Brown Ag2O precipitates with intense heat.',
     products: ['Ag2O', 'NaNO3', 'H2O'],
     precipitate: true,
-    precipitateColor: Color(0xFF5D4037),
-    releasesHeat: true,
+    precipitateColor: Color(0xFF8D6E63),
+    // Heat removed
     // isViolent removed â€” agno3+naoh is not chemically violent
-    // producesSmoke: true,  // REMOVED - no smoke in real chemistry
+    // // Smoke removed  // REMOVED - no smoke in real chemistry
   ),
     // NEW VIOLENT REACTIONS
     'h2o+na': const ReactionInfo(
-  name: 'VIOLENT: Sodium + Water',
+  name: 'Sodium + Water (Vigorous)',
   equation: '2Na + 2H2O -> 2NaOH + H2 + heat',
   type: 'Explosive',
   description: 'Sodium dances on water surface, H2 ignites with bright yellow flame (Na+), NaOH forms. Extremely exothermic.',
   products: ['NaOH', 'H2'],
   releasesHeat: true,
   isViolent: true,
-  producesSmoke: true,
+    // producesSmoke: true, // Audit Fix: No smoke
   bubbles: true,
   endColor: Color(0xFFE0F7FA),
   gasColor: Color(0xFFE0E0E0),
@@ -223,7 +223,7 @@ final Map<String, ReactionInfo> reactions = {
       products: ['Mg(OH)2', 'H2'],
       releasesHeat: true,
     // isViolent removed â€” h2o+mg is not chemically violent
-    // producesSmoke: true,  // REMOVED - no smoke, just bubbles
+    // // producesSmoke: true, // Audit Fix: No smoke // Audit Fix: No smoke
       bubbles: true,
     requiresHeat: true, // Mg + cold water = no reaction
     ),
@@ -235,7 +235,7 @@ final Map<String, ReactionInfo> reactions = {
   products: ['NaCl', 'H2'],
   releasesHeat: true,
   isViolent: true,
-  producesSmoke: true,
+    // // producesSmoke: true, // Audit Fix: No smoke // Audit Fix: No smoke
   bubbles: true,
   endColor: Color(0xFFF5F5F5),
   gasColor: Color(0xFFE0E0E0),
@@ -258,7 +258,7 @@ final Map<String, ReactionInfo> reactions = {
       products: ['MgCl2', 'H2'],
       releasesHeat: true,
     // isViolent removed â€” hcl+mg is not chemically violent
-    // producesSmoke: true,  // REMOVED - no smoke, just bubbles
+    // // Smoke removed  // REMOVED - no smoke, just bubbles
       bubbles: true,
     ),
     'h2so4+na': const ReactionInfo(
@@ -269,7 +269,7 @@ final Map<String, ReactionInfo> reactions = {
   products: ['Na2SO4', 'H2'],
   releasesHeat: true,
   isViolent: true,
-  producesSmoke: true,
+    // // producesSmoke: true, // Audit Fix: No smoke // Audit Fix: No smoke
   bubbles: true,
   endColor: Color(0xFFF0F4C3),
   gasColor: Color(0xFFE0E0E0),
@@ -292,7 +292,7 @@ final Map<String, ReactionInfo> reactions = {
       products: ['MgSO4', 'H2'],
       releasesHeat: true,
     // isViolent removed â€” h2so4+mg is not chemically violent
-    // producesSmoke: true,  // REMOVED - no smoke, just bubbles
+    // // Smoke removed  // REMOVED - no smoke, just bubbles
       bubbles: true,
     ),
     // NEW INTERESTING REACTIONS
@@ -323,8 +323,9 @@ final Map<String, ReactionInfo> reactions = {
       type: 'Single Displacement',
       description: 'Silver crystals form on copper. Solution turns blue.',
       products: ['Cu(NO3)2', 'Ag'],
+    precipitate: true,
+    precipitateColor: Color(0xFFC0C0C0), // Silver
     // precipitate removed â€” this is displacement (silver crystals)
-      precipitateColor: Color(0xFFE0E0E0),
       colorChange: Color(0xFF42A5F5),
     ),
     'cuso4+zn': const ReactionInfo(
@@ -356,17 +357,19 @@ final Map<String, ReactionInfo> reactions = {
   products: ['MnSO4', 'O2'],
   colorChange: Color(0xFFFFFDE7),
   bubbles: true,
+        bubbleRate: BubbleIntensity.vigorous,
+        needsAcid: true,
   gasEvolution: 'O2',
+        gasColor: Color(0xFFFFFFFF),
   releasesHeat: true,
   startColor: Color(0xFF9C27B0),
-  endColor: Color(0xFFFFFDE7),
+  endColor: Color( 0x00FFFFFF),
   colorStages: [
     ColorStage(atFraction: 0.0, color: Color(0xFF9C27B0), label: 'Purple KMnO4'),
     ColorStage(atFraction: 0.3, color: Color(0xFFCE93D8), label: 'Fading'),
     ColorStage(atFraction: 0.7, color: Color(0xFFF3E5F5), label: 'Very pale'),
     ColorStage(atFraction: 1.0, color: Color(0xFFFFFDE7), label: 'Colorless Mn2+'),
   ],
-  bubbleRate: BubbleIntensity.moderate,
   tempDeltaC: 15.0,
   baseDurationSec: 4.0,
 ),
@@ -428,7 +431,7 @@ final Map<String, ReactionInfo> reactions = {
       description: 'Dense white precipitate of barium sulfate.',
       products: ['BaSO4', 'CuCl2'],
       precipitate: true,
-      precipitateColor: Color(0xFFF5F5F5),
+      precipitateColor: Color(0xFFFFFFFF),
       colorChange: Color(0xFF9BB8D0),
     ),
     'ch3cooh+nahco3': const ReactionInfo(
@@ -447,7 +450,7 @@ final Map<String, ReactionInfo> reactions = {
       description: 'Clear solution of ammonium chloride forms.',
       products: ['NH4Cl', 'H2O'],
     // producesSmoke removed â€” solution reaction, no gas phase
-      colorChange: Color(0xFFE8E8E8),
+    colorChange: Color(0x00FFFFFF), // Audit Fix: Colorless
       releasesHeat: true,
     ),
     'cuso4+nh4oh': const ReactionInfo(
@@ -466,7 +469,7 @@ final Map<String, ReactionInfo> reactions = {
     ColorStage(atFraction: 1.0, color: Color(0xFF0D47A1), label: 'Deep navy complex'),
   ],
   precipitate: true,
-  precipitateColor: Color(0xFF283593),
+    precipitateColor: Color(0xFF5DADE2), // Cu(OH)2 light blue
   precipitateInfo: PrecipitateInfo(
     color: Color(0xFF5DADE2),
     settleSec: 1.5,
@@ -515,7 +518,7 @@ final Map<String, ReactionInfo> reactions = {
     type: 'Neutralization',
     description: 'Strong acid + base. Exothermic.',
     products: ['NaNO3', 'H2O'],
-    colorChange: Color(0xFFD5E0E5),
+    colorChange: Color(0x00FFFFFF), // Audit Fix: Colorless
     releasesHeat: true,
   ),
   'cu+hno3': const ReactionInfo(
@@ -543,7 +546,7 @@ final Map<String, ReactionInfo> reactions = {
     type: 'Neutralization',
     description: 'Strong base + acid. Exothermic.',
     products: ['KCl', 'H2O'],
-    colorChange: Color(0xFFD5E0E5),
+    colorChange: Color(0x00FFFFFF), // Audit Fix: Colorless
     releasesHeat: true,
   ),
   'cuso4+koh': const ReactionInfo(
@@ -565,7 +568,7 @@ final Map<String, ReactionInfo> reactions = {
     description: 'Limewater turns milky. CO2 test.',
     products: ['CaCO3', 'H2O'],
     precipitate: true,
-    precipitateColor: Color(0xFFF5F5F5),
+    precipitateColor: Color(0xFFFFFFFF),
     colorChange: Color(0xFFFAFAFA),
   ),
   'caoh2+hcl': const ReactionInfo(
@@ -574,7 +577,7 @@ final Map<String, ReactionInfo> reactions = {
     type: 'Neutralization',
     description: 'Base + acid. Clear solution.',
     products: ['CaCl2', 'H2O'],
-    colorChange: Color(0xFFE8F0F0),
+    colorChange: Color(0x00FFFFFF), // Audit Fix: Colorless
     releasesHeat: true,
   ),
   'hcl+na2co3': const ReactionInfo(
@@ -593,18 +596,19 @@ final Map<String, ReactionInfo> reactions = {
     description: 'White CaCO3 precipitate.',
     products: ['CaCO3', 'NaCl'],
     precipitate: true,
-    precipitateColor: Color(0xFFF5F5F5),
+    precipitateColor: Color(0xFFFFFFFF),
   ),
   'k2cr2o7+koh': const ReactionInfo(
     name: 'Orange to Yellow',
     equation: 'K2Cr2O7 + 2KOH -> 2K2CrO4 + H2O',
-    type: 'Redox',
+    type: 'Equilibrium',
     description: 'Orange dichromate turns yellow chromate.',
     products: ['K2CrO4', 'H2O'],
     colorChange: Color(0xFFFFEB3B),
   ),
   'ethanol+k2cr2o7': const ReactionInfo(
     name: 'Orange to Green (Breathalyzer)',
+    needsAcid: true,
     equation: '2K2Cr2O7 + 8H2SO4 + 3C2H5OH -> 2Cr2(SO4)3 + 3CH3COOH + 2K2SO4 + 11H2O',
     type: 'Oxidation',
     description: 'Orange dichromate reduced to green Cr3+. Breathalyzer!',
@@ -658,7 +662,7 @@ final Map<String, ReactionInfo> reactions = {
     description: 'White gelatinous Al(OH)3 precipitate.',
     products: ['Al(OH)3', 'NaCl'],
     precipitate: true,
-    precipitateColor: Color(0xFFF5F5F5),
+    precipitateColor: Color(0xFFFFFFFF),
   ),
   'naoh+nh4cl': const ReactionInfo(
     name: 'Ammonia Gas Released',
@@ -676,7 +680,7 @@ final Map<String, ReactionInfo> reactions = {
     type: 'Neutralization',
     description: 'Dicarboxylic acid neutralization.',
     products: ['Na2C2O4', 'H2O'],
-    colorChange: Color(0xFFE8E8E8),
+    colorChange: Color(0x00FFFFFF), // Audit Fix: Colorless
     releasesHeat: true,
   ),
   'cacl2+h2c2o4': const ReactionInfo(
@@ -686,7 +690,7 @@ final Map<String, ReactionInfo> reactions = {
     description: 'White calcium oxalate precipitate.',
     products: ['CaC2O4', 'HCl'],
     precipitate: true,
-    precipitateColor: Color(0xFFF5F5F5),
+    precipitateColor: Color(0xFFFFFFFF),
   ),
   'h3po4+naoh': const ReactionInfo(
     name: 'Phosphate Neutralization',
@@ -694,7 +698,7 @@ final Map<String, ReactionInfo> reactions = {
     type: 'Neutralization',
     description: 'Triprotic acid neutralization.',
     products: ['Na3PO4', 'H2O'],
-    colorChange: Color(0xFFE8F0F0),
+    colorChange: Color(0x00FFFFFF), // Audit Fix: Colorless
     releasesHeat: true,
   ),
   'agno3+h3po4': const ReactionInfo(
@@ -712,7 +716,7 @@ final Map<String, ReactionInfo> reactions = {
     type: 'Neutralization',
     description: 'Formic acid + base. Exothermic.',
     products: ['HCOONa', 'H2O'],
-    colorChange: Color(0xFFE8F0F0),
+    colorChange: Color(0x00FFFFFF), // Audit Fix: Colorless
     releasesHeat: true,
   ),
   'hcooh+na2co3': const ReactionInfo(
@@ -732,7 +736,7 @@ final Map<String, ReactionInfo> reactions = {
   products: ['KOH', 'H2'],
   bubbles: true,
   gasEvolution: 'H2',
-  producesSmoke: true,
+    // producesSmoke: true, // Audit Fix: No smoke
   isViolent: true,
   releasesHeat: true,
   endColor: Color(0xFFE1BEE7),
@@ -782,6 +786,8 @@ final Map<String, ReactionInfo> reactions = {
     description: 'Beautiful silver crystals form.',
     products: ['Pb(NO3)2', 'Ag'],
     colorChange: Color(0xFFF5F5F5),
+        precipitate: true,
+        precipitateColor: Color(0xFFE0E0E0),
   ),
   'ag+hno3': const ReactionInfo(
     name: 'Silver Dissolves',
@@ -800,7 +806,7 @@ final Map<String, ReactionInfo> reactions = {
     description: 'White gelatinous Zn(OH)2 precipitate.',
     products: ['Zn(OH)2', 'Na2SO4'],
     precipitate: true,
-    precipitateColor: Color(0xFFF5F5F5),
+    precipitateColor: Color(0xFFFFFFFF),
   ),
   'bacl2+znso4': const ReactionInfo(
     name: 'White Precipitate (BaSO4)',
@@ -809,7 +815,7 @@ final Map<String, ReactionInfo> reactions = {
     description: 'White BaSO4 precipitate.',
     products: ['BaSO4', 'ZnCl2'],
     precipitate: true,
-    precipitateColor: Color(0xFFF5F5F5),
+    precipitateColor: Color(0xFFFFFFFF),
   ),
   'cucl2+naoh': const ReactionInfo(
     name: 'Blue Precipitate (CuCl2)',
@@ -818,7 +824,7 @@ final Map<String, ReactionInfo> reactions = {
     description: 'Blue Cu(OH)2 precipitate.',
     products: ['Cu(OH)2', 'NaCl'],
     precipitate: true,
-    precipitateColor: Color(0xFF1A4D70), // darker blue ppt
+    precipitateColor: Color(0xFF5DADE2), // darker blue ppt
   ),
   'cucl2+zn': const ReactionInfo(
     name: 'Copper Displaced',
@@ -849,7 +855,7 @@ final Map<String, ReactionInfo> reactions = {
     description: 'Brown Fe(OH)3 precipitate.',
     products: ['Fe(OH)3', 'NH4Cl'],
     precipitate: true,
-    precipitateColor: Color(0xFF5D4037),
+    precipitateColor: Color(0xFF8D6E63),
   ),
   'agno3+fe': const ReactionInfo(
     name: 'Silver Crystals (Fe)',
@@ -858,6 +864,8 @@ final Map<String, ReactionInfo> reactions = {
     description: 'Silver crystals deposit on iron.',
     products: ['Fe(NO3)2', 'Ag'],
     colorChange: Color(0xFFBDBDBD),
+        precipitate: true,
+        precipitateColor: Color(0xFFE0E0E0),
   ),
   // === BATCH 3 REACTIONS (FSc only) ===
   'agno3+kcl': const ReactionInfo(
@@ -867,8 +875,6 @@ final Map<String, ReactionInfo> reactions = {
     description: 'White curdy AgCl precipitate. Test for chloride.',
     products: ['AgCl', 'KNO3'],
     precipitate: true,
-    
-  
         precipitateColor: Color(0xFFFFFFFF),
       ),
   'kno3+heat': const ReactionInfo(
@@ -920,7 +926,7 @@ final Map<String, ReactionInfo> reactions = {
     description: 'White gelatinous Mg(OH)2 precipitate.',
     products: ['Mg(OH)2', 'Na2SO4'],
     precipitate: true,
-    precipitateColor: Color(0xFFF5F5F5),
+    precipitateColor: Color(0xFFFFFFFF),
   ),
   'bacl2+mgso4': const ReactionInfo(
     name: 'White Precipitate (BaSO4)',
@@ -929,7 +935,7 @@ final Map<String, ReactionInfo> reactions = {
     description: 'White BaSO4 precipitate. Test for sulfate.',
     products: ['BaSO4', 'MgCl2'],
     precipitate: true,
-    precipitateColor: Color(0xFFF5F5F5),
+    precipitateColor: Color(0xFFFFFFFF),
   ),
   'hcl+na2s2o3': const ReactionInfo(
     name: 'Yellow Sulfur + SO2',
@@ -991,7 +997,7 @@ final Map<String, ReactionInfo> reactions = {
     type: 'Neutralization',
     description: 'Benzoic acid dissolves. Sodium benzoate forms.',
     products: ['C6H5COONa', 'H2O'],
-    colorChange: Color(0xFFF5F5F5),
+    colorChange: Color(0x00FFFFFF), // Audit Fix: Colorless
   ),
   'lactic+naoh': const ReactionInfo(
     name: 'Lactate Neutralization',
@@ -999,7 +1005,7 @@ final Map<String, ReactionInfo> reactions = {
     type: 'Neutralization',
     description: 'Lactic acid neutralized by base.',
     products: ['C3H5O3Na', 'H2O'],
-    colorChange: Color(0xFFF8F8F0),
+    colorChange: Color(0x00FFFFFF), // Audit Fix: Colorless
   ),
   'citric+naoh': const ReactionInfo(
     name: 'Citrate Neutralization',
@@ -1007,7 +1013,7 @@ final Map<String, ReactionInfo> reactions = {
     type: 'Neutralization',
     description: 'Triprotic citric acid neutralized.',
     products: ['Na3C6H5O7', 'H2O'],
-    colorChange: Color(0xFFF5F5F5),
+    colorChange: Color(0x00FFFFFF), // Audit Fix: Colorless
   ),
   'h2o+urea': const ReactionInfo(
     name: 'Urea Hydrolysis',
@@ -1025,6 +1031,8 @@ final Map<String, ReactionInfo> reactions = {
     description: 'Bromine color decolorized. Bromobenzene forms.',
     products: ['C6H5Br', 'HBr'],
     colorChange: Color(0xFFF5F0E8),
+        bubbles: true,
+        gasEvolution: 'HBr',
   ),
 
   // ============================================================
@@ -1058,4 +1066,3 @@ final Map<String, ReactionInfo> reactions = {
 };
 
 // ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â ... [Corrupted comment cleaned]
-

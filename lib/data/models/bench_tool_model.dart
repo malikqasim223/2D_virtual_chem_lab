@@ -1,4 +1,4 @@
-﻿part of chem_lab;
+part of chem_lab;
 
 class BenchTool {
   // === Realistic capillary action ===
@@ -32,7 +32,7 @@ const List<Chemical> allChemicals = [
   Chemical(id: 'agno3', name: 'Silver Nitrate', formula: 'AgNO3', state: 'Solid', category: 'Salts', color: Color(0xFFF0F0F0)),
   Chemical(id: 'nacl', name: 'Sodium Chloride', formula: 'NaCl', state: 'Solid', category: 'Salts', color: Color(0xFFFFFFFF)),
   Chemical(id: 'ethanol', name: 'Ethanol', formula: 'C2H5OH', state: 'Liquid', category: 'Others', color: Color(0xFFF5F8FA)),
-  Chemical(id: 'phenolphthalein', name: 'Phenolphthalein', formula: 'C20H12O4', state: 'Indicator', category: 'Others', color: Color(0xFFF8F0F8)),
+  Chemical(id: 'phenolphthalein', name: 'Phenolphthalein', formula: 'C20H14O4', state: 'Indicator', category: 'Others', color: Color(0xFFF8F0F8)),
   Chemical(id: 'nahco3', name: 'Sodium Bicarbonate', formula: 'NaHCO3', state: 'Solid', category: 'Salts', color: Color(0xFFF5F5ED)),
   Chemical(id: 'caco3', name: 'Calcium Carbonate', formula: 'CaCO3', state: 'Solid', category: 'Salts', color: Color(0xFFECECE5)),
   Chemical(id: 'na', name: 'Sodium Metal', formula: 'Na', state: 'Solid', category: 'Others', color: Color(0xFFC0C0C0)),
@@ -49,7 +49,7 @@ const List<Chemical> allChemicals = [
   Chemical(id: 'ch3cooh', name: 'Acetic Acid', formula: 'CH3COOH', state: 'Liquid', category: 'Acids', color: Color(0xFFF0E8D0)),
   Chemical(id: 'nh4oh', name: 'Ammonia Solution', formula: 'NH4OH', state: 'Liquid', category: 'Bases', color: Color(0xFFE8F4F8)),
   Chemical(id: 'i2', name: 'Iodine Solution', formula: 'I2', state: 'Liquid', category: 'Others', color: Color(0xFF4A2800)),
-  Chemical(id: 'starch', name: 'Starch', formula: 'C6H10O5', state: 'Solid', category: 'Others', color: Color(0xFFFAFAF0)),
+  Chemical(id: 'starch', name: 'Starch', formula: '(C6H10O5)n', state: 'Solid', category: 'Others', color: Color(0xFFFAFAF0)),
   // === BATCH 1 (Inter FSc) ===
   Chemical(id: 'hno3', name: 'Nitric Acid', formula: 'HNO3', state: 'Liquid', category: 'Acids', color: Color(0xFFF0E0C0)),
   Chemical(id: 'koh', name: 'Potassium Hydroxide', formula: 'KOH', state: 'Solid', category: 'Bases', color: Color(0xFFFAFAFA)),

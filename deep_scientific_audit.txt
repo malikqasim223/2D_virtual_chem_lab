@@ -1,0 +1,840 @@
+﻿### [MAIN] Key: 'UNKNOWN'
+  - Name: Neutralization
+  - Eq: HCl + NaOH -> NaCl + H2O
+  - Products: 'NaCl', 'H2O'
+  - Type: Neutralization
+  - Effects: EXOTHERMIC
+  - Colors: ColorChange:0xFFC5D8E5
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Acid-Base Neutralization
+  - Eq: H2SO4 + 2NaOH -> Na2SO4 + 2H2O
+  - Products: 'Na2SO4', 'H2O'
+  - Type: Neutralization
+  - Effects: EXOTHERMIC
+  - Colors: ColorChange:0xFFCFE0EA
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Precipitation (AgCl)
+  - Eq: AgNO3 + NaCl -> AgCl + NaNO3
+  - Products: 'AgCl', 'NaNO3'
+  - Type: Double Displacement
+  - Effects: PRECIPITATE
+  - Colors: PptColor:0xFFFFFFFF
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Precipitation (AgCl)
+  - Eq: HCl + AgNO3 -> AgCl + HNO3
+  - Products: 'AgCl', 'HNO3'
+  - Type: Double Displacement
+  - Effects: PRECIPITATE
+  - Colors: ColorChange:0xFFE8EDF2 | PptColor:0xFFFAFAFA
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Copper Hydroxide
+  - Eq: CuSO4 + 2NaOH -> Cu(OH)2 + Na2SO4
+  - Products: 'Cu(OH)2', 'Na2SO4'
+  - Type: Double Displacement
+  - Effects: PRECIPITATE
+  - Colors: ColorChange:0xFF5DADE2 | PptColor:0xFF5DADE2
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Complex
+  - Eq: CuSO4 + 2NaOH -> Cu(OH)2
+  - Products: 'Cu(OH)2', 'Na2SO4'
+  - Type: Precipitation
+  - Effects: PRECIPITATE
+  - Colors: ColorChange:0xFF4A8FB8 | PptColor:0xFF3D7FA8
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: HCl Gas Evolution
+  - Eq: NaCl + H2SO4 (conc.) -> NaHSO4 + HCl (g)
+  - Products: 'NaHSO4', 'HCl'
+  - Type: Acid-Base Displacement
+  - Effects: BUBBLES, SMOKE, GAS:HCl
+  - Colors: ColorChange:0xFFD5D8DC
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: No Reaction
+  - Eq: CuSO4 + H2SO4 -> no reaction
+  - Products: 'CuSO4', 'H2SO4'
+  - Type: None
+  - Effects: None
+  - Colors: ColorChange:0xFF3D7FA8
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Indicator - Pink
+  - Eq: NaOH + Phenolphthalein -> Pink
+  - Products: 'Phenolphthalein (pink)'
+  - Type: Indicator
+  - Effects: None
+  - Colors: ColorChange:0xFFF06292 | Start:0x00000000
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Indicator - Colorless
+  - Eq: HCl + Phenolphthalein -> Colorless
+  - Products: 'Phenolphthalein (colorless)'
+  - Type: Indicator
+  - Effects: None
+  - Colors: ColorChange:0x00000000 | End:0x00000000
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: No Reaction
+  - Eq: HCl + CuSO4 -> no reaction
+  - Products: 'HCl', 'CuSO4'
+  - Type: None
+  - Effects: None
+  - Colors: ColorChange:0xFF5B92B8
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: No Reaction
+  - Eq: HCl + NaCl -> no reaction
+  - Products: 'HCl', 'NaCl'
+  - Type: None
+  - Effects: None
+  - Colors: ColorChange:0xFFC5D5E5
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: No Reaction
+  - Eq: NaOH + NaCl -> no reaction
+  - Products: 'NaOH', 'NaCl'
+  - Type: None
+  - Effects: None
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: May form Ag2SO4 (Condition-Dependent)
+  - Eq: 2AgNO3 + CuSO4 -> Ag2SO4 (slight ppt) + Cu(NO3)2
+  - Products: 'Ag2SO4', 'Cu(NO3)2'
+  - Type: Precipitation
+  - Effects: PRECIPITATE
+  - Colors: ColorChange:0xFF4B87B0 | PptColor:0xFFFFFFFF
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: No Reaction
+  - Eq: CuSO4 + NaCl -> no reaction
+  - Products: 'CuSO4', 'NaCl'
+  - Type: None
+  - Effects: None
+  - Colors: ColorChange:0xFF4B87B0
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: No Reaction
+  - Eq: C2H5OH + NaOH -> no reaction
+  - Products: 'C2H5OH', 'NaOH'
+  - Type: None
+  - Effects: None
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: No Reaction
+  - Eq: C2H5OH + HCl -> no reaction (room temp)
+  - Products: 'C2H5OH', 'HCl'
+  - Type: None
+  - Effects: None
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Ag2SO4 Precipitation
+  - Eq: H2SO4 + 2AgNO3 -> Ag2SO4 + 2HNO3
+  - Products: 'Ag2SO4', 'HNO3'
+  - Type: Double Displacement
+  - Effects: PRECIPITATE
+  - Colors: ColorChange:0xFFE0E5EC | PptColor:0xFFEDEDED
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Brown Precipitate (Ag2O)
+  - Eq: 2AgNO3 + 2NaOH -> Ag2O + 2NaNO3 + H2O
+  - Products: 'Ag2O', 'NaNO3', 'H2O'
+  - Type: Precipitation
+  - Effects: PRECIPITATE, SMOKE, EXOTHERMIC
+  - Colors: PptColor:0xFF5D4037
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Sodium + Water (Vigorous)
+  - Eq: 2Na + 2H2O -> 2NaOH + H2 + heat
+  - Products: 'NaOH', 'H2'
+  - Type: Explosive
+  - Effects: BUBBLES, SMOKE, VIOLENT, EXOTHERMIC
+  - Colors: End:0xFFE0F7FA
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Magnesium + Water
+  - Eq: Mg + 2H2O -> Mg(OH)2 + H2
+  - Products: 'Mg(OH)2', 'H2'
+  - Type: Metal + Water
+  - Effects: BUBBLES, SMOKE, EXOTHERMIC, NEEDS-HEAT
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: VIOLENT: Sodium + HCl
+  - Eq: 2Na + 2HCl -> 2NaCl + H2 + heat
+  - Products: 'NaCl', 'H2'
+  - Type: Explosive
+  - Effects: BUBBLES, SMOKE, VIOLENT, EXOTHERMIC
+  - Colors: End:0xFFF5F5F5
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Magnesium + HCl
+  - Eq: Mg + 2HCl -> MgCl2 + H2
+  - Products: 'MgCl2', 'H2'
+  - Type: Metal + Acid
+  - Effects: BUBBLES, SMOKE, EXOTHERMIC
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: VIOLENT: Sodium + H2SO4
+  - Eq: 2Na + H2SO4 -> Na2SO4 + H2 + heat
+  - Products: 'Na2SO4', 'H2'
+  - Type: Explosive
+  - Effects: BUBBLES, SMOKE, VIOLENT, EXOTHERMIC
+  - Colors: End:0xFFF0F4C3
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Magnesium + H2SO4
+  - Eq: Mg + H2SO4 -> MgSO4 + H2
+  - Products: 'MgSO4', 'H2'
+  - Type: Metal + Acid
+  - Effects: BUBBLES, SMOKE, EXOTHERMIC
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Golden Rain (Lead Iodide)
+  - Eq: 2KI + Pb(NO3)2 -> PbI2 (ppt) + 2KNO3
+  - Products: 'PbI2', 'KNO3'
+  - Type: Precipitation
+  - Effects: PRECIPITATE
+  - Colors: ColorChange:0xFFFFEB3B | Start:0xFFFFFDE7 | End:0xFFFFF176 | PptColor:0xFFFFD700
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Copper + Silver Nitrate
+  - Eq: Cu + 2AgNO3 -> Cu(NO3)2 + 2Ag
+  - Products: 'Cu(NO3)2', 'Ag'
+  - Type: Single Displacement
+  - Effects: None
+  - Colors: ColorChange:0xFF42A5F5 | PptColor:0xFFE0E0E0
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Zinc Displacement
+  - Eq: Zn + CuSO4 -> ZnSO4 + Cu
+  - Products: 'ZnSO4', 'Cu'
+  - Type: Single Displacement
+  - Effects: PRECIPITATE
+  - Colors: ColorChange:0xFFEEF6FA | PptColor:0xFFB87333
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Iron Displacement
+  - Eq: Fe + CuSO4 -> FeSO4 + Cu
+  - Products: 'FeSO4', 'Cu'
+  - Type: Single Displacement
+  - Effects: PRECIPITATE
+  - Colors: ColorChange:0xFFDCEDC8 | PptColor:0xFFB87333
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Purple Fades (KMnO4 + H2O2)
+  - Eq: 2KMnO4 + 5H2O2 + 3H2SO4 -> K2SO4 + 2MnSO4 + 5O2 + 8H2O
+  - Products: 'MnSO4', 'O2'
+  - Type: Redox
+  - Effects: BUBBLES, EXOTHERMIC, NEEDS-ACID, GAS:O2
+  - Colors: ColorChange:0xFFFFFDE7 | Start:0xFF9C27B0
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Elephant Toothpaste (with soap)
+  - Eq: 2H2O2 ->(KI catalyst) 2H2O + O2
+  - Products: 'H2O', 'O2'
+  - Type: Catalytic Decomposition
+  - Effects: BUBBLES, FOAM, EXOTHERMIC, GAS:O2
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Zinc + Hydrochloric Acid
+  - Eq: Zn + 2HCl -> ZnCl2 + H2
+  - Products: 'ZnCl2', 'H2'
+  - Type: Single Displacement
+  - Effects: BUBBLES, EXOTHERMIC, GAS:H2
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Iron + Hydrochloric Acid
+  - Eq: Fe + 2HCl -> FeCl2 + H2
+  - Products: 'FeCl2', 'H2'
+  - Type: Single Displacement
+  - Effects: BUBBLES, GAS:H2
+  - Colors: ColorChange:0xFF66BB6A
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Baking Soda + HCl
+  - Eq: NaHCO3 + HCl -> NaCl + H2O + CO2
+  - Products: 'NaCl', 'H2O', 'CO2'
+  - Type: Gas Evolution
+  - Effects: BUBBLES, GAS:CO2
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Marble + HCl (Volcano)
+  - Eq: CaCO3 + 2HCl -> CaCl2 + H2O + CO2
+  - Products: 'CaCl2', 'H2O', 'CO2'
+  - Type: Gas Evolution
+  - Effects: BUBBLES, GAS:CO2
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Barium Sulfate Precipitate
+  - Eq: BaCl2 + CuSO4 -> BaSO4 + CuCl2
+  - Products: 'BaSO4', 'CuCl2'
+  - Type: Precipitation
+  - Effects: PRECIPITATE
+  - Colors: ColorChange:0xFF9BB8D0 | PptColor:0xFFF5F5F5
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Vinegar + Baking Soda
+  - Eq: CH3COOH + NaHCO3 -> CH3COONa + H2O + CO2
+  - Products: 'CH3COONa', 'H2O', 'CO2'
+  - Type: Gas Evolution
+  - Effects: BUBBLES, GAS:CO2
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Ammonium Chloride (Neutralization)
+  - Eq: HCl + NH4OH -> NH4Cl + H2O
+  - Products: 'NH4Cl', 'H2O'
+  - Type: Neutralization
+  - Effects: EXOTHERMIC
+  - Colors: ColorChange:0xFFE8E8E8
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Two-Stage: Blue ppt â†’ Deep Blue Complex
+  - Eq: CuSO4 + 2NH4OH -> Cu(OH)2 ppt + (NH4)2SO4; Cu(OH)2 + 4NH3 (excess) -> [Cu(NH3)4](OH)2
+  - Products: '[Cu(NH3)4
+  - Type: Complex Formation
+  - Effects: PRECIPITATE
+  - Colors: ColorChange:0xFF1A237E | Start:0xFF1E88E5 | End:0xFF0D47A1 | PptColor:0xFF283593
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Iodine-Starch Test
+  - Eq: I2 + Starch -> Blue-Black Complex
+  - Products: 'Iodine-Starch complex'
+  - Type: Complex Formation
+  - Effects: None
+  - Colors: ColorChange:0xFF1A1A2E
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: BaSO4 Precipitate
+  - Eq: H2SO4 + BaCl2 -> BaSO4 + 2HCl
+  - Products: 'BaSO4', 'HCl'
+  - Type: Precipitation
+  - Effects: PRECIPITATE
+  - Colors: PptColor:0xFFFFFFFF
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: AgCl Precipitate
+  - Eq: 2AgNO3 + BaCl2 -> 2AgCl + Ba(NO3)2
+  - Products: 'AgCl', 'Ba(NO3)2'
+  - Type: Precipitation
+  - Effects: PRECIPITATE
+  - Colors: PptColor:0xFFFFFFFF
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Neutralization (HNO3)
+  - Eq: HNO3 + NaOH -> NaNO3 + H2O
+  - Products: 'NaNO3', 'H2O'
+  - Type: Neutralization
+  - Effects: EXOTHERMIC
+  - Colors: ColorChange:0xFFD5E0E5
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Brown Gas (NO2)
+  - Eq: Cu + 4HNO3 (conc.) -> Cu(NO3)2 + 2NO2 + 2H2O
+  - Products: 'Cu(NO3)2', 'NO2', 'H2O'
+  - Type: Redox
+  - Effects: SMOKE, GAS:NO2
+  - Colors: ColorChange:0xFF42A5F5
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Fizzing (CO2)
+  - Eq: 2HNO3 + CaCO3 -> Ca(NO3)2 + H2O + CO2
+  - Products: 'Ca(NO3)2', 'H2O', 'CO2'
+  - Type: Acid-Carbonate
+  - Effects: BUBBLES, GAS:CO2
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Neutralization (KOH)
+  - Eq: KOH + HCl -> KCl + H2O
+  - Products: 'KCl', 'H2O'
+  - Type: Neutralization
+  - Effects: EXOTHERMIC
+  - Colors: ColorChange:0xFFD5E0E5
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Blue Precipitate
+  - Eq: CuSO4 + 2KOH -> Cu(OH)2 + K2SO4
+  - Products: 'Cu(OH)2', 'K2SO4'
+  - Type: Double Displacement
+  - Effects: PRECIPITATE
+  - Colors: PptColor:0xFF5DADE2
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Milky (Limewater Test)
+  - Eq: Ca(OH)2 + CO2 -> CaCO3 + H2O
+  - Products: 'CaCO3', 'H2O'
+  - Type: Precipitation
+  - Effects: PRECIPITATE
+  - Colors: ColorChange:0xFFFAFAFA | PptColor:0xFFF5F5F5
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Neutralization (Ca(OH)2)
+  - Eq: Ca(OH)2 + 2HCl -> CaCl2 + 2H2O
+  - Products: 'CaCl2', 'H2O'
+  - Type: Neutralization
+  - Effects: EXOTHERMIC
+  - Colors: ColorChange:0xFFE8F0F0
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Vigorous Fizz
+  - Eq: Na2CO3 + 2HCl -> 2NaCl + H2O + CO2
+  - Products: 'NaCl', 'H2O', 'CO2'
+  - Type: Acid-Carbonate
+  - Effects: BUBBLES, GAS:CO2
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: White Precipitate
+  - Eq: Na2CO3 + CaCl2 -> CaCO3 + 2NaCl
+  - Products: 'CaCO3', 'NaCl'
+  - Type: Precipitation
+  - Effects: PRECIPITATE
+  - Colors: PptColor:0xFFF5F5F5
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Orange to Yellow
+  - Eq: K2Cr2O7 + 2KOH -> 2K2CrO4 + H2O
+  - Products: 'K2CrO4', 'H2O'
+  - Type: Redox
+  - Effects: None
+  - Colors: ColorChange:0xFFFFEB3B
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Orange to Green (Breathalyzer)
+  - Eq: 2K2Cr2O7 + 8H2SO4 + 3C2H5OH -> 2Cr2(SO4)3 + 3CH3COOH + 2K2SO4 + 11H2O
+  - Products: 'Cr2(SO4)3'
+  - Type: Oxidation
+  - Effects: None
+  - Colors: ColorChange:0xFF2E7D32
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Dirty Green Precipitate
+  - Eq: FeSO4 + 2NaOH -> Fe(OH)2 + Na2SO4
+  - Products: 'Fe(OH)2', 'Na2SO4'
+  - Type: Precipitation
+  - Effects: PRECIPITATE
+  - Colors: PptColor:0xFF2E7D32
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: White Precipitate (BaSO4)
+  - Eq: FeSO4 + BaCl2 -> BaSO4 + FeCl2
+  - Products: 'BaSO4', 'FeCl2'
+  - Type: Precipitation
+  - Effects: PRECIPITATE
+  - Colors: PptColor:0xFFFFFFFF
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Hydrogen Gas (Al)
+  - Eq: 2Al + 6HCl -> 2AlCl3 + 3H2
+  - Products: 'AlCl3', 'H2'
+  - Type: Single Displacement
+  - Effects: BUBBLES, GAS:H2
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Amphoteric Reaction
+  - Eq: 2Al + 2NaOH + 2H2O -> 2NaAlO2 + 3H2
+  - Products: 'NaAlO2', 'H2'
+  - Type: Amphoteric
+  - Effects: BUBBLES, GAS:H2
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: White Gelatinous Precipitate
+  - Eq: AlCl3 + 3NaOH -> Al(OH)3 + 3NaCl
+  - Products: 'Al(OH)3', 'NaCl'
+  - Type: Precipitation
+  - Effects: PRECIPITATE
+  - Colors: PptColor:0xFFF5F5F5
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Ammonia Gas Released
+  - Eq: NH4Cl + NaOH -> NaCl + NH3 + H2O
+  - Products: 'NaCl', 'NH3', 'H2O'
+  - Type: Gas Evolution
+  - Effects: GAS:NH3
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Oxalic Neutralization
+  - Eq: H2C2O4 + 2NaOH -> Na2C2O4 + 2H2O
+  - Products: 'Na2C2O4', 'H2O'
+  - Type: Neutralization
+  - Effects: EXOTHERMIC
+  - Colors: ColorChange:0xFFE8E8E8
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: White Oxalate Precipitate
+  - Eq: H2C2O4 + CaCl2 -> CaC2O4 + 2HCl
+  - Products: 'CaC2O4', 'HCl'
+  - Type: Precipitation
+  - Effects: PRECIPITATE
+  - Colors: PptColor:0xFFF5F5F5
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Phosphate Neutralization
+  - Eq: H3PO4 + 3NaOH -> Na3PO4 + 3H2O
+  - Products: 'Na3PO4', 'H2O'
+  - Type: Neutralization
+  - Effects: EXOTHERMIC
+  - Colors: ColorChange:0xFFE8F0F0
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Yellow Phosphate Precipitate
+  - Eq: H3PO4 + 3AgNO3 -> Ag3PO4 + 3HNO3
+  - Products: 'Ag3PO4', 'HNO3'
+  - Type: Precipitation
+  - Effects: PRECIPITATE
+  - Colors: PptColor:0xFFFFEB3B
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Formate Neutralization
+  - Eq: HCOOH + NaOH -> HCOONa + H2O
+  - Products: 'HCOONa', 'H2O'
+  - Type: Neutralization
+  - Effects: EXOTHERMIC
+  - Colors: ColorChange:0xFFE8F0F0
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Fizz (CO2)
+  - Eq: 2HCOOH + Na2CO3 -> 2HCOONa + H2O + CO2
+  - Products: 'HCOONa', 'H2O', 'CO2'
+  - Type: Acid-Carbonate
+  - Effects: BUBBLES, GAS:CO2
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: VIOLENT: Potassium + Water
+  - Eq: 2K + 2H2O -> 2KOH + H2 + heat
+  - Products: 'KOH', 'H2'
+  - Type: Alkali Metal
+  - Effects: BUBBLES, SMOKE, VIOLENT, EXOTHERMIC, GAS:H2
+  - Colors: End:0xFFE1BEE7
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Calcium + Water
+  - Eq: Ca + 2H2O -> Ca(OH)2 + H2
+  - Products: 'Ca(OH)2', 'H2'
+  - Type: Alkaline Earth
+  - Effects: BUBBLES, GAS:H2
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Hydrogen Gas (Ca)
+  - Eq: Ca + 2HCl -> CaCl2 + H2
+  - Products: 'CaCl2', 'H2'
+  - Type: Single Displacement
+  - Effects: BUBBLES, GAS:H2
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Slow Bubbles (Pb)
+  - Eq: Pb + 2HCl -> PbCl2 + H2
+  - Products: 'PbCl2', 'H2'
+  - Type: Single Displacement
+  - Effects: BUBBLES, GAS:H2
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Silver Crystals (Pb)
+  - Eq: Pb + 2AgNO3 -> Pb(NO3)2 + 2Ag
+  - Products: 'Pb(NO3)2', 'Ag'
+  - Type: Single Displacement
+  - Effects: PRECIPITATE
+  - Colors: ColorChange:0xFFF5F5F5 | PptColor:0xFFE0E0E0
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Silver Dissolves
+  - Eq: Ag + 2HNO3 (conc.) -> AgNO3 + NO2 + H2O
+  - Products: 'AgNO3', 'NO2', 'H2O'
+  - Type: Redox
+  - Effects: SMOKE, GAS:NO2
+  - Colors: ColorChange:0xFF42A5F5
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: White Precipitate (Zn)
+  - Eq: ZnSO4 + 2NaOH -> Zn(OH)2 + Na2SO4
+  - Products: 'Zn(OH)2', 'Na2SO4'
+  - Type: Precipitation
+  - Effects: PRECIPITATE
+  - Colors: PptColor:0xFFF5F5F5
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: White Precipitate (BaSO4)
+  - Eq: ZnSO4 + BaCl2 -> BaSO4 + ZnCl2
+  - Products: 'BaSO4', 'ZnCl2'
+  - Type: Precipitation
+  - Effects: PRECIPITATE
+  - Colors: PptColor:0xFFF5F5F5
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Blue Precipitate (CuCl2)
+  - Eq: CuCl2 + 2NaOH -> Cu(OH)2 + 2NaCl
+  - Products: 'Cu(OH)2', 'NaCl'
+  - Type: Precipitation
+  - Effects: PRECIPITATE
+  - Colors: PptColor:0xFF1A4D70
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Copper Displaced
+  - Eq: CuCl2 + Zn -> ZnCl2 + Cu
+  - Products: 'ZnCl2', 'Cu'
+  - Type: Single Displacement
+  - Effects: PRECIPITATE
+  - Colors: ColorChange:0xFFEEF6FA | PptColor:0xFFB87333
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Brown Precipitate (Fe)
+  - Eq: FeCl3 + 3NaOH -> Fe(OH)3 + 3NaCl
+  - Products: 'Fe(OH)3', 'NaCl'
+  - Type: Precipitation
+  - Effects: PRECIPITATE
+  - Colors: PptColor:0xFF8D6E63
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Brown Precipitate (NH4OH)
+  - Eq: FeCl3 + 3NH4OH -> Fe(OH)3 + 3NH4Cl
+  - Products: 'Fe(OH)3', 'NH4Cl'
+  - Type: Precipitation
+  - Effects: PRECIPITATE
+  - Colors: PptColor:0xFF5D4037
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Silver Crystals (Fe)
+  - Eq: Fe + 2AgNO3 -> Fe(NO3)2 + 2Ag
+  - Products: 'Fe(NO3)2', 'Ag'
+  - Type: Single Displacement
+  - Effects: PRECIPITATE
+  - Colors: ColorChange:0xFFBDBDBD | PptColor:0xFFE0E0E0
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: White Precipitate (AgCl)
+  - Eq: KCl + AgNO3 -> AgCl + KNO3
+  - Products: 'AgCl', 'KNO3'
+  - Type: Precipitation
+  - Effects: PRECIPITATE
+  - Colors: PptColor:0xFFFFFFFF
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Decomposition (O2)
+  - Eq: 2KNO3 -> 2KNO2 + O2 (heat)
+  - Products: 'KNO2', 'O2'
+  - Type: Decomposition
+  - Effects: BUBBLES, NEEDS-HEAT, GAS:O2
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Lime Burning (CaO)
+  - Eq: CaCO3 -> CaO + CO2 (heat)
+  - Products: 'CaO', 'CO2'
+  - Type: Decomposition
+  - Effects: BUBBLES, NEEDS-HEAT, GAS:CO2
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Baking Soda Decomposition
+  - Eq: 2NaHCO3 -> Na2CO3 + H2O + CO2 (heat)
+  - Products: 'Na2CO3', 'H2O', 'CO2'
+  - Type: Decomposition
+  - Effects: BUBBLES, NEEDS-HEAT, GAS:CO2
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Silver Nitrate Decomposition
+  - Eq: 2AgNO3 -> 2Ag + 2NO2 + O2 (heat)
+  - Products: 'Ag', 'NO2', 'O2'
+  - Type: Decomposition
+  - Effects: SMOKE, NEEDS-HEAT, GAS:NO2
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: White Precipitate (Mg)
+  - Eq: MgSO4 + 2NaOH -> Mg(OH)2 + Na2SO4
+  - Products: 'Mg(OH)2', 'Na2SO4'
+  - Type: Precipitation
+  - Effects: PRECIPITATE
+  - Colors: PptColor:0xFFF5F5F5
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: White Precipitate (BaSO4)
+  - Eq: MgSO4 + BaCl2 -> BaSO4 + MgCl2
+  - Products: 'BaSO4', 'MgCl2'
+  - Type: Precipitation
+  - Effects: PRECIPITATE
+  - Colors: PptColor:0xFFF5F5F5
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Yellow Sulfur + SO2
+  - Eq: Na2S2O3 + 2HCl -> 2NaCl + H2O + SO2 + S
+  - Products: 'NaCl', 'H2O', 'SO2', 'S'
+  - Type: Double Displacement
+  - Effects: BUBBLES, PRECIPITATE, GAS:SO2
+  - Colors: PptColor:0xFFFFEB3B
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Iodometric Titration
+  - Eq: 2Na2S2O3 + I2 -> Na2S4O6 + 2NaI
+  - Products: 'Na2S4O6', 'NaI'
+  - Type: Redox
+  - Effects: None
+  - Colors: ColorChange:0xFFF0F0F0
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Iodoform Test (Yellow)
+  - Eq: CH3COCH3 + 3I2 + 4NaOH -> CHI3 + 3NaI + 3H2O + CH3COONa
+  - Products: 'CHI3', 'NaI', 'CH3COONa'
+  - Type: Haloform Reaction
+  - Effects: PRECIPITATE
+  - Colors: PptColor:0xFFFFEB3B
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Purple Complex (Phenol Test)
+  - Eq: C6H5OH + FeCl3 -> [Fe(C6H5O)6]3- + H+ (purple)
+  - Products: 'Fe-phenoxide complex'
+  - Type: Complex Formation
+  - Effects: None
+  - Colors: ColorChange:0xFF7B1FA2
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: White Precipitate (2,4,6-Tribromophenol)
+  - Eq: C6H5OH + 3Br2 -> C6H2Br3OH + 3HBr
+  - Products: 'C6H2Br3OH', 'HBr'
+  - Type: Electrophilic Substitution
+  - Effects: PRECIPITATE
+  - Colors: PptColor:0xFFFFFFFF
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Black Charring
+  - Eq: C12H22O11 + H2SO4 -> 12C + 11H2O + heat
+  - Products: 'C', 'H2O'
+  - Type: Dehydration
+  - Effects: EXOTHERMIC
+  - Colors: ColorChange:0xFF000000
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Benzoate Neutralization
+  - Eq: C6H5COOH + NaOH -> C6H5COONa + H2O
+  - Products: 'C6H5COONa', 'H2O'
+  - Type: Neutralization
+  - Effects: None
+  - Colors: ColorChange:0xFFF5F5F5
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Lactate Neutralization
+  - Eq: C3H6O3 + NaOH -> C3H5O3Na + H2O
+  - Products: 'C3H5O3Na', 'H2O'
+  - Type: Neutralization
+  - Effects: None
+  - Colors: ColorChange:0xFFF8F8F0
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Citrate Neutralization
+  - Eq: C6H8O7 + 3NaOH -> Na3C6H5O7 + 3H2O
+  - Products: 'Na3C6H5O7', 'H2O'
+  - Type: Neutralization
+  - Effects: None
+  - Colors: ColorChange:0xFFF5F5F5
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Urea Hydrolysis
+  - Eq: CO(NH2)2 + H2O -> 2NH3 + CO2 (urease)
+  - Products: 'NH3', 'CO2'
+  - Type: Hydrolysis
+  - Effects: GAS:NH3
+  - Colors: NoColorSet
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: Bromobenzene (Substitution)
+  - Eq: C6H6 + Br2 (FeBr3) -> C6H5Br + HBr
+  - Products: 'C6H5Br', 'HBr'
+  - Type: Electrophilic Substitution
+  - Effects: BUBBLES, GAS:HBr
+  - Colors: ColorChange:0xFFF5F0E8
+
+### [MAIN] Key: 'UNKNOWN'
+  - Name: PURPLE FIRE BLAST
+  - Eq: 14KMnO4 + 4C3H5(OH)3 -> 7K2CO3 + 7Mn2O3 + 5CO2 + 16H2O
+  - Products: 'K2CO3', 'Mn2O3', 'CO2', 'H2O'
+  - Type: Spontaneous Combustion
+  - Effects: BUBBLES, SMOKE, VIOLENT, EXOTHERMIC
+  - Colors: ColorChange:0xFF9C27B0 | Start:0xFF9C27B0 | End:0xFF4A148C
+
+### [MULTI] Key: 'UNKNOWN'
+  - Name: Titration Endpoint
+  - Eq: HCl + NaOH + Phenolphthalein -> Pink
+  - Products: 'NaCl', 'H2O', 'Pink indicator'
+  - Type: Titration
+  - Effects: None
+  - Colors: ColorChange:0xFFE91E63
+
+### [MULTI] Key: 'UNKNOWN'
+  - Name: Competitive Precipitation
+  - Eq: AgNO3 + NaCl -> AgCl + NaNO3 (favored)
+  - Products: 'AgCl', 'NaNO3', 'CuSO4'
+  - Type: Selective Precipitation
+  - Effects: PRECIPITATE
+  - Colors: ColorChange:0xFF9BB8D0 | PptColor:0xFFF0F0F0
+
+### [MULTI] Key: 'UNKNOWN'
+  - Name: Sequential Neutralization
+  - Eq: HCl + NaOH -> NaCl; CuSO4 + 2NaOH -> Cu(OH)2
+  - Products: 'NaCl', 'Cu(OH)2', 'H2O'
+  - Type: Multi-step
+  - Effects: PRECIPITATE, EXOTHERMIC
+  - Colors: PptColor:0xFF3D7FA8
+
+### [MULTI] Key: 'UNKNOWN'
+  - Name: Complex Precipitation
+  - Eq: H2SO4 + 2NaOH -> Na2SO4; CuSO4 + 2NaOH -> Cu(OH)2
+  - Products: 'Na2SO4', 'Cu(OH)2', 'H2O'
+  - Type: Multi-step
+  - Effects: PRECIPITATE, EXOTHERMIC
+  - Colors: PptColor:0xFF3D7FA8
+
+### [MULTI] Key: 'UNKNOWN'
+  - Name: Neutralization with spectator
+  - Eq: HCl + NaOH -> NaCl + H2O
+  - Products: 'NaCl', 'H2O'
+  - Type: Neutralization
+  - Effects: EXOTHERMIC
+  - Colors: ColorChange:0xFFC5D8E5
+
+### [MULTI] Key: 'UNKNOWN'
+  - Name: Neutralization (Phenolphthalein)
+  - Eq: HCl + NaOH + Phenolphthalein -> NaCl + H2O (Pink to Colorless)
+  - Products: 'NaCl', 'H2O'
+  - Type: Neutralization
+  - Effects: None
+  - Colors: ColorChange:0x00FFFFFF | Start:0xFFE91E63 | End:0x00FFFFFF
+
+### [MULTI] Key: 'UNKNOWN'
+  - Name: Copper Complex Dissolves
+  - Eq: Cu(OH)2 + 2HCl -> CuCl2 + 2H2O
+  - Products: 'CuCl2', 'H2O'
+  - Type: Acid Dissolution
+  - Effects: None
+  - Colors: ColorChange:0xFF4CAF50 | Start:0xFF5DADE2 | End:0xFF4CAF50
+
+### [MULTI] Key: 'UNKNOWN'
+  - Name: Silver Complex Formation
+  - Eq: AgCl + 2NH4OH -> [Ag(NH3)2]Cl + 2H2O
+  - Products: '[Ag(NH3)2
+  - Type: Complexation
+  - Effects: None
+  - Colors: ColorChange:0x00FFFFFF | Start:0xFFFFFFFF | End:0x00FFFFFF
+
