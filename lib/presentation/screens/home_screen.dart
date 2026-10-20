@@ -1029,8 +1029,34 @@ class ReactionDetailPage extends StatelessWidget {
     );
   }
 }
-class HistoryScreen extends StatelessWidget {
+class HistoryScreen extends StatefulWidget {
   const HistoryScreen({super.key});
+  @override
+  State<HistoryScreen> createState() => _HistoryScreenState();
+}
+
+class _HistoryScreenState extends State<HistoryScreen> {
+  List<dynamic> _history = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadHistory();
+  }
+
+  Future<void> _loadHistory() async {
+    final data = await LabHistoryService.loadHistory();
+    setState(() {
+      _history = data;
+      _isLoading = false;
+    });
+  }
+
+  Future<void> _clearHistory() async {
+    await LabHistoryService.clearHistory();
+    _loadHistory();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -1039,27 +1065,106 @@ class HistoryScreen extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: LC.panel,
         iconTheme: const IconThemeData(color: LC.text),
-        title: const Text('History', style: TextStyle(color: LC.text)),
+        title: const Text('Experiment History', style: TextStyle(color: LC.text)),
         elevation: 0,
+        actions: [
+          if (_history.isNotEmpty)
+            IconButton(
+              icon: const Icon(Icons.delete_outline, color: Colors.redAccent),
+              onPressed: _clearHistory,
+              tooltip: 'Clear All History',
+            )
+        ],
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.history, size: 64, color: LC.textDim),
-            const SizedBox(height: 20),
-            const Text(
-              'Experiment History',
-              style: TextStyle(fontSize: 22, fontWeight: FontWeight.w600, color: LC.text),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'No past experiments yet',
-              style: TextStyle(fontSize: 14, color: LC.textSub),
-            ),
-          ],
-        ),
-      ),
+      body: _isLoading
+          ? const Center(child: CircularProgressIndicator(color: LC.accentBright))
+          : _history.isEmpty
+              ? Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.history, size: 64, color: LC.textDim),
+                      const SizedBox(height: 16),
+                      const Text('No experiments saved yet.', style: TextStyle(color: LC.textSub, fontSize: 16)),
+                      const SizedBox(height: 8),
+                      const Text('Go to Lab, do an experiment, and press Save.', style: TextStyle(color: LC.textDim, fontSize: 12)),
+                    ],
+                  ),
+                )
+              : ListView.builder(
+                  padding: const EdgeInsets.all(16),
+                  itemCount: _history.length,
+                  itemBuilder: (ctx, i) {
+                    final item = _history[i];
+                    final date = DateTime.parse(item['date']).toLocal();
+                    final eqList = item['equipment'] as List;
+
+                    return Container(
+                      margin: const EdgeInsets.only(bottom: 12),
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: LC.panel,
+                        borderRadius: BorderRadius.circular(12),
+                        border: Border.all(color: LC.border),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Text(
+                                'Experiment #${_history.length - i}',
+                                style: const TextStyle(color: LC.accentBright, fontSize: 14, fontWeight: FontWeight.bold),
+                              ),
+                              Text(
+                                '${date.day}/${date.month}/${date.year} - ${date.hour}:${date.minute.toString().padLeft(2, '0')}',
+                                style: const TextStyle(color: LC.textDim, fontSize: 11),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 12),
+                          ...eqList.asMap().entries.map((e) {
+                            final eq = e.value;
+                            final layers = eq['layers'] as List;
+                            if (layers.isEmpty) return const SizedBox.shrink();
+                            
+                            return Padding(
+                              padding: const EdgeInsets.only(bottom: 8),
+                              child: Row(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Icon(Icons.science, size: 16, color: LC.textSub),
+                                  const SizedBox(width: 8),
+                                  Expanded(
+                                    child: Wrap(
+                                      spacing: 6,
+                                      runSpacing: 4,
+                                      children: layers.map((l) {
+                                        return Container(
+                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                          decoration: BoxDecoration(
+                                            color: LC.panelElev,
+                                            borderRadius: BorderRadius.circular(4),
+                                            border: Border.all(color: LC.borderSoft),
+                                          ),
+                                          child: Text(
+                                            '${l['chemId']} (${l['volume']} mL)',
+                                            style: const TextStyle(color: LC.text, fontSize: 11),
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            );
+                          }).toList(),
+                        ],
+                      ),
+                    );
+                  },
+                ),
     );
   }
 }

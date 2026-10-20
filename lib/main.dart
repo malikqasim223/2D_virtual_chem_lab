@@ -1,4 +1,6 @@
 library chem_lab;
+import 'dart:convert';
+import 'dart:io';
 
 import 'dart:async';
 import 'dart:math';
@@ -38,6 +40,7 @@ part 'data/models/molecule_model.dart';
 
 part 'services/chemistry/ph_calculator.dart';
 part 'services/chemistry/lab_ph_service.dart';
+part 'services/chemistry/lab_history_service.dart';
 part 'presentation/widgets/lab/ph_color_book.dart';
 part 'presentation/widgets/lab/litmus_color_book.dart';
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();

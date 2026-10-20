@@ -76,6 +76,17 @@ class EquipItem {
     layers.clear();
     effects.clear();
     temperature = 25.0;
+    targetTemp = 25.0;
+    pourAnim = 0.0;
+    sloshAmp = 0.0;
+    reactionProgress = 0.0;
+    foamRamp = 0.0;
+    reactionComplete = false;
+    stripColorProgress = 0.0;
+    pourColor = Colors.transparent;
+    wasHeated = false;
+    activeHeatingEffect = null;
+    reaction = null;
   }
 }
 

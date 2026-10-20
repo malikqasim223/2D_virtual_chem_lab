@@ -1,4 +1,4 @@
-﻿part of chem_lab;
+part of chem_lab;
 
 class LabPhService {
   /// Reaction products → pH mapping
@@ -98,9 +98,9 @@ class LabPhService {
         .fold(0.0, (a, b) => a + b.volume);
       
       final baseVol = eq.layers.where((l) =>
-        l.chemId == 'NaOH' || l.chemId == 'KOH' || l.chemId == 'LiOH' ||
-        l.chemId == 'Ba(OH)2' || l.chemId == 'Ca(OH)2' ||
-        l.chemId == 'NH4OH' || l.chemId == 'NH3')
+        l.chemId.toLowerCase() == 'naoh' || l.chemId.toLowerCase() == 'koh' || l.chemId.toLowerCase() == 'lioh' ||
+        l.chemId.toLowerCase() == 'baoh2' || l.chemId.toLowerCase() == 'caoh2' ||
+        l.chemId.toLowerCase() == 'nh4oh' || l.chemId.toLowerCase() == 'nh3')
         .fold(0.0, (a, b) => a + b.volume);
 
       final diff = acidVol - baseVol;
