@@ -63,7 +63,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
       _time += 0.033;
       bool needs = false;
       for (final eq in equipment) {
-        // Strip color animation — slow capillary action (like real lab)
+        // Strip color animation ÃƒÂ¢â€šÂ¬â‚¬Â slow capillary action (like real lab)
         if (eq.effects.contains(LabEffect.litmus) || eq.effects.contains(LabEffect.phPaper)) {
           if (eq.stripColorProgress < 1.0 && eq.layers.isNotEmpty) {
             eq.stripColorProgress = (eq.stripColorProgress + 0.006).clamp(0.0, 1.0);
@@ -93,11 +93,11 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
           final hasReaction = reactions.containsKey(myKey) || multiReactions.containsKey(myKey);
           final rxnForThis = multiReactions[myKey] ?? reactions[myKey];
           if (hasReaction && !eq.reactionComplete) {
-            // HEAT GATE â€” reactions requiring heat need Bunsen + temp >= 60C
+            // HEAT GATE ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â€šÂ¬Â reactions requiring heat need Bunsen + temp >= 60C
             final needsHeat = rxnForThis?.requiresHeat == true;
             final hasEnoughHeat = eq.isHot && eq.temperature >= 60.0;
             if (needsHeat && !hasEnoughHeat) {
-              // Heat required but not provided â€” skip for now
+              // Heat required but not provided ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â€šÂ¬Â skip for now
             } else {
               eq.reactionProgress = (eq.reactionProgress + 0.0006).clamp(0.0, 1.0);
               if (eq.reactionProgress >= 1.0) eq.reactionComplete = true;
@@ -114,7 +114,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
             if (l.isSolid && l.dissolveProgress < 1.0) {
               // Dissolve speed proportional to reaction progress
               // Reaches 1.0 when reactionProgress reaches 1.0
-              // Slow start, then steady â€” smooth
+              // Slow start, then steady ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â€šÂ¬Â smooth
               final targetDissolve = eq.reactionProgress;
               // Smoothly approach target (not instant)
               if (l.dissolveProgress < targetDissolve) {
@@ -128,13 +128,13 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
           eq.pourAnim = (eq.pourAnim - 0.022).clamp(0.0, 1.0);
           needs = true;
         }
-        // FOAM RAMP â€” outside pourAnim check (independent, runs after pour)
+        // FOAM RAMP ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â€šÂ¬Â outside pourAnim check (independent, runs after pour)
         if (eq.pourAnim == 0.0 && eq.foamRamp < 1.0) {
           eq.foamRamp = (eq.foamRamp + 0.008).clamp(0.0, 1.0); // ~2s smooth rise
           needs = true;
         }
 
-        // Tools ka continuous animation ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â‚¬Å¾Ã‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¦ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â stirrer/thermo/dropper/ice chalta rahe
+        // Tools ka continuous animation ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â‚¬Å¾Â¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€šÂ ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¾Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¬ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¾ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â‚¬Å¾Â¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¬ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’â‚¬Â¦Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¬ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’â‚¬Â¦Ãƒâ€šÂ¾ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â‚¬Å¾Â¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€šÂ ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¾Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’â‚¬Â¦Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¬ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€šÂ¦ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â‚¬Å¾Â¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¬ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â¦ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’â‚¬Â¦Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â‚¬Å¾Â¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€šÂ ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¾Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¬ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¾ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â‚¬Å¾Â¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¬ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â¦ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’â‚¬Â¦Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â‚¬Å¾Â¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€šÂ ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¾Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’â‚¬Â¦Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â‚¬Å¾Â¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’â‚¬Â¦Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¬ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€šÂ¦ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’â‚¬Â¦Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¬ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â‚¬Å¾Â¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¬ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¦ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’â‚¬Â¦Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â‚¬Å¾Â¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€šÂ ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¾Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’â‚¬Â¦Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¬ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€šÂ¦ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â‚¬Å¾Â¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¬ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â¦ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’â‚¬Â¦Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¬ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â‚¬Å¾Â¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€šÂ ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¾Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¬ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¾ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â‚¬Å¾Â¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¬ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â¦ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’â‚¬Â¦Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â‚¬Å¾Â¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€šÂ ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¾Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’â‚¬Â¦Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â‚¬Å¾Â¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¬ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â¦ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¬ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¦ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â‚¬Å¾Â¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¬ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â¦ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’â‚¬Â¦Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¬ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â‚¬Å¾Â¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€šÂ ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¾Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’â‚¬Â¦Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¬ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€šÂ¦ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â‚¬Å¾Â¢ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¬ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â¦ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™Ãƒâ€šÂ¢ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Ã…Â¡Ãƒâ€šÂ¬ÃƒÆ’â‚¬Â¦Ãƒâ€šÂ¡ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬Ãƒâ€¦Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Ã…Â¡ÃƒÆ’â‚¬Å¡Ãƒâ€šÂ stirrer/thermo/dropper/ice chalta rahe
         if (eq.effects.isNotEmpty) needs = true;
         // Temperature update
         if (eq.isHot || eq.isCold) {
@@ -154,7 +154,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
         }
         if (eq.isHot && eq.temperature > 60) eq.wasHeated = true;
       }
-      // CONTINUOUS ANIMATION â€” keep painting if any content visible
+      // CONTINUOUS ANIMATION ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â€šÂ¬Â keep painting if any content visible
       if (!needs) {
         for (final eq in equipment) {
           if (eq.layers.isNotEmpty || eq.effects.isNotEmpty) { needs = true; break; }
@@ -253,7 +253,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
       final delta = draggingEquip!.position - oldPos;
       // Attached tools bhi saath move karein
       for (final tool in benchTools) {
-        // Dipping tool — move dip targets with equipment         if (tool.isDipping && tool.dippedEqId == draggingEquip!.id) {           tool.dipStartPos += delta;           tool.dipTargetPos += delta;           tool.position += delta;           continue;         }
+        // Dipping tool ÃƒÂ¢â€šÂ¬â‚¬Â move dip targets with equipment         if (tool.isDipping && tool.dippedEqId == draggingEquip!.id) {           tool.dipStartPos += delta;           tool.dipTargetPos += delta;           tool.position += delta;           continue;         }
         if (tool.attachedTo == draggingEquip!.id) {
           tool.position += delta;
         }
@@ -496,10 +496,10 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
       eq.addChem(c.id, c.color, amount, isSolid: c.state == 'Solid');
       eq.pourAnim = 1.0;
       eq.pourIsLiquid = c.state == 'Liquid';
-      eq.foamRamp = 0; // Reset foam ramp â€” will grow smoothly after pour
+      eq.foamRamp = 0; // Reset foam ramp ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â€šÂ¬Â will grow smoothly after pour
       eq.pourColor = c.color;
       activeEquipId = equipId;
-      _recomputeReaction(); // Original timing â€” blast fires immediately
+      _recomputeReaction(); // Original timing ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â€šÂ¬Â blast fires immediately
       final _rxnCheck = _reactionFor(eq);
         _currentReaction = _rxnCheck;
       if (_rxnCheck != null && _rxnCheck.isViolent) {
@@ -519,7 +519,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
         animation: _shakeCtrl,
         builder: (context, child) {
           final t = _shakeCtrl.value;
-          // Shake intensity curve â€” matches flash (build up -> peak -> fade out)
+          // Shake intensity curve ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â€šÂ¬Â matches flash (build up -> peak -> fade out)
           double shakeIntensity;
           if (t < 0.40) {
             final ft = t / 0.40;
@@ -542,7 +542,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
               child: Stack(
                 children: [
                   Column(children: [
-                      _topBar(),
+                    // _topBar(), // Removed as requested
                     Expanded(
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -935,11 +935,11 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
   
   
   
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂ
   
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-  // CHEM INFO PANEL â€” reference style
-  // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
+  // ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂ
+  // CHEM INFO PANEL ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â€šÂ¬Â reference style
+  // ÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂÃƒÆ’Â¢ÃƒÂ¢â€šÂ¬Â¢Ãƒâ€šÂ
   Widget _chemInfoPanel() {
     final filtered = allChemicals.where((c) {
       if (chemInfoSearch.isEmpty) return true;
@@ -999,26 +999,38 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                   return GestureDetector(
                     onTap: () => setState(() { selectedChemInfo = c.id; chemInfoTab = 'PROPERTIES'; }),
                     child: Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
-                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      margin: const EdgeInsets.only(bottom: 6),
+                      padding: const EdgeInsets.all(10),
                       decoration: BoxDecoration(
-                        color: active ? LC.darkPanelElev : Colors.transparent,
-                        borderRadius: BorderRadius.circular(6)),
+                        color: active ? LC.darkAccent.withValues(alpha: 0.18) : LC.darkPanelElev,
+                        borderRadius: BorderRadius.circular(8),
+                        border: Border.all(
+                          color: active ? LC.darkAccent : LC.darkBorder,
+                          width: active ? 1.4 : 1.0)),
                       child: Row(children: [
-                        Container(width: 3, height: 28,
-                          decoration: BoxDecoration(color: c.color,
-                            borderRadius: BorderRadius.circular(2))),
+                        SizedBox(width: 28, height: 40,
+                          child: CustomPaint(painter: MiniBottlePainter(color: c.color, state: c.state))),
                         const SizedBox(width: 10),
-                        Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                          Text(c.formula,
-                            style: TextStyle(
-                              color: active ? LC.darkAccentBright : LC.darkText,
-                              fontSize: 13,
-                              fontWeight: FontWeight.w700)),
-                          Text(c.name,
-                            style: TextStyle(color: LC.darkTextDim, fontSize: 10),
-                            overflow: TextOverflow.ellipsis),
-                        ])),
+                        Expanded(child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(c.name, maxLines: 1, overflow: TextOverflow.ellipsis,
+                              style: TextStyle(
+                                color: active ? LC.darkAccentBright : LC.darkText,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w500)),
+                            const SizedBox(height: 3),
+                            Text(c.formula,
+                              style: const TextStyle(
+                                color: LC.darkAccentBright,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600)),
+                          ])),
+                        Icon(
+                          active ? Icons.chevron_right : Icons.info_outline,
+                          size: 14,
+                          color: active ? LC.darkAccentBright : LC.darkTextDim),
                       ]),
                     ),
                   );
@@ -1051,13 +1063,13 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                     const SizedBox(width: 12),
                     // Data table
                     Expanded(child: Column(children: [
-                      _dataRow('Molar Mass', detail?.molarMass != null ? '${detail!.molarMass} g/mol' : 'â€”'),
+                      _dataRow('Molar Mass', detail?.molarMass != null ? '${detail!.molarMass} g/mol' : 'ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â¬ÃƒÂ¢â€šÂ¬Â'),
                       if (detail?.boilingPoint != null)
-                        _dataRow('Boiling Point', '${detail!.boilingPoint}Â°C'),
+                        _dataRow('Boiling Point', '${detail!.boilingPoint} °C'),
                       if (detail?.meltingPoint != null)
-                        _dataRow('Melting Point', '${detail!.meltingPoint}Â°C'),
+                        _dataRow('Melting Point', '${detail!.meltingPoint} °C'),
                       if (detail?.density != null)
-                        _dataRow('Density', '${detail!.density} g/cmÂ³'),
+                        _dataRow('Density', '${detail!.density} g/cm³'),
                       if (detail?.ph != null)
                         _dataRow('pH', detail!.ph!),
                       if (detail?.hazards != null && detail!.hazards.isNotEmpty)
@@ -1634,30 +1646,52 @@ Widget _labArea() {
     return Container(height: 52,
       padding: const EdgeInsets.symmetric(horizontal: 14),
       child: Row(children: [
-        const Icon(Icons.science_outlined, size: 15, color: LC.darkAccentBright),
+        // --- HOME / BACK BUTTON ---
+        Material(color: Colors.transparent,
+          child: InkWell(
+            onTap: () => Navigator.pop(context),
+            borderRadius: BorderRadius.circular(6),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              decoration: BoxDecoration(
+                color: LC.panel,
+                borderRadius: BorderRadius.circular(6),
+                border: Border.all(color: LC.border)),
+              child: const Row(children: [
+                Icon(Icons.arrow_back_ios_new, size: 12, color: LC.textSub),
+                SizedBox(width: 6),
+                Text('Home', style: TextStyle(color: LC.text, fontSize: 11, fontWeight: FontWeight.w500)),
+              ]),
+            ),
+          ),
+        ),
+        const SizedBox(width: 20),
+        
+        // --- TITLE ---
+        const Icon(Icons.science_outlined, size: 15, color: LC.accentBright),
         const SizedBox(width: 8),
         Flexible(child: Text('Virtual Laboratory',
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(color: LC.darkText, fontSize: 12, fontWeight: FontWeight.w600))),
+          style: const TextStyle(color: LC.text, fontSize: 12, fontWeight: FontWeight.w600))),
         const SizedBox(width: 16),
+        
+        // --- EXPERIMENT DROPDOWN ---
         Flexible(child: Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          decoration: BoxDecoration(color: LC.darkPanel,
+          decoration: BoxDecoration(color: LC.panel,
             borderRadius: BorderRadius.circular(6),
-            border: Border.all(color: LC.darkBorder)),
+            border: Border.all(color: LC.border)),
           child: Row(children: [
             Flexible(child: Text('Experiment: $experimentName',
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: LC.darkTextSub, fontSize: 10))),
-            const Icon(Icons.keyboard_arrow_down, color: LC.darkTextDim, size: 13),
+              style: const TextStyle(color: LC.textSub, fontSize: 10))),
+            const Icon(Icons.keyboard_arrow_down, color: LC.textDim, size: 13),
           ]))),
+        
+        // --- SPACER (Pushes reset to right) ---
         const Spacer(),
+        
+        // --- RESET BUTTON ONLY ---
         _headerBtn(Icons.refresh, 'Reset', reset, false),
-        const SizedBox(width: 8),
-        _headerBtn(Icons.play_arrow, 'Start', () {
-          ScaffoldMessenger.of(context).showSnackBar(
-            const SnackBar(content: Text('Experiment started'),
-              duration: Duration(seconds: 1)));
-        }, true),
       ]));
   }
 
@@ -2284,15 +2318,15 @@ Widget _labArea() {
                             runSpacing: 2,
                             children: [
                               if (rxn.isViolent)
-                                _indicatorBadge('⚠️ VIOLENT', Colors.red),
+                                _indicatorBadge('ÃƒÂ¢Ã…Â¡Â ÃƒÂ¯Â¸Â VIOLENT', Colors.red),
                               if (rxn.releasesHeat)
-                                _indicatorBadge('🔥 HEAT', LC.danger),
+                                _indicatorBadge('Ãƒ°Ã…Â¸â‚¬ÂÂ¥ HEAT', LC.danger),
                               if (rxn.bubbles)
-                                _indicatorBadge('💨 GAS', LC.info),
+                                _indicatorBadge('Ãƒ°Ã…Â¸â‚¬â„¢Â¨ GAS', LC.info),
                               if (rxn.precipitate)
-                                _indicatorBadge('⬇️ PPT', LC.warning),
+                                _indicatorBadge('ÃƒÂ¢Â¬â‚¬Â¡ÃƒÂ¯Â¸Â PPT', LC.warning),
                               if (rxn.producesSmoke)
-                                _indicatorBadge('☁️ SMOKE', LC.darkTextSub),
+                                _indicatorBadge('ÃƒÂ¢Ã‹Å“ÂÃƒÂ¯Â¸Â SMOKE', LC.darkTextSub),
                             ],
                           ),
                         ],
@@ -2320,11 +2354,6 @@ Widget _labArea() {
     );
   }
 }
-
-
-
-
-
 
 
 

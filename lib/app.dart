@@ -1,10 +1,11 @@
-﻿part of chem_lab;
+part of chem_lab;
 
 class ChemLabApp extends StatelessWidget {
   const ChemLabApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      navigatorKey: navigatorKey,
       debugShowCheckedModeBanner: false,
       title: 'Virtual Chemistry Lab',
       theme: ThemeData(brightness: Brightness.dark, fontFamily: 'Segoe UI',

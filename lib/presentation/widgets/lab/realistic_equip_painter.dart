@@ -18,7 +18,7 @@ class RealisticEquipPainter extends CustomPainter {
     final path = _buildPath(w, h);
 
     canvas.drawOval(Rect.fromLTWH(w * 0.15, h * 0.96, w * 0.7, h * 0.05),
-      Paint()..color = Color(0xFF94A3B8).withValues(alpha: 0.2)
+      Paint()..color = Colors.black.withValues(alpha: 0.6)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10));
 
     canvas.drawPath(path, Paint()..shader = LinearGradient(
@@ -26,16 +26,16 @@ class RealisticEquipPainter extends CustomPainter {
       colors: [LC.glassTint.withValues(alpha: 0.12),
         LC.glassFill.withValues(alpha: 0.06),
         LC.glassTint.withValues(alpha: 0.10)]).createShader(Rect.fromLTWH(0, 0, w, h)));
-    // GLASS OUTLINE Ã¢â‚¬â€ visible border
+    // GLASS OUTLINE ├óΓé¼ΓÇ¥ visible border
     canvas.drawPath(path, Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.2
-      ..color = LC.glassEdge.withValues(alpha: 0.6));
+      ..color = Colors.white.withValues(alpha: 0.35));
     // Glass shine highlight
     canvas.drawPath(path, Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 2.5
-      ..color = Colors.white.withValues(alpha: 0.25));
+      ..color = Colors.white.withValues(alpha: 0.08));
 
     canvas.save();
     canvas.clipPath(path);
@@ -44,14 +44,14 @@ class RealisticEquipPainter extends CustomPainter {
       if (item.hasLitmus) _paintLitmusStrip(canvas, w, h);
       if (item.hasPhPaper) _paintPhPaperStrip(canvas, w, h);
       _paintLayers(canvas, w, h);
-      _paintSolidPile(canvas, w, h); // AFTER layers Ã¢â‚¬â€ residue on top
+      _paintSolidPile(canvas, w, h); // AFTER layers ├óΓé¼ΓÇ¥ residue on top
       _paintWave(canvas, w, h);
       if (reaction?.bubbles == true) _paintBubbles(canvas, w, h);
       _paintHeatingEffect(canvas, w, h);
       _paintGasEvolution(canvas, w, h);
       _paintSmoke(canvas, w, h);
       _paintFireBlast(canvas, w, h);
-    // Skip for displacement Ã¢â‚¬â€ already drawn in _paintLayers
+    // Skip for displacement ├óΓé¼ΓÇ¥ already drawn in _paintLayers
     if (reaction?.precipitate == true && !(reaction!.type.toLowerCase().contains('displacement'))) {
       _paintPrecipitate(canvas, w, h, reaction!.precipitateColor ?? reaction!.colorChange ?? LC.glassFill);
     }
@@ -66,7 +66,7 @@ class RealisticEquipPainter extends CustomPainter {
 
     canvas.drawPath(path, Paint()..style = PaintingStyle.stroke
       ..strokeWidth = isHovered ? 2 : 1.3..strokeJoin = StrokeJoin.round
-      ..color = isHovered ? LC.success : Colors.black.withValues(alpha: 0.6));
+      ..color = isHovered ? LC.success : LC.glassEdge.withValues(alpha: 0.6));
 
     _paintPour(canvas, w, h);
     _paintMarks(canvas, w, h); // With translate + after pour = on top
@@ -150,7 +150,7 @@ class RealisticEquipPainter extends CustomPainter {
 
     // === REACTION COMPLETE: separated products ===
     // ONLY precipitate reactions show separated salt bed
-    // PRECIPITATE REACTION Ã¢â‚¬â€ liquid tinted, bed drawn by _paintPrecipitate
+    // PRECIPITATE REACTION ├óΓé¼ΓÇ¥ liquid tinted, bed drawn by _paintPrecipitate
     if (reaction != null && item.reactionProgress > 0.3 && reaction!.precipitate) {
       Color liquidTint = reaction!.colorChange ?? item.blendedColor;
       final path = Path()
@@ -223,7 +223,7 @@ class RealisticEquipPainter extends CustomPainter {
       ).createShader(Rect.fromLTWH(0, baseTop - 2, w, h - baseTop + 2)));
   }
 
-  // Shape-specific liquid top Ã¢â‚¬â€ matches markings exactly
+  // Shape-specific liquid top ├óΓé¼ΓÇ¥ matches markings exactly
   double _liquidTop(double h) {
     if (shape == EquipShape.flask) {
       return h * 0.92 - item.fillRatio * h * 0.50; // flask body (0.42-0.92)
@@ -272,8 +272,8 @@ class RealisticEquipPainter extends CustomPainter {
 
     // === Minor ticks (thin, short) ===
     final minorPaint = Paint()
-      ..color = Colors.white.withValues(alpha: 0.8)
-      ..strokeWidth = 1.0
+      ..color = Colors.white.withValues(alpha: 0.42)
+      ..strokeWidth = 0.6
       ..strokeCap = StrokeCap.round;
     for (final v in minor) {
       final y = yBot - (v / maxVol) * span;
@@ -282,8 +282,8 @@ class RealisticEquipPainter extends CustomPainter {
 
     // === Major ticks (thick, long, with numbers) ===
     final majorPaint = Paint()
-      ..color = Colors.white
-      ..strokeWidth = 1.8
+      ..color = Colors.white.withValues(alpha: 0.9)
+      ..strokeWidth = 1.2
       ..strokeCap = StrokeCap.round;
     for (final v in major) {
       final y = yBot - (v / maxVol) * span;
@@ -336,7 +336,7 @@ class RealisticEquipPainter extends CustomPainter {
       ..color = Colors.white.withValues(alpha: 0.5));
   }
 
-  // REAL gas colors Ã¢â‚¬â€ based on chemistry
+  // REAL gas colors ├óΓé¼ΓÇ¥ based on chemistry
   Color _gasColor(String? gas) {
     switch (gas) {
       case 'NO2': return const Color(0xFF8B4513); // Brown (red-brown)
@@ -409,37 +409,37 @@ class RealisticEquipPainter extends CustomPainter {
         ..color = Colors.white.withValues(alpha: 0.65));
     }
   }
-  // Precipitate style Ã¢â‚¬â€ unique per precipitate type (real chemistry)
+  // Precipitate style ├óΓé¼ΓÇ¥ unique per precipitate type (real chemistry)
   String _precipStyle() {
     final rxn = reaction;
     if (rxn == null) return 'default';
     final products = rxn.products.join(' ').toLowerCase();
     final key = (rxn.name + ' ' + rxn.equation).toLowerCase();
-    // CURDY Ã¢â‚¬â€ white clumpy (AgCl, Ag2SO4)
+    // CURDY ├óΓé¼ΓÇ¥ white clumpy (AgCl, Ag2SO4)
     if (products.contains('agcl')) return 'curdy-white';
     if (products.contains('ag2so4')) return 'curdy-white';
-    // GELATINOUS Ã¢â‚¬â€ blobby, slow settle (Cu(OH)2, Fe(OH)3, Al(OH)3)
+    // GELATINOUS ├óΓé¼ΓÇ¥ blobby, slow settle (Cu(OH)2, Fe(OH)3, Al(OH)3)
     if (products.contains('cu(oh)2')) return 'gel-blue';
     if (products.contains('fe(oh)3')) return 'gel-brown';
     if (products.contains('fe(oh)2')) return 'gel-green';
     if (products.contains('al(oh)3')) return 'gel-white';
     if (products.contains('zn(oh)2')) return 'gel-white';
     if (products.contains('mg(oh)2')) return 'gel-white';
-    // GRANULAR Ã¢â‚¬â€ small particles, fast settle (PbI2, BaSO4)
+    // GRANULAR ├óΓé¼ΓÇ¥ small particles, fast settle (PbI2, BaSO4)
     if (products.contains('pbi2')) return 'granular-gold';
     if (products.contains('baso4')) return 'granular-white';
     if (products.contains('caco3')) return 'granular-white';
     if (products.contains('cac2o4')) return 'granular-white';
     if (products.contains('ag3po4')) return 'granular-yellow';
-    // METAL DEPOSIT Ã¢â‚¬â€ coating on metal (Cu, Ag)
+    // METAL DEPOSIT ├óΓé¼ΓÇ¥ coating on metal (Cu, Ag)
     if (rxn.type.toLowerCase().contains('single displacement')) return 'metal-deposit'; // ONLY single
-    // MILKY Ã¢â‚¬â€ clouded throughout (limewater)
+    // MILKY ├óΓé¼ΓÇ¥ clouded throughout (limewater)
     if (key.contains('limewater') || key.contains('milky')) return 'milky';
-    // AG2O Ã¢â‚¬â€ brown heavy
+    // AG2O ├óΓé¼ΓÇ¥ brown heavy
     if (products.contains('ag2o')) return 'heavy-brown';
-    // IODOFORM Ã¢â‚¬â€ bright yellow crystalline
+    // IODOFORM ├óΓé¼ΓÇ¥ bright yellow crystalline
     if (products.contains('chi3')) return 'granular-yellow';
-    // TRIBROMOPHENOL Ã¢â‚¬â€ white crystalline
+    // TRIBROMOPHENOL ├óΓé¼ΓÇ¥ white crystalline
     if (products.contains('c6h2br3oh')) return 'granular-white';
     return 'default';
   }
@@ -505,7 +505,7 @@ class RealisticEquipPainter extends CustomPainter {
     final settleT = (progress * 2.0 * settleRate).clamp(0.0, 1.0); // faster settle
     if (settleT <= 0.0) return;
     
-    // METAL DEPOSIT Ã¢â‚¬â€ coating on metal, no settling bed
+    // METAL DEPOSIT ├óΓé¼ΓÇ¥ coating on metal, no settling bed
     if (style == 'metal-deposit') {
       final rng = Random(item.id.length * 11 + 7);
       // Particles form on side/bottom (attached to metal)
@@ -520,7 +520,7 @@ class RealisticEquipPainter extends CustomPainter {
       return;
     }
     
-    // MILKY Ã¢â‚¬â€ clouded throughout (no distinct bed)
+    // MILKY ├óΓé¼ΓÇ¥ clouded throughout (no distinct bed)
     if (style == 'milky') {
       final rng = Random(item.id.length * 23 + 13);
       for (int i = 0; i < (80 * density).toInt(); i++) {
@@ -532,8 +532,8 @@ class RealisticEquipPainter extends CustomPainter {
       return;
     }
     
-    // BED STYLES Ã¢â‚¬â€ granular, curdy, gel, heavy
-    // Bed height SCALES with amount Ã¢â‚¬â€ more reactant = more precipitate
+    // BED STYLES ├óΓé¼ΓÇ¥ granular, curdy, gel, heavy
+    // Bed height SCALES with amount ├óΓé¼ΓÇ¥ more reactant = more precipitate
     final totalVol = item.totalVolume;
     final amountFactor = (totalVol / 100.0).clamp(0.3, 1.5); // 50=0.5, 100=1.0, 150=1.5
     final maxH = h * 0.45 * amountFactor; // scales with amount
@@ -631,7 +631,7 @@ class RealisticEquipPainter extends CustomPainter {
     final rodBot = Offset(cx + sin(time * 4) * w * 0.05, h * 0.88);
     canvas.drawLine(rodTop, rodBot,
       Paint()
-        ..color = LC.glassEdge
+        ..color = Colors.white.withValues(alpha: 0.9)
         ..strokeWidth = 3.5
         ..strokeCap = StrokeCap.round);
 
@@ -647,7 +647,7 @@ class RealisticEquipPainter extends CustomPainter {
     // Bottom paddle
     canvas.drawOval(
       Rect.fromCenter(center: rodBot, width: 18, height: 6),
-      Paint()..color = LC.glassEdge.withValues(alpha: 0.6));
+      Paint()..color = Colors.white.withValues(alpha: 0.85));
   }
 
   void _paintLitmusStrip(Canvas canvas, double w, double h) {
@@ -656,7 +656,7 @@ class RealisticEquipPainter extends CustomPainter {
     final fillRatio = item.fillRatio;
     final liquidTop = h * (1 - fillRatio);
     final stripTop = (liquidTop - stripH * 0.50).clamp(h * 0.05, h * 0.85);
-    // Float physics â€” subtle movement like real liquid
+    // Float physics ΓÇö subtle movement like real liquid
     final floatY = sin(time * 2.8) * h * 0.005;
     final floatX = sin(time * 2.2 + 0.5) * w * 0.008;
     final floatTilt = sin(time * 1.8) * 0.04;
@@ -669,11 +669,11 @@ class RealisticEquipPainter extends CustomPainter {
     // Drop shadow
     canvas.drawRRect(
       RRect.fromRectAndRadius(strip.shift(const Offset(1.5, 2.5)), const Radius.circular(2)),
-      Paint()..color = Color(0xFF94A3B8).withValues(alpha: 0.2)
+      Paint()..color = Colors.black.withValues(alpha: 0.5)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5),
     );
 
-    // DRY LITMUS BASE â€” purple/blue color (real litmus paper)
+    // DRY LITMUS BASE ΓÇö purple/blue color (real litmus paper)
     const dryColor = Color(0xFF8E6BB0);
     canvas.drawRRect(
       RRect.fromRectAndRadius(strip, const Radius.circular(2)),
@@ -699,7 +699,7 @@ class RealisticEquipPainter extends CustomPainter {
       );
     }
 
-    // COLOR DEVELOP â€” from tip upward (submerged in liquid)
+    // COLOR DEVELOP ΓÇö from tip upward (submerged in liquid)
     final ph = LabPhService.calculatePh(item);
     if (ph != null && item.layers.isNotEmpty) {
       final color = PhCalculator.litmusColor(ph);
@@ -710,7 +710,7 @@ class RealisticEquipPainter extends CustomPainter {
         final developRect = Rect.fromLTWH(
           strip.left, strip.bottom - submergedH, strip.width, submergedH);
 
-        // Gradient color â€” strong at tip, fade upward
+        // Gradient color ΓÇö strong at tip, fade upward
         canvas.drawRect(
           developRect,
           Paint()..shader = LinearGradient(
@@ -761,7 +761,7 @@ class RealisticEquipPainter extends CustomPainter {
     // White label at top (like real litmus book)
     canvas.drawRect(
       Rect.fromLTWH(strip.left + 2, strip.top + 2, strip.width - 4, 5),
-      Paint()..color = LC.glassEdge,
+      Paint()..color = Colors.white.withValues(alpha: 0.9),
     );
     // "LITMUS" text bars
     canvas.drawRect(
@@ -789,9 +789,9 @@ class RealisticEquipPainter extends CustomPainter {
     final stripH = h * 0.58;
     final fillRatio = item.fillRatio;
     final liquidTop = h * (1 - fillRatio);
-    // Strip hangs from above â€” top portion out of liquid
+    // Strip hangs from above ΓÇö top portion out of liquid
     final stripTop = (liquidTop - stripH * 0.50).clamp(h * 0.05, h * 0.85);
-    // Float physics â€” subtle movement like real liquid
+    // Float physics ΓÇö subtle movement like real liquid
     final floatY = sin(time * 2.8 + 0.3) * h * 0.005;
     final floatX = sin(time * 2.2 + 0.8) * w * 0.008;
     final floatTilt = sin(time * 1.8 + 0.2) * 0.04;
@@ -804,7 +804,7 @@ class RealisticEquipPainter extends CustomPainter {
     // Drop shadow
     canvas.drawRRect(
       RRect.fromRectAndRadius(strip.shift(const Offset(1.5, 2.5)), const Radius.circular(2)),
-      Paint()..color = Color(0xFF94A3B8).withValues(alpha: 0.2)
+      Paint()..color = Colors.black.withValues(alpha: 0.5)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5),
     );
 
@@ -822,7 +822,7 @@ class RealisticEquipPainter extends CustomPainter {
       ).createShader(strip),
     );
 
-    // Paper texture â€” subtle horizontal fibers
+    // Paper texture ΓÇö subtle horizontal fibers
     final rng = Random(42);
     for (int i = 0; i < 20; i++) {
       final y = strip.top + rng.nextDouble() * strip.height;
@@ -833,7 +833,7 @@ class RealisticEquipPainter extends CustomPainter {
       );
     }
 
-    // COLOR DEVELOP â€” from TIP upward (like real capillary action)
+    // COLOR DEVELOP ΓÇö from TIP upward (like real capillary action)
     final ph = LabPhService.calculatePh(item);
     if (ph != null && item.layers.isNotEmpty) {
       final color = PhCalculator.colorForPh(ph);
@@ -875,7 +875,7 @@ class RealisticEquipPainter extends CustomPainter {
           ).createShader(developRect),
         );
 
-        // Meniscus line â€” where paper meets liquid
+        // Meniscus line ΓÇö where paper meets liquid
         canvas.drawLine(
           Offset(strip.left, liquidTop),
           Offset(strip.right, liquidTop),
@@ -896,7 +896,7 @@ class RealisticEquipPainter extends CustomPainter {
     // Top white reference band
     canvas.drawRect(
       Rect.fromLTWH(strip.left + 1, strip.top + 2, strip.width - 2, 3),
-      Paint()..color = LC.glassEdge.withValues(alpha: 0.8),
+      Paint()..color = Colors.white.withValues(alpha: 0.95),
     );
 
     // Outer border
@@ -948,44 +948,44 @@ class RealisticEquipPainter extends CustomPainter {
     if (rxn == null) return [const Color(0xFFFFEB3B), const Color(0xFFE53935), const Color(0xFF4A0000)];
     final name = rxn.name.toUpperCase();
     final eq = rxn.equation.toUpperCase();
-    // Potassium Ã¢â€ â€™ lilac/purple
+    // Potassium ├óΓÇáΓÇÖ lilac/purple
     if (eq.contains('K ') || name.contains('POTASSIUM')) {
       return [const Color(0xFFE1BEE7), const Color(0xFF9C27B0), const Color(0xFF4A148C)];
     }
-    // Sodium Ã¢â€ â€™ orange-yellow (classic)
+    // Sodium ├óΓÇáΓÇÖ orange-yellow (classic)
     if (eq.contains('NA ') || name.contains('SODIUM')) {
       return [const Color(0xFFFFF176), const Color(0xFFFF6F00), const Color(0xFF8B0000)]; // sodium: orange-yellow
     }
-    // Magnesium Ã¢â€ â€™ bright white-blue
+    // Magnesium ├óΓÇáΓÇÖ bright white-blue
     if (name.contains('MAGNESIUM') || eq.contains('MG ')) {
       return [const Color(0xFFFFFFFF), const Color(0xFFB0E0E6), const Color(0xFF4682B4)];
     }
-    // Calcium Ã¢â€ â€™ pale yellow
+    // Calcium ├óΓÇáΓÇÖ pale yellow
     if (name.contains('CALCIUM') || eq.contains('CA ')) {
       return [const Color(0xFFFFF9C4), const Color(0xFFFFEB3B), const Color(0xFFF57F17)];
     }
-    // Default Ã¢â€ â€™ orange-red
+    // Default ├óΓÇáΓÇÖ orange-red
     return [const Color(0xFFFFEB3B), const Color(0xFFE53935), const Color(0xFF4A0000)];
   }
   
-  // Fire animation style Ã¢â‚¬â€ unique per reaction
+  // Fire animation style ├óΓé¼ΓÇ¥ unique per reaction
   String _fireStyle() {
     final rxn = reaction;
     if (rxn == null) return 'default';
     final name = rxn.name.toUpperCase();
     final eq = rxn.equation.toUpperCase();
     final k = rxn.equation.toLowerCase();
-    // K + H2O Ã¢â€ â€™ dancing lilac flame (metal moves on surface)
+    // K + H2O ├óΓÇáΓÇÖ dancing lilac flame (metal moves on surface)
     if (k.contains('2k + 2h2o') || (eq.contains('K ') && eq.contains('H2O'))) return 'dancing-lilac';
-    // Na + H2O Ã¢â€ â€™ dancing orange (sodium skitters)
+    // Na + H2O ├óΓÇáΓÇÖ dancing orange (sodium skitters)
     if (k.contains('2na + 2h2o')) return 'dancing-orange';
-    // Na + HCl Ã¢â€ â€™ white-hot explosion (instant)
+    // Na + HCl ├óΓÇáΓÇÖ white-hot explosion (instant)
     if (k.contains('2na + 2hcl')) return 'explosion-white';
-    // Na + H2SO4 Ã¢â€ â€™ intense white-hot explosion
+    // Na + H2SO4 ├óΓÇáΓÇÖ intense white-hot explosion
     if (k.contains('2na + h2so4')) return 'explosion-intense';
-    // Mg + HCl Ã¢â€ â€™ bright white glow (no flame, just heat)
+    // Mg + HCl ├óΓÇáΓÇÖ bright white glow (no flame, just heat)
     if (name.contains('MAGNESIUM') && k.contains('hcl')) return 'glow-white';
-    // Ca + water Ã¢â€ â€™ pale yellow gentle
+    // Ca + water ├óΓÇáΓÇÖ pale yellow gentle
     if (name.contains('CALCIUM')) return 'gentle-yellow';
     return 'default';
   }
@@ -1024,7 +1024,7 @@ class RealisticEquipPainter extends CustomPainter {
   void _paintFireBlast(Canvas canvas, double w, double h) {
     if (reaction == null || !reaction!.isViolent) return;
     // === PERSISTENT STATE (after reaction complete) ===
-    // Only bubbles + smoke Ã¢â‚¬â€ no fire
+    // Only bubbles + smoke ├óΓé¼ΓÇ¥ no fire
     if (item.reactionComplete && item.reactionProgress >= 1.0) {
       final rng = Random(42);
       final cx = w * 0.5;
@@ -1382,7 +1382,7 @@ class RealisticEquipPainter extends CustomPainter {
     }
   }
   void _paintFoam(Canvas canvas, double w, double h) {
-    // FOAM GATE: no foam during pour Ã¢â‚¬â€ appears after pour completes
+    // FOAM GATE: no foam during pour ├óΓé¼ΓÇ¥ appears after pour completes
     if (item.pourAnim > 0.0) return;
     if (reaction == null || !reaction!.foam) return;
     final progress = item.reactionProgress; // Full progress (no ramp)
@@ -1394,7 +1394,7 @@ class RealisticEquipPainter extends CustomPainter {
     final beakerPath = _buildPath(w, h);
     final insideHeight = surfaceY - mouthY;
     
-    // AUTO WIDTH Ã¢â‚¬â€ foam width matches equipment mouth
+    // AUTO WIDTH ├óΓé¼ΓÇ¥ foam width matches equipment mouth
     double mouthW;
     switch (item.shape) {
       case EquipShape.beaker: mouthW = 0.83; break;
@@ -1403,7 +1403,7 @@ class RealisticEquipPainter extends CustomPainter {
       case EquipShape.cylinder: mouthW = 0.40; break;
       default: mouthW = 0.60;
     }
-    // AUTO WIDTH Ã¢â‚¬â€ top width limit
+    // AUTO WIDTH ├óΓé¼ΓÇ¥ top width limit
     double topWFactor;
     switch (item.shape) {
       case EquipShape.beaker: topWFactor = 1.15; break; // Slight widen
@@ -1492,7 +1492,7 @@ class RealisticEquipPainter extends CustomPainter {
         if (rowP > 0.90) widthFactor = 1.0 - (rowP - 0.90) * 2.0; // Minimal narrowing
         widthFactor = widthFactor.clamp(0.4, 1.0);
         
-        // Equipment profile at this height Ã¢â‚¬â€ flask: body wide, neck narrow
+        // Equipment profile at this height ├óΓé¼ΓÇ¥ flask: body wide, neck narrow
         double localW;
         if (item.shape == EquipShape.flask && rowP < 0.90) {
           if (rowP < 0.35) { // Body stays wide longer
@@ -1535,7 +1535,7 @@ class RealisticEquipPainter extends CustomPainter {
         final rowY = mouthY - rowP * overflowH;
         
         double widthFactor;
-        // CONTINUOUS WIDTH Ã¢â‚¬â€ 0.85 (minor) Ã¢â€ â€™ 1.25 (wider)
+        // CONTINUOUS WIDTH ├óΓé¼ΓÇ¥ 0.85 (minor) ├óΓÇáΓÇÖ 1.25 (wider)
         // HOLD neck width first 25%, then smoothstep expand
         final p = rowP < 0.40 ? 0.0 : (rowP - 0.40) / 0.60; // Longer neck hold
         final ss = p * p * (3 - 2 * p); // smoothstep (no jump)
@@ -1543,7 +1543,7 @@ class RealisticEquipPainter extends CustomPainter {
         widthFactor = widthFactor.clamp(1.0, topWFactor).toDouble(); // Equipment-specific
         
         final blobW = w * mouthW * widthFactor * (0.35 + 0.65 * item.foamRamp); // Bubble grow
-        final blobH = h * 0.20; // FIXED Ã¢â‚¬â€ no jump as width grows
+        final blobH = h * 0.20; // FIXED ├óΓé¼ΓÇ¥ no jump as width grows
         final wobbleY = sin(t * 1.2 + r * 0.4) * h * 0.008;
         drawWavyBlob(cx, rowY + wobbleY, blobW, blobH, (500 + r).toDouble(), 0.96);
       }
@@ -1552,7 +1552,7 @@ class RealisticEquipPainter extends CustomPainter {
     // ============ DRIPS ============
     if (overflowH > h * 0.05) {
       final dripIntensity = (overflowH / h * 2).clamp(0.0, 1.0);
-      // AUTO EDGE Ã¢â‚¬â€ drops fall from foam column edges (equipment width)
+      // AUTO EDGE ├óΓé¼ΓÇ¥ drops fall from foam column edges (equipment width)
       final dripHalfW = w * mouthW * 0.5 + w * 0.02;
       final leftEdgeX = cx - dripHalfW;
       final rightEdgeX = cx + dripHalfW;
@@ -1783,7 +1783,7 @@ class RealisticEquipPainter extends CustomPainter {
       RRect.fromRectAndRadius(
         Rect.fromLTWH(tx, ty, tw, th),
         const Radius.circular(5)),
-      Paint()..color = LC.glassEdge.withValues(alpha: 0.8));
+      Paint()..color = Colors.white.withValues(alpha: 0.95));
 
     canvas.drawRRect(
       RRect.fromRectAndRadius(
@@ -1829,7 +1829,7 @@ class RealisticEquipPainter extends CustomPainter {
 
     final tempTp = TextPainter(
       text: TextSpan(
-        text: '${item.temperature.toInt()}Ã‚Â°C',
+        text: '${item.temperature.toInt()}├é┬░C',
         style: const TextStyle(
           fontSize: 10, color: Colors.white,
           fontWeight: FontWeight.w800, letterSpacing: 0.3)),
@@ -1867,7 +1867,7 @@ class RealisticEquipPainter extends CustomPainter {
       RRect.fromRectAndRadius(
         Rect.fromLTWH(dx - 4, dy + 11, 8, h * 0.28),
         const Radius.circular(2)),
-      Paint()..color = LC.glassEdge);
+      Paint()..color = Colors.white.withValues(alpha: 0.9));
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(dx - 4, dy + 11, 8, h * 0.28),
@@ -1896,7 +1896,7 @@ class RealisticEquipPainter extends CustomPainter {
     final cx = w * 0.5;
 
     double bottleX, bottleY, tilt;
-    // Bottle floats ABOVE equipment Ã¢â‚¬â€ stream visible from mouth to surface
+    // Bottle floats ABOVE equipment ├óΓé¼ΓÇ¥ stream visible from mouth to surface
     const bottleAbove = 55.0; // Bottle sits ~55px above equipment mouth
     final pourTargetX = cx - 18.5; // Bottle shifted left so MOUTH lands at center
     final pourTargetY = -bottleAbove;
@@ -1935,7 +1935,7 @@ class RealisticEquipPainter extends CustomPainter {
         final dy = surfaceY - mouthY; // Full stream to liquid surface
         final streamPath = Path()..moveTo(mouthX, mouthY);
         for (double t = 0.0; t <= 1.0; t += 0.04) {
-          final px = mouthX + t * 2 + sin(t * 6 + time * 7) * 1.0; // Straighter Ã¢â‚¬â€ stays in tube
+          final px = mouthX + t * 2 + sin(t * 6 + time * 7) * 1.0; // Straighter ├óΓé¼ΓÇ¥ stays in tube
           final py = mouthY + t * t * dy;
           streamPath.lineTo(px, py);
         }
@@ -2064,13 +2064,13 @@ class RealisticEquipPainter extends CustomPainter {
       Paint()..color = Colors.white.withValues(alpha: 0.55));
     canvas.drawRect(
       Rect.fromLTWH(-bw * 0.40, -bh * 0.42, bw * 0.04, bh * 0.78),
-      Paint()..color = LC.glassEdge);
+      Paint()..color = Colors.white.withValues(alpha: 0.9));
 
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromCenter(center: Offset.zero, width: bw * 0.8, height: bh * 0.35),
         const Radius.circular(1.5)),
-      Paint()..color = LC.glassEdge);
+      Paint()..color = Colors.white.withValues(alpha: 0.9));
     canvas.drawRect(
       Rect.fromCenter(center: const Offset(0, -2.5), width: bw * 0.58, height: 1.2),
       Paint()..color = col.withValues(alpha: 0.75));
@@ -2106,7 +2106,7 @@ class RealisticEquipPainter extends CustomPainter {
     }
   }
   void _paintSolidPile(Canvas canvas, double w, double h) {
-    // PRODUCT RESIDUE Ã¢â‚¬â€ decomposition reactions leave solid product
+    // PRODUCT RESIDUE ├óΓé¼ΓÇ¥ decomposition reactions leave solid product
     if (item.reactionComplete && reaction != null && reaction!.type == 'Decomposition') {
       final products = reaction!.products.join(' ').toLowerCase();
       Color productCol = const Color(0xFFBDBDBD); // default gray
@@ -2117,18 +2117,18 @@ class RealisticEquipPainter extends CustomPainter {
       final beakerBottom = h * 0.95; // where beaker bottom sits
       final beakerTop = h * 0.12; // where liquid starts
       final usableH = beakerBottom - beakerTop;
-      final ph = usableH * 0.85; // 85% of usable Ã¢â‚¬â€ ~50ml+ residue
+      final ph = usableH * 0.85; // 85% of usable ├óΓé¼ΓÇ¥ ~50ml+ residue
       // final ptY = beakerBottom - ph;
       // (old ptY below)
       final ptY = beakerBottom - ph; // top of residue
       // Surface: WAVE during heating, FLAT when complete
       if (item.reactionComplete) {
-        // FLAT Ã¢â‚¬â€ reaction done, solid residue
+        // FLAT ├óΓé¼ΓÇ¥ reaction done, solid residue
         canvas.drawLine(Offset(0, ptY + 2), Offset(w, ptY + 2), Paint()
           ..strokeWidth = 2.0
           ..color = Colors.white.withValues(alpha: 0.7));
       } else {
-        // WAVY Ã¢â‚¬â€ still reacting (fire below)
+        // WAVY ├óΓé¼ΓÇ¥ still reacting (fire below)
         final wavePath = Path()..moveTo(0, ptY + 2);
         final waveAmp = 3.0 + sin(time * 2) * 1.5;
         final waveFreq = 6.0;
@@ -2148,7 +2148,7 @@ class RealisticEquipPainter extends CustomPainter {
             ..color = productCol.withValues(alpha: 0.85));
         }
       }
-      // Base solid bed Ã¢â‚¬â€ gives structure to residue
+      // Base solid bed ├óΓé¼ΓÇ¥ gives structure to residue
       final bedRect = Rect.fromLTWH(0, ptY, w, h - ptY); // full to bottom
       canvas.drawRect(bedRect, Paint()
         ..shader = LinearGradient(
@@ -2264,13 +2264,12 @@ class RealisticEquipPainter extends CustomPainter {
     canvas.drawPath(topHighlight, Paint()
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.2
-      ..color = LC.glassEdge.withValues(alpha: 0.6));
+      ..color = Colors.white.withValues(alpha: 0.35));
   }
 
   @override
   bool shouldRepaint(covariant RealisticEquipPainter old) => true;
 }
-
 
 
 

@@ -72,7 +72,7 @@ const List<Chemical> allChemicals = [
   Chemical(id: 'znso4', name: 'Zinc Sulfate', formula: 'ZnSO4', state: 'Solid', category: 'Salts', color: Color(0xFFFFFFFF)),
   Chemical(id: 'cucl2', name: 'Copper(II) Chloride', formula: 'CuCl2', state: 'Solid', category: 'Salts', color: Color(0xFF42A5F5)),
   Chemical(id: 'fecl3', name: 'Iron(III) Chloride', formula: 'FeCl3', state: 'Solid', category: 'Salts', color: Color(0xFF8D6E63)),
-  // === BATCH 3 (Inter FSc â€” Final) ===
+  // === BATCH 3 (Inter FSc — Final) ===
   Chemical(id: 'kcl', name: 'Potassium Chloride', formula: 'KCl', state: 'Solid', category: 'Salts', color: Color(0xFFFFFFFF)),
   Chemical(id: 'kno3', name: 'Potassium Nitrate', formula: 'KNO3', state: 'Solid', category: 'Salts', color: Color(0xFFF5F5F5)),
   Chemical(id: 'caso4', name: 'Calcium Sulfate', formula: 'CaSO4', state: 'Solid', category: 'Salts', color: Color(0xFFF5F5F0)),
@@ -109,9 +109,9 @@ const List<Chemical> allChemicals = [
   Chemical(id: 'co2', name: 'Carbon Dioxide', formula: 'CO2', state: 'Gas', category: 'Others', color: Color(0xFFE0E0E0)),
 ];
 
-// ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â ... [Corrupted comment cleaned]
+// ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â ... [Corrupted comment cleaned]
 // HEATING EFFECTS (Bunsen burner + chemicals)
-// ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â ... [Corrupted comment cleaned]
+// ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â ... [Corrupted comment cleaned]
 
 
 

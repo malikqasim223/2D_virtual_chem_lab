@@ -25,7 +25,7 @@ class MoleculePainter extends CustomPainter {
     final centerX = (minX + maxX) / 2;
     final centerY = (minY + maxY) / 2;
     
-    // Fit into canvas (75% â€” bigger than before)
+    // Fit into canvas (75% — bigger than before)
     final availableW = size.width * 0.88;
     final availableH = size.height * 0.88;
     final scale = [availableW / w, availableH / h].reduce((a, b) => a < b ? a : b);
@@ -74,7 +74,7 @@ class MoleculePainter extends CustomPainter {
         bondPaint.strokeWidth = 4;
         canvas.drawLine(p1, p2, bondPaint);
       } else {
-        // Double bond â€” two parallel lines
+        // Double bond — two parallel lines
         final sep = 3.5;
         bondPaint.strokeWidth = 3.5;
         canvas.drawLine(

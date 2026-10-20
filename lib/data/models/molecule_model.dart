@@ -1058,7 +1058,7 @@ const Map<String, ChemDetail> chemDetails = {
   ),
   'li': ChemDetail(
     uses: 'Li-ion batteries, aerospace alloys, psychiatric medication (Li2CO3).',
-    properties: 'Soft silvery metal. Lightest metal (0.534 g/cm3). Reacts with water.',
+    properties: 'Soft silvery metal. Lightest metal (0.534 g/cm³). Reacts with water.',
     safety: 'FLAMMABLE. Corrosive to skin. Burns with CRIMSON flame.',
     occurrence: 'Minerals (spodumene, lepidolite).',
     molarMass: 6.94,
@@ -1099,6 +1099,5 @@ const Map<String, ChemDetail> chemDetails = {
 };
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// MOLECULE PAINTER â€” ball-stick model
+// MOLECULE PAINTER — ball-stick model
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-

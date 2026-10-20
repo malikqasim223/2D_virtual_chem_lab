@@ -248,22 +248,19 @@ class _ChemInfoScreenState extends State<ChemInfoScreen> with SingleTickerProvid
   }
 
   @override
-  void dispose() {
-    _tabController.dispose();
-    super.dispose();
-  }
+  void dispose() { _tabController.dispose(); super.dispose(); }
 
-  Color _categoryColor(String cat) {
+  Color _catColor(String cat) {
     switch (cat.toLowerCase()) {
-      case 'acids': return const Color(0xFFE57373);
-      case 'bases': return const Color(0xFF64B5F6);
-      case 'salts': return const Color(0xFF81C784);
-      case 'indicator': return const Color(0xFFBA68C8);
-      default: return const Color(0xFF9575CD);
+      case 'acids': return const Color(0xFFEF4444);
+      case 'bases': return const Color(0xFF3B82F6);
+      case 'salts': return const Color(0xFF10B981);
+      case 'indicator': return const Color(0xFFA855F7);
+      default: return const Color(0xFF8B5CF6);
     }
   }
 
-  IconData _categoryIcon(String cat) {
+  IconData _catIcon(String cat) {
     switch (cat.toLowerCase()) {
       case 'acids': return Icons.water_drop_outlined;
       case 'bases': return Icons.science_outlined;
@@ -274,23 +271,10 @@ class _ChemInfoScreenState extends State<ChemInfoScreen> with SingleTickerProvid
     }
   }
 
-  Color _reactionTypeColor(String type) {
-    if (type.contains('Precipitation')) return const Color(0xFF64B5F6);
-    if (type.contains('Neutralization')) return const Color(0xFF81C784);
-    if (type.contains('Redox')) return const Color(0xFFFFB74D);
-    if (type.contains('Displacement')) return const Color(0xFFBA68C8);
-    if (type.contains('Gas')) return const Color(0xFF4DD0E1);
-    if (type.contains('Decomposition')) return const Color(0xFFE57373);
-    if (type.contains('Complex')) return const Color(0xFF9575CD);
-    return LC.accentBright;
-  }
-
-  List<String> get _chemCategories {
+  List<String> get _chemCats {
     final cats = <String>{'All'};
     for (final c in allChemicals) { cats.add(c.category); }
-    final list = cats.toList();
-    list.remove('All');
-    list.sort();
+    final list = cats.toList()..remove('All')..sort();
     return ['All', ...list];
   }
 
@@ -298,37 +282,29 @@ class _ChemInfoScreenState extends State<ChemInfoScreen> with SingleTickerProvid
     final types = <String>{'All'};
     for (final r in reactions.values) { types.add(r.type); }
     for (final r in multiReactions.values) { types.add(r.type); }
-    final list = types.toList();
-    list.remove('All');
-    list.sort();
+    final list = types.toList()..remove('All')..sort();
     return ['All', ...list];
   }
 
-  List<Chemical> get _filteredChemicals {
+  List<Chemical> get _filteredChems {
     final q = _chemSearch.toLowerCase().trim();
     return allChemicals.where((c) {
-      final ms = q.isEmpty || c.name.toLowerCase().contains(q) || c.formula.toLowerCase().contains(q) || c.id.toLowerCase().contains(q);
+      final ms = q.isEmpty || c.name.toLowerCase().contains(q) || c.formula.toLowerCase().contains(q);
       final mc = _selectedChemCat == 'All' || c.category == _selectedChemCat;
       return ms && mc;
     }).toList()..sort((a, b) => a.name.compareTo(b.name));
   }
 
-  List<MapEntry<String, ReactionInfo>> get _filteredReactions {
+  List<MapEntry<String, ReactionInfo>> get _filteredRxns {
     final q = _rxnSearch.toLowerCase().trim();
-    final result = <MapEntry<String, ReactionInfo>>[];
+    final res = <MapEntry<String, ReactionInfo>>[];
     for (final e in reactions.entries) {
-      final r = e.value;
-      final ms = q.isEmpty || r.name.toLowerCase().contains(q) || r.equation.toLowerCase().contains(q) || r.type.toLowerCase().contains(q);
-      final mt = _selectedRxnType == 'All' || r.type == _selectedRxnType;
-      if (ms && mt) result.add(e);
+      if ((q.isEmpty || e.value.name.toLowerCase().contains(q) || e.value.equation.toLowerCase().contains(q)) && (_selectedRxnType == 'All' || e.value.type == _selectedRxnType)) res.add(e);
     }
     for (final e in multiReactions.entries) {
-      final r = e.value;
-      final ms = q.isEmpty || r.name.toLowerCase().contains(q) || r.equation.toLowerCase().contains(q) || r.type.toLowerCase().contains(q);
-      final mt = _selectedRxnType == 'All' || r.type == _selectedRxnType;
-      if (ms && mt) result.add(e);
+      if ((q.isEmpty || e.value.name.toLowerCase().contains(q) || e.value.equation.toLowerCase().contains(q)) && (_selectedRxnType == 'All' || e.value.type == _selectedRxnType)) res.add(e);
     }
-    return result..sort((a, b) => a.value.name.compareTo(b.value.name));
+    return res..sort((a, b) => a.value.name.compareTo(b.value.name));
   }
 
   @override
@@ -338,12 +314,55 @@ class _ChemInfoScreenState extends State<ChemInfoScreen> with SingleTickerProvid
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeroHeader(),
-            _buildCustomTabBar(),
+            // Hero Header
+            Container(
+              padding: const EdgeInsets.fromLTRB(24, 20, 24, 16),
+              decoration: BoxDecoration(
+                color: LC.panel,
+                border: Border(bottom: BorderSide(color: LC.border)),
+              ),
+              child: Column(
+                children: [
+                  Row(
+                    children: [
+                      GestureDetector(
+                        onTap: () => Navigator.pop(context),
+                        child: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: LC.panelElev, borderRadius: BorderRadius.circular(8), border: Border.all(color: LC.border)), child: Icon(Icons.arrow_back, color: LC.text, size: 18)),
+                      ),
+                      const SizedBox(width: 16),
+                      Container(padding: const EdgeInsets.all(10), decoration: BoxDecoration(color: LC.accent.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(10), border: Border.all(color: LC.accent.withValues(alpha: 0.3))), child: Icon(Icons.menu_book_outlined, color: LC.accent, size: 24)),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            const Text('Chemical Encyclopedia', style: TextStyle(color: LC.text, fontSize: 20, fontWeight: FontWeight.w700)),
+                            const SizedBox(height: 4),
+                            Text('${allChemicals.length} chemicals • ${reactions.length + multiReactions.length} reactions', style: TextStyle(color: LC.textSub, fontSize: 12)),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  // Tabs
+                  Container(
+                    padding: const EdgeInsets.all(4),
+                    decoration: BoxDecoration(color: LC.bgDeep, borderRadius: BorderRadius.circular(10), border: Border.all(color: LC.border)),
+                    child: Row(
+                      children: [
+                        _buildTabBtn('Chemicals', Icons.menu_book_outlined, 0),
+                        _buildTabBtn('Reactions', Icons.science_outlined, 1),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
             Expanded(
               child: TabBarView(
                 controller: _tabController,
-                children: [_buildChemicalsTab(), _buildReactionsTab()],
+                children: [_buildChemsTab(), _buildRxnsTab()],
               ),
             ),
           ],
@@ -352,88 +371,26 @@ class _ChemInfoScreenState extends State<ChemInfoScreen> with SingleTickerProvid
     );
   }
 
-  Widget _buildHeroHeader() {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
-      decoration: BoxDecoration(
-        gradient: LinearGradient(begin: Alignment.topLeft, end: Alignment.bottomRight, colors: [LC.panel, LC.panelElev]),
-        border: Border(bottom: BorderSide(color: LC.border, width: 1)),
-      ),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: LC.panelElev, borderRadius: BorderRadius.circular(8), border: Border.all(color: LC.border)),
-              child: Icon(Icons.arrow_back, color: LC.text, size: 18),
-            ),
-          ),
-          const SizedBox(width: 12),
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              gradient: LinearGradient(colors: [LC.accentBright.withValues(alpha: 0.35), LC.accent.withValues(alpha: 0.15)]),
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: LC.accentBright.withValues(alpha: 0.5)),
-              boxShadow: [BoxShadow(color: LC.accentBright.withValues(alpha: 0.2), blurRadius: 10, spreadRadius: 1)],
-            ),
-            child: Icon(Icons.menu_book_outlined, color: LC.accentBright, size: 22),
-          ),
-          const SizedBox(width: 12),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Chemical Encyclopedia', style: TextStyle(color: LC.text, fontSize: 16, fontWeight: FontWeight.w700, letterSpacing: 0.3)),
-                SizedBox(height: 3),
-                Text('${allChemicals.length} chemicals • ${reactions.length + multiReactions.length} reactions', style: TextStyle(color: LC.textSub, fontSize: 11, letterSpacing: 0.2)),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCustomTabBar() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      color: LC.panel,
-      child: Container(
-        padding: const EdgeInsets.all(4),
-        decoration: BoxDecoration(color: LC.bgDeep, borderRadius: BorderRadius.circular(10), border: Border.all(color: LC.border)),
-        child: Row(
-          children: [
-            _buildTabButton('Chemicals', Icons.menu_book_outlined, 0),
-            _buildTabButton('Reactions', Icons.science_outlined, 1),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildTabButton(String label, IconData icon, int index) {
-    final isSelected = _tabController.index == index;
+  Widget _buildTabBtn(String label, IconData icon, int idx) {
+    final sel = _tabController.index == idx;
     return Expanded(
       child: InkWell(
-        onTap: () => _tabController.animateTo(index, duration: const Duration(milliseconds: 250), curve: Curves.easeInOut),
+        onTap: () => _tabController.animateTo(idx),
         borderRadius: BorderRadius.circular(8),
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 250),
+          duration: const Duration(milliseconds: 200),
           padding: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
-            gradient: isSelected ? LinearGradient(colors: [LC.accentBright.withValues(alpha: 0.35), LC.accent.withValues(alpha: 0.15)]) : null,
+            color: sel ? LC.accentBright : Colors.transparent,
             borderRadius: BorderRadius.circular(8),
-            border: isSelected ? Border.all(color: LC.accentBright.withValues(alpha: 0.6), width: 1.5) : null,
-            boxShadow: isSelected ? [BoxShadow(color: LC.accentBright.withValues(alpha: 0.15), blurRadius: 8, spreadRadius: 1)] : [],
+            boxShadow: sel ? [BoxShadow(color: LC.accent.withValues(alpha: 0.2), blurRadius: 8, spreadRadius: 1)] : [],
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(icon, color: isSelected ? LC.accentBright : LC.textSub, size: 16),
+              Icon(icon, color: sel ? Colors.black : LC.textSub, size: 16),
               const SizedBox(width: 8),
-              Text(label, style: TextStyle(color: isSelected ? LC.accentBright : LC.textSub, fontSize: 12, fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500, letterSpacing: 0.3)),
+              Text(label, style: TextStyle(color: sel ? Colors.black : LC.textSub, fontSize: 13, fontWeight: sel ? FontWeight.w700 : FontWeight.w500)),
             ],
           ),
         ),
@@ -441,60 +398,56 @@ class _ChemInfoScreenState extends State<ChemInfoScreen> with SingleTickerProvid
     );
   }
 
-  Widget _buildSearchBar(String hint, ValueChanged<String> onChanged, String currentValue, VoidCallback onClear) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 14, 16, 8),
-      color: LC.panel,
+  Widget _buildSearchBar(String hint, ValueChanged<String> onChanged, String val, VoidCallback onClear) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(24, 16, 24, 8),
       child: Container(
-        decoration: BoxDecoration(color: LC.bgDeep, borderRadius: BorderRadius.circular(10), border: Border.all(color: LC.border)),
+        decoration: BoxDecoration(color: LC.panel, borderRadius: BorderRadius.circular(10), border: Border.all(color: LC.border)),
         child: TextField(
           onChanged: onChanged,
-          controller: TextEditingController(text: currentValue)..selection = TextSelection.collapsed(offset: currentValue.length),
+          controller: TextEditingController(text: val)..selection = TextSelection.collapsed(offset: val.length),
           style: const TextStyle(color: LC.text, fontSize: 13),
           decoration: InputDecoration(
             hintText: hint,
-            hintStyle: TextStyle(color: LC.textDim, fontSize: 12),
+            hintStyle: TextStyle(color: LC.textDim, fontSize: 13),
             prefixIcon: Icon(Icons.search, color: LC.textSub, size: 18),
-            suffixIcon: currentValue.isNotEmpty ? GestureDetector(onTap: onClear, child: Icon(Icons.close, color: LC.textSub, size: 18)) : null,
-            contentPadding: const EdgeInsets.symmetric(vertical: 12, horizontal: 12),
+            suffixIcon: val.isNotEmpty ? GestureDetector(onTap: onClear, child: Icon(Icons.close, color: LC.textSub, size: 18)) : null,
             border: InputBorder.none,
-            enabledBorder: InputBorder.none,
-            focusedBorder: InputBorder.none,
+            contentPadding: const EdgeInsets.symmetric(vertical: 14),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildFilterRow(List<String> options, String selected, Function(String) onSelect, IconData Function(String) getIcon) {
+  Widget _buildFilters(List<String> options, String selected, Function(String) onSelect, IconData Function(String) getIcon) {
     return Container(
-      height: 46,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      color: LC.panel,
+      height: 44,
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 4),
       child: ListView.separated(
         scrollDirection: Axis.horizontal,
         itemCount: options.length,
-        separatorBuilder: (_, __) => const SizedBox(width: 6),
+        separatorBuilder: (_, __) => const SizedBox(width: 8),
         itemBuilder: (_, i) {
           final opt = options[i];
-          final isSel = selected == opt;
+          final sel = selected == opt;
           return InkWell(
             onTap: () => onSelect(opt),
             borderRadius: BorderRadius.circular(16),
             child: AnimatedContainer(
               duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
               decoration: BoxDecoration(
-                color: isSel ? LC.accentBright.withValues(alpha: 0.2) : LC.panelElev,
+                color: sel ? LC.accentBright : LC.panel,
                 borderRadius: BorderRadius.circular(16),
-                border: Border.all(color: isSel ? LC.accentBright : LC.border, width: isSel ? 1.5 : 1),
-                boxShadow: isSel ? [BoxShadow(color: LC.accentBright.withValues(alpha: 0.2), blurRadius: 6)] : [],
+                border: Border.all(color: sel ? LC.accent : LC.border),
+                boxShadow: sel ? [BoxShadow(color: LC.accent.withValues(alpha: 0.2), blurRadius: 8)] : [],
               ),
               child: Row(
                 children: [
-                  Icon(getIcon(opt), size: 12, color: isSel ? LC.accentBright : LC.textSub),
-                  const SizedBox(width: 5),
-                  Text(opt, style: TextStyle(color: isSel ? LC.accentBright : LC.textSub, fontSize: 11, fontWeight: isSel ? FontWeight.w700 : FontWeight.w500)),
+                  Icon(getIcon(opt), size: 12, color: sel ? Colors.black : LC.textSub),
+                  const SizedBox(width: 6),
+                  Text(opt, style: TextStyle(color: sel ? Colors.black : LC.textSub, fontSize: 11, fontWeight: sel ? FontWeight.w700 : FontWeight.w500)),
                 ],
               ),
             ),
@@ -504,150 +457,110 @@ class _ChemInfoScreenState extends State<ChemInfoScreen> with SingleTickerProvid
     );
   }
 
-  Widget _buildCountBar(int count, String label) {
-    return Container(
-      padding: const EdgeInsets.fromLTRB(16, 10, 16, 8),
-      color: LC.panel,
+  Widget _buildChemsTab() {
+    final chems = _filteredChems;
+    return Column(
+      children: [
+        _buildSearchBar('Search chemicals...', (v) => setState(() => _chemSearch = v), _chemSearch, () => setState(() => _chemSearch = '')),
+        _buildFilters(_chemCats, _selectedChemCat, (v) => setState(() => _selectedChemCat = v), _catIcon),
+        Expanded(
+          child: chems.isEmpty
+              ? const Center(child: Text('No chemicals found', style: TextStyle(color: LC.textSub)))
+              : ListView.builder(
+                  padding: const EdgeInsets.all(24),
+                  itemCount: chems.length,
+                  itemBuilder: (ctx, i) => _buildChemCard(ctx, chems[i]),
+                ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildChemCard(BuildContext ctx, Chemical c) {
+    return _HoverListCard(
+      onTap: () => Navigator.push(ctx, MaterialPageRoute(builder: (_) => ChemDetailPage(chem: c, detail: chemDetails[c.id]))),
       child: Row(
         children: [
-          Container(width: 3, height: 14, decoration: BoxDecoration(color: LC.accentBright, borderRadius: BorderRadius.circular(2))),
-          const SizedBox(width: 8),
-          Text('$count $label', style: TextStyle(color: LC.textSub, fontSize: 11, fontWeight: FontWeight.w600, letterSpacing: 0.3)),
+          // MiniBottlePainter (same as inventory!)
+          SizedBox(
+            width: 32, height: 44,
+            child: CustomPaint(painter: MiniBottlePainter(color: c.color, state: c.state)),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(c.name, maxLines: 1, overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: LC.text, fontSize: 14, fontWeight: FontWeight.w600)),
+                const SizedBox(height: 4),
+                Row(children: [
+                  Text(c.formula, style: const TextStyle(color: LC.accentBright, fontSize: 12, fontWeight: FontWeight.w700)),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(color: LC.panelElev, borderRadius: BorderRadius.circular(3), border: Border.all(color: LC.border)),
+                    child: Text(c.state.toUpperCase(), style: TextStyle(color: LC.textSub, fontSize: 9, fontWeight: FontWeight.w600, letterSpacing: 0.3)),
+                  ),
+                ]),
+              ],
+            ),
+          ),
+          Icon(Icons.arrow_forward_ios, size: 12, color: LC.textDim),
         ],
       ),
     );
   }
 
-  Widget _buildChemicalsTab() {
-    final filtered = _filteredChemicals;
+  Widget _buildRxnsTab() {
+    final rxns = _filteredRxns;
     return Column(
       children: [
-        _buildSearchBar('Search by name, formula, or ID...', (v) => setState(() => _chemSearch = v), _chemSearch, () => setState(() => _chemSearch = '')),
-        _buildFilterRow(_chemCategories, _selectedChemCat, (v) => setState(() => _selectedChemCat = v), _categoryIcon),
-        _buildCountBar(filtered.length, 'chemicals'),
+        _buildSearchBar('Search reactions...', (v) => setState(() => _rxnSearch = v), _rxnSearch, () => setState(() => _rxnSearch = '')),
+        _buildFilters(_rxnTypes, _selectedRxnType, (v) => setState(() => _selectedRxnType = v), (_) => Icons.science_outlined),
         Expanded(
-          child: filtered.isEmpty
-              ? Center(child: Text('No chemicals found', style: TextStyle(color: LC.textSub)))
+          child: rxns.isEmpty
+              ? const Center(child: Text('No reactions found', style: TextStyle(color: LC.textSub)))
               : ListView.builder(
-                  padding: const EdgeInsets.all(12),
-                  itemCount: filtered.length,
-                  itemBuilder: (context, i) => _buildChemicalCard(context, filtered[i]),
+                  padding: const EdgeInsets.all(24),
+                  itemCount: rxns.length,
+                  itemBuilder: (ctx, i) => _buildRxnCard(ctx, rxns[i]),
                 ),
         ),
       ],
     );
   }
 
-  Widget _buildChemicalCard(BuildContext context, Chemical chem) {
-    final catColor = _categoryColor(chem.category);
-    final detail = chemDetails[chem.id];
-    final hCount = detail?.hazards.length ?? 0;
-    return _HoverCard(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ChemDetailPage(chem: chem, detail: detail))),
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Row(
-          children: [
-            Container(width: 3, height: 52, decoration: BoxDecoration(color: catColor, borderRadius: BorderRadius.circular(2))),
-            const SizedBox(width: 12),
-            Container(
-              width: 46, height: 46,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(colors: [chem.color.withValues(alpha: 0.5), chem.color.withValues(alpha: 0.2)]),
-                borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: chem.color.withValues(alpha: 0.7), width: 1.5),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(chem.name, style: const TextStyle(color: LC.text, fontSize: 13, fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 5),
-                  Wrap(spacing: 5, runSpacing: 4, children: [
-                    Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: LC.bgDeep, borderRadius: BorderRadius.circular(3)), child: Text(chem.formula, style: TextStyle(color: catColor, fontSize: 10.5, fontWeight: FontWeight.w700))),
-                    Container(padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2), decoration: BoxDecoration(color: catColor.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(3)), child: Text(chem.category, style: TextStyle(color: catColor, fontSize: 9, fontWeight: FontWeight.w600))),
-                    Container(padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2), decoration: BoxDecoration(color: LC.info.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(3)), child: Text(chem.state, style: TextStyle(color: LC.info, fontSize: 9, fontWeight: FontWeight.w600))),
-                    if (hCount > 0) Container(padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 2), decoration: BoxDecoration(color: LC.danger.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(3), border: Border.all(color: LC.danger.withValues(alpha: 0.4))), child: Row(children: [Icon(Icons.warning_amber, color: LC.danger, size: 9), const SizedBox(width: 2), Text('$hCount', style: TextStyle(color: LC.danger, fontSize: 9, fontWeight: FontWeight.w700))])),
-                  ]),
-                ],
-              ),
-            ),
-            Icon(Icons.arrow_forward_ios, size: 12, color: LC.textDim),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildReactionsTab() {
-    final filtered = _filteredReactions;
-    return Column(
-      children: [
-        _buildSearchBar('Search by name, equation, or type...', (v) => setState(() => _rxnSearch = v), _rxnSearch, () => setState(() => _rxnSearch = '')),
-        _buildFilterRow(_rxnTypes, _selectedRxnType, (v) => setState(() => _selectedRxnType = v), (_) => Icons.science_outlined),
-        _buildCountBar(filtered.length, 'reactions'),
-        Expanded(
-          child: filtered.isEmpty
-              ? Center(child: Text('No reactions found', style: TextStyle(color: LC.textSub)))
-              : ListView.builder(
-                  padding: const EdgeInsets.all(12),
-                  itemCount: filtered.length,
-                  itemBuilder: (context, i) => _buildReactionCard(context, filtered[i]),
-                ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildReactionCard(BuildContext context, MapEntry<String, ReactionInfo> entry) {
-    final rxn = entry.value;
-    final typeColor = _reactionTypeColor(rxn.type);
-    return _HoverCard(
-      onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => ReactionDetailPage(reactionKey: entry.key, reaction: rxn))),
-      borderColor: rxn.isViolent ? LC.danger.withValues(alpha: 0.5) : null,
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Row(
-          children: [
-            Container(width: 3, height: 62, decoration: BoxDecoration(color: typeColor, borderRadius: BorderRadius.circular(2))),
-            const SizedBox(width: 12),
-            Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(child: Text(rxn.name, style: const TextStyle(color: LC.text, fontSize: 13, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis)),
-                      if (rxn.isViolent) Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: LC.danger.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(3), border: Border.all(color: LC.danger.withValues(alpha: 0.5))), child: Row(children: [Icon(Icons.warning_amber, color: LC.danger, size: 10), const SizedBox(width: 3), Text('HAZARD', style: TextStyle(color: LC.danger, fontSize: 8, fontWeight: FontWeight.w700, letterSpacing: 0.5))])),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Container(padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 5), decoration: BoxDecoration(color: LC.bgDeep, borderRadius: BorderRadius.circular(5), border: Border.all(color: LC.border)), child: Text(rxn.equation, maxLines: 1, overflow: TextOverflow.ellipsis, style: TextStyle(color: LC.accentBright, fontSize: 10.5, fontWeight: FontWeight.w500))),
-                  const SizedBox(height: 8),
-                  Wrap(spacing: 4, runSpacing: 4, children: [
-                    _miniBadge(rxn.type, typeColor),
-                    if (rxn.bubbles) _miniBadge('GAS', LC.info),
-                    if (rxn.precipitate) _miniBadge('PPT', LC.warning),
-                    if (rxn.releasesHeat) _miniBadge('HEAT', LC.danger),
-                    if (rxn.requiresHeat) _miniBadge('NEEDS HEAT', const Color(0xFFF57C00)),
-                    if (rxn.needsAcid) _miniBadge('NEEDS ACID', const Color(0xFFD32F2F)),
-                    if (rxn.producesSmoke) _miniBadge('SMOKE', LC.textSub),
-                    if (rxn.foam) _miniBadge('FOAM', LC.info),
-                  ]),
-                ],
-              ),
-            ),
-            Icon(Icons.arrow_forward_ios, size: 12, color: LC.textDim),
-          ],
-        ),
+  Widget _buildRxnCard(BuildContext ctx, MapEntry<String, ReactionInfo> e) {
+    final r = e.value;
+    return _HoverListCard(
+      onTap: () => Navigator.push(ctx, MaterialPageRoute(builder: (_) => ReactionDetailPage(reactionKey: e.key, reaction: r))),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(child: Text(r.name, style: const TextStyle(color: LC.text, fontSize: 14, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis)),
+              if (r.isViolent) Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: LC.danger.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(4)), child: Text('HAZARD', style: TextStyle(color: LC.danger, fontSize: 8, fontWeight: FontWeight.w700))),
+            ],
+          ),
+          const SizedBox(height: 6),
+          Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6), decoration: BoxDecoration(color: LC.bgDeep, borderRadius: BorderRadius.circular(6), border: Border.all(color: LC.border)), child: Text(r.equation, style: TextStyle(color: LC.accentBright, fontSize: 11, fontWeight: FontWeight.w500), maxLines: 1, overflow: TextOverflow.ellipsis)),
+          const SizedBox(height: 8),
+          Wrap(spacing: 6, runSpacing: 6, children: [
+            _miniBadge(r.type, LC.info),
+            if (r.bubbles) _miniBadge('GAS', LC.info),
+            if (r.precipitate) _miniBadge('PPT', LC.warning),
+            if (r.releasesHeat) _miniBadge('HEAT', LC.danger),
+            if (r.needsAcid) _miniBadge('ACID', LC.warning),
+          ]),
+        ],
       ),
     );
   }
 
   Widget _miniBadge(String label, Color color) {
-    return Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: color.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(3), border: Border.all(color: color.withValues(alpha: 0.4))), child: Text(label, style: TextStyle(color: color, fontSize: 8, fontWeight: FontWeight.w700, letterSpacing: 0.3)));
+    return Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: color.withValues(alpha: 0.15), borderRadius: BorderRadius.circular(4)), child: Text(label, style: TextStyle(color: color, fontSize: 9, fontWeight: FontWeight.w600)));
   }
 }
 
@@ -752,7 +665,7 @@ class ChemDetailPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            onTap: () => Navigator.pop(context),
+            onTap: () => navigatorKey.currentState?.pop(),
             child: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: LC.bgDeep.withValues(alpha: 0.6), borderRadius: BorderRadius.circular(8), border: Border.all(color: LC.border)), child: Icon(Icons.arrow_back, color: LC.text, size: 18)),
           ),
           const SizedBox(height: 16),
@@ -968,7 +881,7 @@ class ReactionDetailPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           GestureDetector(
-            onTap: () => Navigator.pop(context),
+            onTap: () => navigatorKey.currentState?.pop(),
             child: Container(padding: const EdgeInsets.all(8), decoration: BoxDecoration(color: LC.bgDeep.withValues(alpha: 0.6), borderRadius: BorderRadius.circular(8), border: Border.all(color: LC.border)), child: Icon(Icons.arrow_back, color: LC.text, size: 18)),
           ),
           const SizedBox(height: 16),
@@ -1180,6 +1093,40 @@ class SettingsScreen extends StatelessWidget {
               style: TextStyle(fontSize: 14, color: LC.textSub),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HoverListCard extends StatefulWidget {
+  final Widget child;
+  final VoidCallback onTap;
+  const _HoverListCard({required this.child, required this.onTap});
+  @override
+  State<_HoverListCard> createState() => _HoverListCardState();
+}
+
+class _HoverListCardState extends State<_HoverListCard> {
+  bool _hovered = false;
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      onEnter: (_) => setState(() => _hovered = true),
+      onExit: (_) => setState(() => _hovered = false),
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          margin: const EdgeInsets.only(bottom: 12),
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: _hovered ? Colors.white.withValues(alpha: 0.08) : LC.panel,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: _hovered ? LC.accent : LC.border),
+          ),
+          child: widget.child,
         ),
       ),
     );

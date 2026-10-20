@@ -1,7 +1,7 @@
 part of chem_lab;
 
 final Map<String, ReactionInfo> reactions = {
-  // ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã ... [Corrupted comment cleaned]
+  // ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Ã ... [Corrupted comment cleaned]
   'hcl+naoh': const ReactionInfo(
     name: 'Neutralization',
     equation: 'HCl + NaOH -> NaCl + H2O',
@@ -21,7 +21,7 @@ final Map<String, ReactionInfo> reactions = {
     releasesHeat: true,
   ),
 
-  // ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã ... [Corrupted comment cleaned]
+  // ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Ã ... [Corrupted comment cleaned]
   'agno3+nacl': const ReactionInfo(
     name: 'Precipitation (AgCl)',
     equation: 'AgNO3 + NaCl -> AgCl + NaNO3',
@@ -58,7 +58,7 @@ final Map<String, ReactionInfo> reactions = {
         colorChange: Color(0xFF5DADE2),
       ),
 
-  // ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã ... [Corrupted comment cleaned]
+  // ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Ã ... [Corrupted comment cleaned]
   'hcl+naoh+cuso4': const ReactionInfo(
     name: 'Complex',
     equation: 'CuSO4 + 2NaOH -> Cu(OH)2',
@@ -89,7 +89,7 @@ final Map<String, ReactionInfo> reactions = {
     colorChange: Color(0xFF3D7FA8),
   ),
 
-  // ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã ... [Corrupted comment cleaned]
+  // ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Ã ... [Corrupted comment cleaned]
   'naoh+phenolphthalein': const ReactionInfo(
     name: 'Indicator - Pink',
     equation: 'NaOH + Phenolphthalein -> Pink',
@@ -113,7 +113,7 @@ final Map<String, ReactionInfo> reactions = {
         endColor: Color(0x00000000),
       ),
 
-  // ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã ... [Corrupted comment cleaned]
+  // ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Ã ... [Corrupted comment cleaned]
   'cuso4+hcl': const ReactionInfo(
     name: 'No Reaction',
     equation: 'HCl + CuSO4 -> no reaction',
@@ -188,7 +188,7 @@ final Map<String, ReactionInfo> reactions = {
     precipitate: true,
     precipitateColor: Color(0xFF8D6E63),
     // Heat removed
-    // isViolent removed â€” agno3+naoh is not chemically violent
+    // isViolent removed — agno3+naoh is not chemically violent
     // // Smoke removed  // REMOVED - no smoke in real chemistry
   ),
     // NEW VIOLENT REACTIONS
@@ -222,7 +222,7 @@ final Map<String, ReactionInfo> reactions = {
     description: 'Mg reacts very slowly with cold water. Fast with hot water/steam.',
       products: ['Mg(OH)2', 'H2'],
       releasesHeat: true,
-    // isViolent removed â€” h2o+mg is not chemically violent
+    // isViolent removed — h2o+mg is not chemically violent
     // // producesSmoke: true, // Audit Fix: No smoke // Audit Fix: No smoke
       bubbles: true,
     requiresHeat: true, // Mg + cold water = no reaction
@@ -257,7 +257,7 @@ final Map<String, ReactionInfo> reactions = {
       description: 'Magnesium reacts with hydrochloric acid, releasing hydrogen gas and heat.',
       products: ['MgCl2', 'H2'],
       releasesHeat: true,
-    // isViolent removed â€” hcl+mg is not chemically violent
+    // isViolent removed — hcl+mg is not chemically violent
     // // Smoke removed  // REMOVED - no smoke, just bubbles
       bubbles: true,
     ),
@@ -291,7 +291,7 @@ final Map<String, ReactionInfo> reactions = {
       description: 'Bright white flame with intense heat and smoke.',
       products: ['MgSO4', 'H2'],
       releasesHeat: true,
-    // isViolent removed â€” h2so4+mg is not chemically violent
+    // isViolent removed — h2so4+mg is not chemically violent
     // // Smoke removed  // REMOVED - no smoke, just bubbles
       bubbles: true,
     ),
@@ -325,7 +325,7 @@ final Map<String, ReactionInfo> reactions = {
       products: ['Cu(NO3)2', 'Ag'],
     precipitate: true,
     precipitateColor: Color(0xFFC0C0C0), // Silver
-    // precipitate removed â€” this is displacement (silver crystals)
+    // precipitate removed — this is displacement (silver crystals)
       colorChange: Color(0xFF42A5F5),
     ),
     'cuso4+zn': const ReactionInfo(
@@ -334,10 +334,10 @@ final Map<String, ReactionInfo> reactions = {
       type: 'Single Displacement',
       description: 'Blue color fades as zinc displaces copper.',
       products: ['ZnSO4', 'Cu'],
-      colorChange: Color(0xFFEEF6FA), // very pale â€” nearly colorless
+      colorChange: Color(0xFFEEF6FA), // very pale — nearly colorless
       precipitate: true,
       precipitateColor: Color(0xFFB87333), // red-brown Cu deposit
-    // bubbles removed â€” Zn+CuSO4 has no gas
+    // bubbles removed — Zn+CuSO4 has no gas
     ),
     'cuso4+fe': const ReactionInfo(
       name: 'Iron Displacement',
@@ -381,7 +381,7 @@ final Map<String, ReactionInfo> reactions = {
       products: ['H2O', 'O2'],
       bubbles: true,
       gasEvolution: 'O2',
-    // producesSmoke removed â€” gas â‰  smoke (real chemistry)
+    // producesSmoke removed — gas â‰  smoke (real chemistry)
       foam: true,
       releasesHeat: true,
     ),
@@ -449,12 +449,12 @@ final Map<String, ReactionInfo> reactions = {
       type: 'Neutralization',
       description: 'Clear solution of ammonium chloride forms.',
       products: ['NH4Cl', 'H2O'],
-    // producesSmoke removed â€” solution reaction, no gas phase
+    // producesSmoke removed — solution reaction, no gas phase
     colorChange: Color(0x00FFFFFF), // Audit Fix: Colorless
       releasesHeat: true,
     ),
     'cuso4+nh4oh': const ReactionInfo(
-  name: 'Two-Stage: Blue ppt â†’ Deep Blue Complex',
+  name: 'Two-Stage: Blue ppt → Deep Blue Complex',
   equation: 'CuSO4 + 2NH4OH -> Cu(OH)2 ppt + (NH4)2SO4; Cu(OH)2 + 4NH3 (excess) -> [Cu(NH3)4](OH)2',
   type: 'Complex Formation',
   description: 'Light blue Cu(OH)2 ppt forms, then dissolves in excess NH3 to deep navy [Cu(NH3)4]2+ complex.',
@@ -671,7 +671,7 @@ final Map<String, ReactionInfo> reactions = {
     description: 'Pungent ammonia gas. Test for NH4+.',
     products: ['NaCl', 'NH3', 'H2O'],
     gasEvolution: 'NH3',
-    // producesSmoke removed â€” gas â‰  smoke (real chemistry)
+    // producesSmoke removed — gas â‰  smoke (real chemistry)
   ),
   // === BATCH 2 REACTIONS ===
   'h2c2o4+naoh': const ReactionInfo(
@@ -832,7 +832,7 @@ final Map<String, ReactionInfo> reactions = {
     type: 'Single Displacement',
     description: 'Zinc displaces copper. Red-brown Cu.',
     products: ['ZnCl2', 'Cu'],
-      colorChange: Color(0xFFEEF6FA), // pale â€” nearly colorless ZnCl2
+      colorChange: Color(0xFFEEF6FA), // pale — nearly colorless ZnCl2
       precipitate: true,
       precipitateColor: Color(0xFFB87333), // red-brown Cu
   ),
@@ -896,7 +896,7 @@ final Map<String, ReactionInfo> reactions = {
     requiresHeat: true,
     gasEvolution: 'CO2',
     bubbles: true,
-    // producesSmoke removed â€” gas â‰  smoke (real chemistry)
+    // producesSmoke removed — gas â‰  smoke (real chemistry)
   ),
   'nahco3+heat': const ReactionInfo(
     name: 'Baking Soda Decomposition',
@@ -907,7 +907,7 @@ final Map<String, ReactionInfo> reactions = {
     requiresHeat: true,
     gasEvolution: 'CO2',
     bubbles: true,
-    // producesSmoke removed â€” gas â‰  smoke (real chemistry)
+    // producesSmoke removed — gas â‰  smoke (real chemistry)
   ),
   'agno3+heat': const ReactionInfo(
     name: 'Silver Nitrate Decomposition',
@@ -1022,7 +1022,7 @@ final Map<String, ReactionInfo> reactions = {
     description: 'Urea decomposes to ammonia + CO2.',
     products: ['NH3', 'CO2'],
     gasEvolution: 'NH3',
-    // producesSmoke removed â€” gas â‰  smoke (real chemistry)
+    // producesSmoke removed — gas â‰  smoke (real chemistry)
   ),
   'benzene+br2': const ReactionInfo(
     name: 'Bromobenzene (Substitution)',
@@ -1065,4 +1065,4 @@ final Map<String, ReactionInfo> reactions = {
 ),
 };
 
-// ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Â ÃƒÂ¢Ã¢â€šÂ¬Ã¢â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â ... [Corrupted comment cleaned]
+// ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â ... [Corrupted comment cleaned]

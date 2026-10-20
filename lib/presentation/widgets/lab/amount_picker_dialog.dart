@@ -1,4 +1,4 @@
-﻿part of chem_lab;
+part of chem_lab;
 
 class AmountPickerDialog extends StatefulWidget {
   final Chemical chemical;
@@ -119,6 +119,6 @@ class _AmountPickerDialogState extends State<AmountPickerDialog> {
 }
 
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
-// CHEMICAL INFO â€” Extended Study Data
+// CHEMICAL INFO — Extended Study Data
 // â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•â•
 

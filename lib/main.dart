@@ -1,4 +1,4 @@
-﻿library chem_lab;
+library chem_lab;
 
 import 'dart:async';
 import 'dart:math';
@@ -40,6 +40,8 @@ part 'services/chemistry/ph_calculator.dart';
 part 'services/chemistry/lab_ph_service.dart';
 part 'presentation/widgets/lab/ph_color_book.dart';
 part 'presentation/widgets/lab/litmus_color_book.dart';
+final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
+
 void main() => runApp(const ChemLabApp());
 
 
