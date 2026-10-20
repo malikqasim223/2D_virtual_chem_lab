@@ -3,11 +3,13 @@ part of chem_lab;
 class LabHistoryService {
   static const String _fileName = 'saved_experiments.json';
 
-  static Future<void> saveExperiment(List<EquipItem> equipment) async {
+  static Future<void> saveExperiment(List<EquipItem> equipment, String expName) async {
     final data = {
+      'name': expName,
       'date': DateTime.now().toIso8601String(),
       'equipment': equipment.map((e) => {
         'shape': e.shape.toString(),
+        'label': e.shape.label,
         'temperature': e.temperature,
         'layers': e.layers.map((l) => {'chemId': l.chemId, 'volume': l.volume}).toList(),
       }).toList(),
@@ -25,7 +27,7 @@ class LabHistoryService {
       }
     }
     
-    history.insert(0, data); // Newest first
+    history.insert(0, data);
     await file.writeAsString(jsonEncode(history));
   }
 

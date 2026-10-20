@@ -1,49 +1,16 @@
-# Flutter
+# Flutter/Dart
 .dart_tool/
 .packages
 build/
 .flutter-plugins
 .flutter-plugins-dependencies
-*.iml
+
+# IDE
 .idea/
 .vscode/
+
+# Backups (Never push to GitHub)
+backups/
+*.zip
+*.bak
 *.log
-windows/flutter/ephemeral/
-android/.gradle/
-android/local.properties
-ios/Pods/
-.DS_Store
-Thumbs.db
-
-# Corrupted files - temporarily excluded
-lib/main_backup.txt
-lib/main_before_*.txt
-*.bak
-
-# Local backups (do not push)
-backups/
-
-*.back
-
-# ===== Refactor temp files (never commit) =====
-backups/
-_empty_backup_*/
-analyze_output.txt
-diagnostic_report.txt
-*.tmp
-*.bak
-
-# ===== Flutter generated =====
-.dart_tool/
-build/
-.flutter-plugins
-.flutter-plugins-dependencies
-.packages
-
-# Audit & Test Artifacts
-reactions_catalog.html
-reactions_catalog.csv
-chemicals_audit.csv
-reactions_audit.csv
-diagnostic_report.txt
-analyze_output.txt

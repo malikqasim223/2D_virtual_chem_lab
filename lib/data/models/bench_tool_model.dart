@@ -25,6 +25,8 @@ class BenchTool {
 }
 
 const List<Chemical> allChemicals = [
+  Chemical(id: 'fe2o3', name: 'Iron(III) Oxide', formula: 'Fe2O3', state: 'Solid', category: 'Others', color: Color(0xFF8B4513)),
+
   Chemical(id: 'hcl', name: 'Hydrochloric Acid', formula: 'HCl', state: 'Liquid', category: 'Acids', color: Color(0xFFE8F0E8)),
   Chemical(id: 'h2so4', name: 'Sulfuric Acid', formula: 'H2SO4', state: 'Liquid', category: 'Acids', color: Color(0xFFF5E8C0)),
   Chemical(id: 'naoh', name: 'Sodium Hydroxide', formula: 'NaOH', state: 'Solid', category: 'Bases', color: Color(0xFFFAFAFA)),

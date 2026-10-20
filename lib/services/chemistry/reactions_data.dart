@@ -1,6 +1,28 @@
 part of chem_lab;
 
 final Map<String, ReactionInfo> reactions = {
+  'al+fe2o3': const ReactionInfo(
+    name: 'Thermite Reaction',
+    equation: 'Fe2O3 + 2Al -> 2Fe + Al2O3 + heat (~2500°C)',
+    type: 'Thermite',
+    description: 'Extremely exothermic! Molten iron is produced. Blinding white light and heavy smoke.',
+    products: ['Fe', 'Al2O3'],
+    releasesHeat: true,
+    isViolent: true,
+    producesSmoke: true, // Add smoke
+    bubbles: true,       // Add sparks
+    tempDeltaC: 900.0,
+    endColor: Color(0xFF8B4513),
+    flameColor: Color(0xFFFFFFFF),
+    explosion: ExplosionInfo(
+      flashColor: Color(0xFFFFFFFF), // Blinding white
+      flashDurationSec: 0.5,
+      shakeAmplitude: 0.0, // NO SHAKE for Thermite
+      smokeColor: Color(0xFFB0BEC5),
+    ),
+    baseDurationSec: 3.0,
+  ),
+
   // ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Ã ... [Corrupted comment cleaned]
   'hcl+naoh': const ReactionInfo(
     name: 'Neutralization',

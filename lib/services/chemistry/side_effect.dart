@@ -54,9 +54,9 @@ SideEffect? detectSideEffect(List<String> chemIds) {
   return null;
 }
 
-// ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â ... [Corrupted comment cleaned]
+//  â‚¬â„¢   ... [Corrupted comment cleaned]
 // FALLBACK: Unknown combos -> tiny fizz + warmth (realistic "mixing")
-// ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â ... [Corrupted comment cleaned]
+//  â‚¬â„¢   ... [Corrupted comment cleaned]
 SideEffect defaultMixingEffect(List<String> chemIds) {
   return const SideEffect(
     label: 'MIXING',
@@ -66,8 +66,8 @@ SideEffect defaultMixingEffect(List<String> chemIds) {
   );
 }
 
-// ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â ... [Corrupted comment cleaned]
+//  â‚¬â„¢   ... [Corrupted comment cleaned]
 // PREDEFINED EXPERIMENTS (Manual Lab Guide)
-// ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â ... [Corrupted comment cleaned]
+//  â‚¬â„¢   ... [Corrupted comment cleaned]
 
 

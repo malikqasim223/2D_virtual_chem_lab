@@ -1058,6 +1058,131 @@ class _HistoryScreenState extends State<HistoryScreen> {
     _loadHistory();
   }
 
+  void _showDetails(BuildContext context, dynamic item) {
+    final eqList = item['equipment'] as List;
+    List<String> allChemIds = [];
+    for (var eq in eqList) {
+      for (var l in eq['layers']) {
+        allChemIds.add(l['chemId']);
+      }
+    }
+    allChemIds.sort();
+    final key = allChemIds.join('+');
+    final rxn = multiReactions[key] ?? reactions[key];
+
+    showDialog(
+      context: context,
+      builder: (ctx) => Dialog(
+        backgroundColor: LC.panel,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        child: Container(
+          width: 550,
+          padding: const EdgeInsets.all(20),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Expanded(child: Text(item['name'] ?? 'Experiment Details',
+                    style: const TextStyle(color: LC.accentBright, fontSize: 18, fontWeight: FontWeight.bold))),
+                  IconButton(
+                    icon: const Icon(Icons.close, color: LC.textDim, size: 20),
+                    onPressed: () => Navigator.pop(ctx),
+                  )
+                ],
+              ),
+              const Divider(color: LC.border),
+              const SizedBox(height: 12),
+              const Text('EQUIPMENT & CHEMICALS', style: TextStyle(color: LC.textMuted, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.0)),
+              const SizedBox(height: 8),
+              Flexible(
+                child: ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: eqList.length,
+                  itemBuilder: (c, i) {
+                    final eq = eqList[i];
+                    final layers = eq['layers'] as List;
+                    if (layers.isEmpty) return const SizedBox.shrink();
+                    
+                    return Padding(
+                      padding: const EdgeInsets.only(bottom: 8),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(eq['label'] ?? 'Equipment', style: const TextStyle(color: LC.accent, fontSize: 13, fontWeight: FontWeight.w600)),
+                          const SizedBox(height: 4),
+                          ...layers.map((l) {
+                            final chem = allChemicals.firstWhere((c) => c.id == l['chemId'], orElse: () => allChemicals.first);
+                            return Padding(
+                              padding: const EdgeInsets.only(left: 8, bottom: 2),
+                              child: Row(
+                                children: [
+                                  Container(width: 4, height: 4, decoration: BoxDecoration(color: chem.color, shape: BoxShape.circle)),
+                                  const SizedBox(width: 6),
+                                  Text('${chem.name} (${l['volume']} mL)', style: const TextStyle(color: LC.text, fontSize: 12)),
+                                ],
+                              ),
+                            );
+                          }),
+                        ],
+                      ),
+                    );
+                  },
+                ),
+              ),
+              if (rxn != null) ...[
+                const SizedBox(height: 16),
+                const Text('REACTION ANALYSIS', style: TextStyle(color: LC.textMuted, fontSize: 10, fontWeight: FontWeight.bold, letterSpacing: 1.0)),
+                const SizedBox(height: 8),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: LC.panelElev,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: LC.border),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(rxn.name, style: const TextStyle(color: LC.success, fontSize: 14, fontWeight: FontWeight.bold)),
+                      const SizedBox(height: 4),
+                      Text(rxn.equation, style: const TextStyle(color: LC.accentBright, fontSize: 12, fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 6),
+                      Text(rxn.description, style: const TextStyle(color: LC.textSub, fontSize: 11, height: 1.4)),
+                      if (rxn.products.isNotEmpty) ...[
+                        const SizedBox(height: 8),
+                        Text('Products: ${rxn.products.join(", ")}', style: const TextStyle(color: LC.warning, fontSize: 11)),
+                      ]
+                    ],
+                  ),
+                ),
+              ],
+              const SizedBox(height: 20),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: LC.accent,
+                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                  ),
+                  icon: const Icon(Icons.play_arrow, color: Colors.white),
+                  label: const Text('Load in Lab', style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),
+                  onPressed: () {
+                    Navigator.pop(ctx);
+                    Navigator.pushReplacement(context, MaterialPageRoute(builder: (_) => LabScreen(loadData: item)));
+                  },
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1096,71 +1221,48 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   itemCount: _history.length,
                   itemBuilder: (ctx, i) {
                     final item = _history[i];
+                    final name = item['name'] ?? 'Unnamed Experiment';
                     final date = DateTime.parse(item['date']).toLocal();
                     final eqList = item['equipment'] as List;
+                    int chemCount = 0;
+                    for (var eq in eqList) { chemCount += (eq['layers'] as List).length; }
 
-                    return Container(
-                      margin: const EdgeInsets.only(bottom: 12),
-                      padding: const EdgeInsets.all(16),
-                      decoration: BoxDecoration(
-                        color: LC.panel,
-                        borderRadius: BorderRadius.circular(12),
-                        border: Border.all(color: LC.border),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Text(
-                                'Experiment #${_history.length - i}',
-                                style: const TextStyle(color: LC.accentBright, fontSize: 14, fontWeight: FontWeight.bold),
-                              ),
-                              Text(
-                                '${date.day}/${date.month}/${date.year} - ${date.hour}:${date.minute.toString().padLeft(2, '0')}',
-                                style: const TextStyle(color: LC.textDim, fontSize: 11),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 12),
-                          ...eqList.asMap().entries.map((e) {
-                            final eq = e.value;
-                            final layers = eq['layers'] as List;
-                            if (layers.isEmpty) return const SizedBox.shrink();
-                            
-                            return Padding(
-                              padding: const EdgeInsets.only(bottom: 8),
-                              child: Row(
+                    return InkWell(
+                      onTap: () => _showDetails(ctx, item),
+                      child: Container(
+                        margin: const EdgeInsets.only(bottom: 12),
+                        padding: const EdgeInsets.all(16),
+                        decoration: BoxDecoration(
+                          color: LC.panel,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: LC.border),
+                        ),
+                        child: Row(
+                          children: [
+                            Container(
+                              padding: const EdgeInsets.all(12),
+                              decoration: BoxDecoration(color: LC.accent.withOpacity(0.1), shape: BoxShape.circle),
+                              child: const Icon(Icons.science, color: LC.accentBright, size: 24),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Icon(Icons.science, size: 16, color: LC.textSub),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Wrap(
-                                      spacing: 6,
-                                      runSpacing: 4,
-                                      children: layers.map((l) {
-                                        return Container(
-                                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                                          decoration: BoxDecoration(
-                                            color: LC.panelElev,
-                                            borderRadius: BorderRadius.circular(4),
-                                            border: Border.all(color: LC.borderSoft),
-                                          ),
-                                          child: Text(
-                                            '${l['chemId']} (${l['volume']} mL)',
-                                            style: const TextStyle(color: LC.text, fontSize: 11),
-                                          ),
-                                        );
-                                      }).toList(),
-                                    ),
+                                  Text(name, style: const TextStyle(color: LC.text, fontSize: 16, fontWeight: FontWeight.bold)),
+                                  const SizedBox(height: 4),
+                                  Text(
+                                    '${date.day}/${date.month}/${date.year} at ${date.hour}:${date.minute.toString().padLeft(2, '0')}',
+                                    style: const TextStyle(color: LC.textDim, fontSize: 11),
                                   ),
+                                  const SizedBox(height: 4),
+                                  Text('$chemCount chemicals mixed', style: const TextStyle(color: LC.accent, fontSize: 12)),
                                 ],
                               ),
-                            );
-                          }).toList(),
-                        ],
+                            ),
+                            const Icon(Icons.chevron_right, color: LC.textDim),
+                          ],
+                        ),
                       ),
                     );
                   },
@@ -1168,6 +1270,8 @@ class _HistoryScreenState extends State<HistoryScreen> {
     );
   }
 }
+
+
 
 class SettingsScreen extends StatelessWidget {
   const SettingsScreen({super.key});
