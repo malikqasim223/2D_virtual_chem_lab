@@ -1,4 +1,4 @@
-﻿part of chem_lab;
+part of chem_lab;
 
 class MarbleBenchPainter extends CustomPainter {
   @override
@@ -12,7 +12,7 @@ class MarbleBenchPainter extends CustomPainter {
       final len = 50 + rng.nextDouble() * 200;
       final angle = rng.nextDouble() * pi;
       canvas.drawLine(start, Offset(start.dx + cos(angle) * len, start.dy + sin(angle) * len),
-        Paint()..color = Colors.white.withValues(alpha: 0.03)..strokeWidth = 0.8);
+        Paint()..color = Colors.white.withValues(alpha: 0.08)..strokeWidth = 0.8);
     }
     for (int i = 0; i < 400; i++) {
       canvas.drawCircle(Offset(rng.nextDouble() * size.width, rng.nextDouble() * size.height),

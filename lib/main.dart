@@ -24,6 +24,7 @@ part 'presentation/widgets/lab/molecule_painter.dart';
 part 'presentation/widgets/lab/marble_bench_painter.dart';
 part 'presentation/widgets/lab/bench_tool_painter.dart';
 part 'presentation/screens/lab/lab_screen.dart';
+part 'presentation/screens/home_screen.dart';
 part 'presentation/widgets/lab/amount_picker_dialog.dart';
 part 'presentation/widgets/lab/mini_bottle_painter.dart';
 part 'core/theme/lab_colors.dart';
@@ -40,6 +41,7 @@ part 'services/chemistry/lab_ph_service.dart';
 part 'presentation/widgets/lab/ph_color_book.dart';
 part 'presentation/widgets/lab/litmus_color_book.dart';
 void main() => runApp(const ChemLabApp());
+
 
 
 

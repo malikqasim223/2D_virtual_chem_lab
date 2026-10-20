@@ -1,10 +1,10 @@
-﻿part of chem_lab;
+part of chem_lab;
 
 class PhColorBook {
   static void show(BuildContext context) {
     showDialog(
       context: context,
-      barrierColor: Colors.black.withValues(alpha: 0.7),
+      barrierColor: Color(0xFF94A3B8).withValues(alpha: 0.2),
       builder: (ctx) => Dialog(
         backgroundColor: LC.panel,
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),

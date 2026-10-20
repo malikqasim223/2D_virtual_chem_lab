@@ -9,9 +9,10 @@ class ChemLabApp extends StatelessWidget {
       title: 'Virtual Chemistry Lab',
       theme: ThemeData(brightness: Brightness.dark, fontFamily: 'Segoe UI',
         scaffoldBackgroundColor: LC.bgDeep, useMaterial3: true),
-      home: const LabScreen(),
+      home: const HomeScreen(),
     );
   }
 }
+
 
 

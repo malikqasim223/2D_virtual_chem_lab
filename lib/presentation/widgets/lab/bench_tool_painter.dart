@@ -1,4 +1,4 @@
-﻿part of chem_lab;
+part of chem_lab;
 
 class BenchToolPainter extends CustomPainter {
   final LabEffect type;
@@ -406,7 +406,7 @@ class BenchToolPainter extends CustomPainter {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = 0.9
-        ..color = Colors.black.withValues(alpha: 0.3),
+        ..color = Color(0xFF94A3B8).withValues(alpha: 0.2),
     );
   }
 

@@ -190,13 +190,18 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
   void _recomputeReaction() {
     currentReaction = null;
     for (final eq in equipment) {
+      eq.reaction = null;
       if (eq.layers.length >= 2) {
         final ids = eq.layers.map((l) => l.chemId).toList()..sort();
         final key = ids.join('+');
-        if (multiReactions.containsKey(key)) { currentReaction = multiReactions[key]; return; }
-        if (reactions.containsKey(key)) { currentReaction = reactions[key]; return; }
-        // Fallback: any 2-subset
-        // Pairwise fallback removed for 3+ chemical safety (Audit Fix)
+        if (multiReactions.containsKey(key)) {
+          eq.reaction = multiReactions[key];
+        } else if (reactions.containsKey(key)) {
+          eq.reaction = reactions[key];
+        }
+      }
+      if (currentReaction == null && eq.reaction != null) {
+        currentReaction = eq.reaction;
       }
     }
   }
@@ -509,7 +514,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(backgroundColor: LC.bgDeep,
+    return Scaffold(backgroundColor: LC.darkBgDeep,
       body: AnimatedBuilder(
         animation: _shakeCtrl,
         builder: (context, child) {
@@ -537,16 +542,77 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
               child: Stack(
                 children: [
                   Column(children: [
-                    _topBar(),
-                    Expanded(child: Row(children: [
-                      _sidebar(),
-                      if (showInventory) _inventoryPanel(),
-                      if (showExperiments) _experimentsPanel(),
-          if (showChemInfo) _chemInfoPanel(),
-                      Expanded(child: _labArea()),
-                      if (showToolbox) _toolboxPanel(),
-                    ])),
+                      _topBar(),
+                    Expanded(
+                      child: Row(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          if (showInventory)
+                            Container(
+                              width: 280,
+                              constraints: const BoxConstraints.tightFor(width: 280),
+                              child: _inventoryPanel(),
+                            ),
+                          if (showChemInfo)
+                            Container(
+                              width: 280,
+                              constraints: const BoxConstraints.tightFor(width: 280),
+                              child: _chemInfoPanel(),
+                            ),
+                          Expanded(child: _labArea()),
+                          if (showToolbox)
+                            Container(
+                              width: 280,
+                              constraints: const BoxConstraints.tightFor(width: 280),
+                              child: _toolboxPanel(),
+                            ),
+                        ],
+                      ),
+                    ),
                   ]),
+                  
+                  // ===== Inventory Toggle (Left) =====
+                  if (!showInventory)
+                    Positioned(
+                      left: 0,
+                      top: 0,
+                      bottom: 0,
+                      child: Center(
+                        child: _sideToggle(
+                          icon: Icons.inventory_2_outlined,
+                          isActive: false,
+                          onTap: () {
+                          setState(() => showInventory = true);
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            setState(() => _clampEquipmentToBench());
+                          });
+                        },
+                          isLeft: true,
+                        ),
+                      ),
+                    ),
+                  
+                  // ===== Toolbox Toggle (Right) =====
+                  if (!showToolbox)
+                    Positioned(
+                      right: 0,
+                      top: 0,
+                      bottom: 0,
+                      child: Center(
+                        child: _sideToggle(
+                          icon: Icons.build_circle_outlined,
+                          isActive: false,
+                          onTap: () {
+                          setState(() => showToolbox = true);
+                          WidgetsBinding.instance.addPostFrameCallback((_) {
+                            setState(() => _clampEquipmentToBench());
+                          });
+                        },
+                          isLeft: false,
+                        ),
+                      ),
+                    ),
+                  
                   IgnorePointer(
                     child: AnimatedBuilder(
                       animation: _flashCtrl,
@@ -589,178 +655,208 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
       ),
     );
     return Container(height: 60,
-      decoration: const BoxDecoration(color: LC.bg,
-        border: Border(bottom: BorderSide(color: LC.border))),
+      decoration: const BoxDecoration(color: LC.darkBg,
+        border: Border(bottom: BorderSide(color: LC.darkBorder))),
       padding: const EdgeInsets.symmetric(horizontal: 18),
       child: Row(children: [
+            // ===== Home Button =====
+            MouseRegion(
+              cursor: SystemMouseCursors.click,
+              child: GestureDetector(
+                onTap: () => Navigator.pop(context),
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  decoration: BoxDecoration(
+                    color: LC.darkPanelElev,
+                    borderRadius: BorderRadius.circular(8),
+                    border: Border.all(color: LC.darkBorder),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: const [
+                      Icon(Icons.home_outlined, size: 16, color: LC.darkAccentBright),
+                      SizedBox(width: 6),
+                      Text('Home', style: TextStyle(color: LC.darkText, fontSize: 12, fontWeight: FontWeight.w600)),
+                    ],
+                  ),
+                ),
+              ),
+            ),
         Container(width: 38, height: 38,
-          decoration: BoxDecoration(color: LC.panelElev,
+          decoration: BoxDecoration(color: LC.darkPanelElev,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: LC.borderSoft)),
-          child: const Icon(Icons.science, color: LC.accentBright, size: 20)),
+            border: Border.all(color: LC.darkBorderSoft)),
+          child: const Icon(Icons.science, color: LC.darkAccentBright, size: 20)),
         const SizedBox(width: 12),
         const Column(crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text('Virtual Chemistry Lab (Illustrative)',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: LC.text)),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: LC.darkText)),
             SizedBox(height: 2),
             Text('Explore / Experiment / Learn',
-              style: TextStyle(color: LC.textDim, fontSize: 10)),
+              style: TextStyle(color: LC.darkTextDim, fontSize: 10)),
           ]),
         const SizedBox(width: 30),
         Expanded(child: Container(height: 34,
-          decoration: BoxDecoration(color: LC.panel,
+          decoration: BoxDecoration(color: LC.darkPanel,
             borderRadius: BorderRadius.circular(17),
-            border: Border.all(color: LC.border)),
+            border: Border.all(color: LC.darkBorder)),
           padding: const EdgeInsets.symmetric(horizontal: 14),
           child: Row(children: const [
-            Icon(Icons.search, color: LC.textDim, size: 15),
+            Icon(Icons.search, color: LC.darkTextDim, size: 15),
             SizedBox(width: 8),
             Expanded(child: Text('Search chemicals, experiments...',
-              style: TextStyle(color: LC.textDim, fontSize: 11))),
+              style: TextStyle(color: LC.darkTextDim, fontSize: 11))),
           ]))),
         const SizedBox(width: 16),
         Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(color: LC.panel,
+          decoration: BoxDecoration(color: LC.darkPanel,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: LC.border)),
+            border: Border.all(color: LC.darkBorder)),
           child: Row(children: const [
-            Icon(Icons.person, color: LC.accentBright, size: 14),
+            Icon(Icons.person, color: LC.darkAccentBright, size: 14),
             SizedBox(width: 6),
-            Text('Student', style: TextStyle(color: LC.text, fontSize: 10)),
+            Text('Student', style: TextStyle(color: LC.darkText, fontSize: 10)),
           ])),
       ]));
   }
 
   Widget _topBar() {
     return Container(height: 60,
-      decoration: const BoxDecoration(color: LC.bg,
-        border: Border(bottom: BorderSide(color: LC.border))),
+      decoration: const BoxDecoration(color: LC.darkBg,
+        border: Border(bottom: BorderSide(color: LC.darkBorder))),
       padding: const EdgeInsets.symmetric(horizontal: 18),
       child: Row(children: [
+        // ===== Home Button =====
+        MouseRegion(
+          cursor: SystemMouseCursors.click,
+          child: GestureDetector(
+            onTap: () => Navigator.pop(context),
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: LC.darkPanelElev,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: LC.darkBorder),
+              ),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: const [
+                  Icon(Icons.home_outlined, size: 16, color: LC.darkAccentBright),
+                  SizedBox(width: 6),
+                  Text('Home', style: TextStyle(color: LC.darkText, fontSize: 12, fontWeight: FontWeight.w600)),
+                ],
+              ),
+            ),
+          ),
+        ),
+        const SizedBox(width: 12),
         Container(width: 38, height: 38,
-          decoration: BoxDecoration(color: LC.panelElev,
+          decoration: BoxDecoration(color: LC.darkPanelElev,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: LC.borderSoft)),
-          child: const Icon(Icons.science, color: LC.accentBright, size: 20)),
+            border: Border.all(color: LC.darkBorderSoft)),
+          child: const Icon(Icons.science, color: LC.darkAccentBright, size: 20)),
         const SizedBox(width: 12),
         const Column(crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Text('Virtual Chemistry Lab (Illustrative)',
-              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: LC.text)),
+              style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: LC.darkText)),
             SizedBox(height: 2),
             Text('Explore / Experiment / Learn',
-              style: TextStyle(color: LC.textDim, fontSize: 10)),
+              style: TextStyle(color: LC.darkTextDim, fontSize: 10)),
           ]),
         const SizedBox(width: 30),
         Expanded(child: Container(height: 34,
-          decoration: BoxDecoration(color: LC.panel,
+          decoration: BoxDecoration(color: LC.darkPanel,
             borderRadius: BorderRadius.circular(17),
-            border: Border.all(color: LC.border)),
+            border: Border.all(color: LC.darkBorder)),
           padding: const EdgeInsets.symmetric(horizontal: 14),
           child: Row(children: const [
-            Icon(Icons.search, color: LC.textDim, size: 15),
+            Icon(Icons.search, color: LC.darkTextDim, size: 15),
             SizedBox(width: 8),
             Expanded(child: Text('Search chemicals, experiments...',
-              style: TextStyle(color: LC.textDim, fontSize: 11))),
+              style: TextStyle(color: LC.darkTextDim, fontSize: 11))),
           ]))),
         const SizedBox(width: 16),
         Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(color: LC.panel,
+          decoration: BoxDecoration(color: LC.darkPanel,
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: LC.border)),
+            border: Border.all(color: LC.darkBorder)),
           child: Row(children: const [
-            Icon(Icons.person, color: LC.accentBright, size: 14),
+            Icon(Icons.person, color: LC.darkAccentBright, size: 14),
             SizedBox(width: 6),
-            Text('Student', style: TextStyle(color: LC.text, fontSize: 10)),
+            Text('Student', style: TextStyle(color: LC.darkText, fontSize: 10)),
           ])),
       ]));
   }
 
   Widget _sidebar() {
     final items = [
-      (Icons.home_outlined, 'Home', -1),
+      (Icons.home_outlined, 'Home', -2),
       (Icons.science_outlined, 'Virtual Lab', -1),
-      (Icons.biotech_outlined, 'Experiments', 2),
       (Icons.inventory_2_outlined, 'Inventory', 0),
-    (Icons.menu_book_outlined, 'Chem Info', 3),
       (Icons.build_circle_outlined, 'Toolbox', 1),
-      (Icons.history, 'History', -1),
-      (Icons.settings_outlined, 'Settings', -1),
     ];
     return Container(width: 130,
-      decoration: const BoxDecoration(color: LC.bg,
-        border: Border(right: BorderSide(color: LC.border))),
+      decoration: const BoxDecoration(color: LC.darkBg,
+        border: Border(right: BorderSide(color: LC.darkBorder))),
       child: Column(children: [
         const SizedBox(height: 14),
         ...items.asMap().entries.map((e) {
           final active = navIndex == e.key;
           return GestureDetector(
-            onTap: () => setState(() {
-              navIndex = e.key;
-              if (e.value.$3 == 0) {
-                showInventory = !showInventory;
-                if (showInventory) { showToolbox = false; showExperiments = false; }
-              } else if (e.value.$3 == 1) {
-                showToolbox = !showToolbox;
-                if (showToolbox) { showInventory = false; showExperiments = false; }
-              } else if (e.value.$3 == 2) {
-                showExperiments = !showExperiments;
-                if (showExperiments) { showInventory = false; showToolbox = false; }
+            onTap: () {
+              if (e.value.$3 == -2) {
+                Navigator.pop(context);
+                return;
               }
-              else if (e.value.$3 == 3) {
-                showChemInfo = !showChemInfo;
-                if (showChemInfo) { showInventory = false; showToolbox = false; showExperiments = false; }
-              }
-            }),
+              setState(() {
+                navIndex = e.key;
+                if (e.value.$3 == 0) {
+                  showInventory = !showInventory;
+                  if (showInventory) { showToolbox = false; }
+                } else if (e.value.$3 == 1) {
+                  showToolbox = !showToolbox;
+                  if (showToolbox) { showInventory = false; }
+                }
+              });
+            },
             child: AnimatedContainer(duration: const Duration(milliseconds: 180),
               margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               decoration: BoxDecoration(
-                color: active ? LC.panelElev : Colors.transparent,
+                color: active ? LC.darkPanelElev : Colors.transparent,
                 borderRadius: BorderRadius.circular(8),
-                border: active ? Border.all(color: LC.borderSoft) : null),
+                border: active ? Border.all(color: LC.darkBorderSoft) : null),
               child: Row(children: [
-                Icon(e.value.$1, size: 17, color: active ? LC.accentBright : LC.textSub),
+                Icon(e.value.$1, size: 17, color: active ? LC.darkAccentBright : LC.darkTextSub),
                 const SizedBox(width: 10),
                 Expanded(child: Text(e.value.$2,
-                  style: TextStyle(color: active ? LC.text : LC.textSub,
+                  style: TextStyle(color: active ? LC.darkText : LC.darkTextSub,
                     fontSize: 11, fontWeight: active ? FontWeight.w600 : FontWeight.w400))),
               ])));
-        }),
-        const Spacer(),
-        Container(margin: const EdgeInsets.all(10), padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(color: LC.panel,
-            borderRadius: BorderRadius.circular(10),
-            border: Border.all(color: LC.border)),
-          child: const Column(children: [
-            Icon(Icons.science, color: LC.accent, size: 22),
-            SizedBox(height: 8),
-            Text('Small\nExperiments\nBig\nDiscoveries',
-              textAlign: TextAlign.center,
-              style: TextStyle(color: LC.textDim, fontSize: 9, height: 1.5)),
-          ])),
+        }).toList(),
       ]));
   }
 
   Widget _experimentsPanel() {
     return Container(width: 300,
-      decoration: const BoxDecoration(color: LC.panel,
-        border: Border(right: BorderSide(color: LC.border))),
+      decoration: const BoxDecoration(color: LC.darkPanel,
+        border: Border(right: BorderSide(color: LC.darkBorder))),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Container(padding: const EdgeInsets.fromLTRB(16, 14, 12, 10),
           child: Row(children: [
-            const Icon(Icons.biotech_outlined, size: 14, color: LC.accentBright),
+            const Icon(Icons.biotech_outlined, size: 14, color: LC.darkAccentBright),
             const SizedBox(width: 10),
             const Text('Manual Experiments',
-              style: TextStyle(color: LC.text, fontSize: 12, fontWeight: FontWeight.w600)),
+              style: TextStyle(color: LC.darkText, fontSize: 12, fontWeight: FontWeight.w600)),
             const Spacer(),
             GestureDetector(onTap: () => setState(() => showExperiments = false),
-              child: const Icon(Icons.close, color: LC.textDim, size: 15)),
+              child: const Icon(Icons.close, color: LC.darkTextDim, size: 15)),
           ])),
-        Container(height: 1, color: LC.border),
+        Container(height: 1, color: LC.darkBorder),
         Expanded(child: ListView.builder(
           padding: const EdgeInsets.fromLTRB(12, 12, 12, 12),
           itemCount: allExperiments.length,
@@ -772,52 +868,52 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(color: LC.panelElev,
+      decoration: BoxDecoration(color: LC.darkPanelElev,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: LC.border)),
+        border: Border.all(color: LC.darkBorder)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
           Container(width: 22, height: 22,
             decoration: BoxDecoration(
-              color: LC.accent.withValues(alpha: 0.2),
+              color: LC.darkAccent.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(4)),
             child: Center(child: Text('${allExperiments.indexOf(exp) + 1}',
-              style: const TextStyle(color: LC.accentBright, fontSize: 10,
+              style: const TextStyle(color: LC.darkAccentBright, fontSize: 10,
                 fontWeight: FontWeight.w700)))),
           const SizedBox(width: 8),
           Expanded(child: Text(exp.name,
-            style: const TextStyle(color: LC.text, fontSize: 11,
+            style: const TextStyle(color: LC.darkText, fontSize: 11,
               fontWeight: FontWeight.w600))),
         ]),
         const SizedBox(height: 6),
         Text(exp.description,
-          style: const TextStyle(color: LC.textSub, fontSize: 9, height: 1.4)),
+          style: const TextStyle(color: LC.darkTextSub, fontSize: 9, height: 1.4)),
         const SizedBox(height: 8),
         const Text('STEPS',
-          style: TextStyle(color: LC.textMuted, fontSize: 8,
+          style: TextStyle(color: LC.darkTextMuted, fontSize: 8,
             fontWeight: FontWeight.w600, letterSpacing: 1.0)),
         const SizedBox(height: 4),
         ...exp.steps.asMap().entries.map((e) => Padding(
           padding: const EdgeInsets.only(bottom: 2),
           child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
             Text('${e.key + 1}. ',
-              style: const TextStyle(color: LC.accentBright, fontSize: 9)),
+              style: const TextStyle(color: LC.darkAccentBright, fontSize: 9)),
             Expanded(child: Text(e.value,
-              style: const TextStyle(color: LC.textSub, fontSize: 9, height: 1.3))),
+              style: const TextStyle(color: LC.darkTextSub, fontSize: 9, height: 1.3))),
           ]))),
         const SizedBox(height: 8),
         const Text('CHEMICALS',
-          style: TextStyle(color: LC.textMuted, fontSize: 8,
+          style: TextStyle(color: LC.darkTextMuted, fontSize: 8,
             fontWeight: FontWeight.w600, letterSpacing: 1.0)),
         const SizedBox(height: 4),
         Wrap(spacing: 4, runSpacing: 4,
           children: exp.chemicals.map((c) => Container(
             padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
             decoration: BoxDecoration(
-              color: LC.accent.withValues(alpha: 0.15),
+              color: LC.darkAccent.withValues(alpha: 0.15),
               borderRadius: BorderRadius.circular(3),
-              border: Border.all(color: LC.accent.withValues(alpha: 0.4))),
-            child: Text(c, style: const TextStyle(color: LC.accentBright,
+              border: Border.all(color: LC.darkAccent.withValues(alpha: 0.4))),
+            child: Text(c, style: const TextStyle(color: LC.darkAccentBright,
               fontSize: 8, fontWeight: FontWeight.w500)),
           )).toList()),
         const SizedBox(height: 8),
@@ -855,41 +951,41 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
         : null;
     final detail = selected != null ? chemDetails[selected.id] : null;
     return Container(width: 640,
-      decoration: const BoxDecoration(color: LC.panel,
-        border: Border(right: BorderSide(color: LC.border))),
+      decoration: const BoxDecoration(color: LC.darkPanel,
+        border: Border(right: BorderSide(color: LC.darkBorder))),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         // HEADER
         Container(padding: const EdgeInsets.fromLTRB(20, 16, 16, 14),
           child: Row(children: [
-            const Icon(Icons.menu_book_rounded, size: 20, color: LC.accentBright),
+            const Icon(Icons.menu_book_rounded, size: 20, color: LC.darkAccentBright),
             const SizedBox(width: 10),
             const Text('Chemical Encyclopedia',
-              style: TextStyle(color: LC.text, fontSize: 16, fontWeight: FontWeight.w700)),
+              style: TextStyle(color: LC.darkText, fontSize: 16, fontWeight: FontWeight.w700)),
             const Spacer(),
             GestureDetector(onTap: () => setState(() => showChemInfo = false),
               child: Container(width: 30, height: 30,
-                decoration: BoxDecoration(color: LC.panelElev,
+                decoration: BoxDecoration(color: LC.darkPanelElev,
                   borderRadius: BorderRadius.circular(8)),
-                child: const Icon(Icons.close, color: LC.textDim, size: 16))),
+                child: const Icon(Icons.close, color: LC.darkTextDim, size: 16))),
           ])),
-        Container(height: 1, color: LC.border),
+        Container(height: 1, color: LC.darkBorder),
         Expanded(child: Row(children: [
           // LEFT: Chem list
           Container(width: 180,
-            decoration: BoxDecoration(border: Border(right: BorderSide(color: LC.border))),
+            decoration: BoxDecoration(border: Border(right: BorderSide(color: LC.darkBorder))),
             child: Column(children: [
               Padding(padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
                 child: Container(height: 38,
-                  decoration: BoxDecoration(color: LC.panelElev,
+                  decoration: BoxDecoration(color: LC.darkPanelElev,
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: LC.border)),
+                    border: Border.all(color: LC.darkBorder)),
                   child: TextField(
                     onChanged: (v) => setState(() => chemInfoSearch = v),
-                    style: const TextStyle(color: LC.text, fontSize: 12),
+                    style: const TextStyle(color: LC.darkText, fontSize: 12),
                     decoration: InputDecoration(
                       hintText: 'Search...',
-                      hintStyle: TextStyle(color: LC.textDim, fontSize: 11),
-                      prefixIcon: const Icon(Icons.search, size: 16, color: LC.textDim),
+                      hintStyle: TextStyle(color: LC.darkTextDim, fontSize: 11),
+                      prefixIcon: const Icon(Icons.search, size: 16, color: LC.darkTextDim),
                       border: InputBorder.none,
                       contentPadding: const EdgeInsets.symmetric(vertical: 10),
                     ),
@@ -906,7 +1002,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                       margin: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
                       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                       decoration: BoxDecoration(
-                        color: active ? LC.panelElev : Colors.transparent,
+                        color: active ? LC.darkPanelElev : Colors.transparent,
                         borderRadius: BorderRadius.circular(6)),
                       child: Row(children: [
                         Container(width: 3, height: 28,
@@ -916,11 +1012,11 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                           Text(c.formula,
                             style: TextStyle(
-                              color: active ? LC.accentBright : LC.text,
+                              color: active ? LC.darkAccentBright : LC.darkText,
                               fontSize: 13,
                               fontWeight: FontWeight.w700)),
                           Text(c.name,
-                            style: TextStyle(color: LC.textDim, fontSize: 10),
+                            style: TextStyle(color: LC.darkTextDim, fontSize: 10),
                             overflow: TextOverflow.ellipsis),
                         ])),
                       ]),
@@ -932,13 +1028,13 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
           // RIGHT: Details (reference style)
           Expanded(child: selected == null
             ? Center(child: Text('Select a chemical',
-                style: TextStyle(color: LC.textDim, fontSize: 14)))
+                style: TextStyle(color: LC.darkTextDim, fontSize: 14)))
             : SingleChildScrollView(
                 padding: const EdgeInsets.all(20),
                 child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                   // Chem name (big)
                   Text(selected.name,
-                    style: const TextStyle(color: LC.text, fontSize: 26,
+                    style: const TextStyle(color: LC.darkText, fontSize: 26,
                       fontWeight: FontWeight.bold)),
                   const SizedBox(height: 16),
                   // Molecule diagram + data table (side by side)
@@ -976,7 +1072,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                       _chemTab('USES', const Color(0xFF4CAF50)),
                       _chemTab('SAFETY', const Color(0xFFE85D5D)),
                     ]),
-                    Container(height: 2, color: LC.border),
+                    Container(height: 2, color: LC.darkBorder),
                     const SizedBox(height: 16),
                     // Tab content
                     if (chemInfoTab == 'PROPERTIES') ...[
@@ -1020,14 +1116,14 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
       padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 14),
       decoration: BoxDecoration(
         color: const Color(0xFF14141E),
-        border: Border(bottom: BorderSide(color: LC.border, width: 0.5))),
+        border: Border(bottom: BorderSide(color: LC.darkBorder, width: 0.5))),
       child: Row(children: [
         Text(label,
-          style: TextStyle(color: LC.textSub, fontSize: 13,
+          style: TextStyle(color: LC.darkTextSub, fontSize: 13,
             fontWeight: FontWeight.w500)),
         const Spacer(),
         Flexible(child: Text(value,
-          style: const TextStyle(color: LC.text, fontSize: 13,
+          style: const TextStyle(color: LC.darkText, fontSize: 13,
             fontWeight: FontWeight.w700),
           overflow: TextOverflow.ellipsis, textAlign: TextAlign.end)),
       ]),
@@ -1047,7 +1143,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
         child: Text(tabName,
           textAlign: TextAlign.center,
           style: TextStyle(
-            color: active ? color : LC.textDim,
+            color: active ? color : LC.darkTextDim,
             fontSize: 12,
             fontWeight: FontWeight.w700,
             letterSpacing: 0.8)),
@@ -1059,7 +1155,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
     final items = content.split(' | ').where((s) => s.trim().isNotEmpty).toList();
     if (items.length <= 1) {
       return Text(content,
-        style: TextStyle(color: LC.text, fontSize: 13, height: 1.5));
+        style: TextStyle(color: LC.darkText, fontSize: 13, height: 1.5));
     }
     return Column(crossAxisAlignment: CrossAxisAlignment.start,
       children: items.map((item) => Padding(
@@ -1069,10 +1165,10 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
             margin: const EdgeInsets.only(top: 6, right: 8),
             width: 5, height: 5,
             decoration: BoxDecoration(
-              color: LC.accentBright,
+              color: LC.darkAccentBright,
               shape: BoxShape.circle)),
           Expanded(child: Text(item.trim(),
-            style: TextStyle(color: LC.text, fontSize: 13, height: 1.5))),
+            style: TextStyle(color: LC.darkText, fontSize: 13, height: 1.5))),
         ]),
       )).toList());
   }
@@ -1084,7 +1180,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
       decoration: BoxDecoration(
         color: const Color(0xFF14141E),
         borderRadius: BorderRadius.circular(10),
-        border: Border.all(color: LC.border, width: 0.5)),
+        border: Border.all(color: LC.darkBorder, width: 0.5)),
       child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Container(width: 34, height: 34,
           decoration: BoxDecoration(
@@ -1105,36 +1201,36 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
   
   Widget _inventoryPanel() {
     return Container(width: 280,
-      decoration: const BoxDecoration(color: LC.panel,
-        border: Border(right: BorderSide(color: LC.border))),
+      decoration: const BoxDecoration(color: LC.darkPanel,
+        border: Border(right: BorderSide(color: LC.darkBorder))),
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
         Container(padding: const EdgeInsets.fromLTRB(16, 14, 12, 10),
           child: Row(children: [
-            const Icon(Icons.inventory_2_outlined, size: 14, color: LC.accentBright),
+            const Icon(Icons.inventory_2_outlined, size: 14, color: LC.darkAccentBright),
             const SizedBox(width: 10),
             const Text('Chemical Inventory',
-              style: TextStyle(color: LC.text, fontSize: 12, fontWeight: FontWeight.w600)),
+              style: TextStyle(color: LC.darkText, fontSize: 12, fontWeight: FontWeight.w600)),
             const Spacer(),
             GestureDetector(onTap: () => setState(() => showInventory = false),
-              child: const Icon(Icons.close, color: LC.textDim, size: 15)),
+              child: const Icon(Icons.close, color: LC.darkTextDim, size: 15)),
           ])),
-        Container(height: 1, color: LC.border),
+        Container(height: 1, color: LC.darkBorder),
         Padding(padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
           child: Container(height: 30,
-            decoration: BoxDecoration(color: LC.panelElev,
+            decoration: BoxDecoration(color: LC.darkPanelElev,
               borderRadius: BorderRadius.circular(6),
-              border: Border.all(color: LC.border)),
+              border: Border.all(color: LC.darkBorder)),
             child: Row(children: [
               const SizedBox(width: 8),
-              const Icon(Icons.search, size: 14, color: LC.textDim),
+              const Icon(Icons.search, size: 14, color: LC.darkTextDim),
               const SizedBox(width: 6),
               Expanded(child: TextField(
                 controller: _invSearchCtrl,
                 onChanged: (v) => setState(() => _invSearch = v),
-                style: const TextStyle(color: LC.text, fontSize: 11),
+                style: const TextStyle(color: LC.darkText, fontSize: 11),
                 decoration: const InputDecoration(
                   hintText: 'Search chemical...',
-                  hintStyle: TextStyle(color: LC.textDim, fontSize: 11),
+                  hintStyle: TextStyle(color: LC.darkTextDim, fontSize: 11),
                   border: InputBorder.none,
                   isDense: true,
                   contentPadding: EdgeInsets.symmetric(vertical: 8)),
@@ -1144,7 +1240,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                   _invSearchCtrl.clear();
                   setState(() => _invSearch = '');
                 }, child: const Padding(padding: EdgeInsets.only(right: 8),
-                  child: Icon(Icons.close, size: 13, color: LC.textDim))),
+                  child: Icon(Icons.close, size: 13, color: LC.darkTextDim))),
             ]))),
         Padding(padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
           child: SizedBox(height: 28,
@@ -1155,12 +1251,12 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                   child: GestureDetector(onTap: () => setState(() => category = c),
                     child: Container(padding: const EdgeInsets.symmetric(horizontal: 10),
                       decoration: BoxDecoration(
-                        color: active ? LC.accent : LC.panelElev,
+                        color: active ? LC.darkAccent : LC.darkPanelElev,
                         borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: active ? LC.accentBright : LC.border)),
+                        border: Border.all(color: active ? LC.darkAccentBright : LC.darkBorder)),
                       alignment: Alignment.center,
                       child: Text(c, style: TextStyle(
-                        color: active ? LC.bgDeep : LC.textSub,
+                        color: active ? LC.darkBgDeep : LC.darkTextSub,
                         fontSize: 10,
                         fontWeight: active ? FontWeight.w600 : FontWeight.w400)))));
               }).toList()))),
@@ -1180,9 +1276,9 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
         onPanCancel: endChemicalDrag,
         child: Container(margin: const EdgeInsets.only(bottom: 6),
           padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(color: LC.panelElev,
+          decoration: BoxDecoration(color: LC.darkPanelElev,
             borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: LC.border)),
+            border: Border.all(color: LC.darkBorder)),
           child: Row(children: [
             SizedBox(width: 28, height: 40,
               child: CustomPaint(painter: MiniBottlePainter(color: c.color, state: c.state))),
@@ -1190,32 +1286,32 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
             Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(c.name, maxLines: 1, overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: LC.text, fontSize: 11, fontWeight: FontWeight.w500)),
+                  style: const TextStyle(color: LC.darkText, fontSize: 11, fontWeight: FontWeight.w500)),
                 const SizedBox(height: 3),
-                Text(c.formula, style: const TextStyle(color: LC.accentBright,
+                Text(c.formula, style: const TextStyle(color: LC.darkAccentBright,
                   fontSize: 10, fontWeight: FontWeight.w600)),
               ])),
-            const Icon(Icons.drag_indicator, size: 14, color: LC.textDim),
+            const Icon(Icons.drag_indicator, size: 14, color: LC.darkTextDim),
           ]))));
   }
 
   Widget _toolboxPanel() {
     return Container(width: 280,
-      decoration: const BoxDecoration(color: LC.panel,
-        border: Border(left: BorderSide(color: LC.border))),
+      decoration: const BoxDecoration(color: LC.darkPanel,
+        border: Border(left: BorderSide(color: LC.darkBorder))),
       child: SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Container(padding: const EdgeInsets.fromLTRB(16, 14, 12, 10),
             child: Row(children: [
-              const Icon(Icons.build_circle_outlined, size: 14, color: LC.accentBright),
+              const Icon(Icons.build_circle_outlined, size: 14, color: LC.darkAccentBright),
               const SizedBox(width: 10),
               const Text('Chemistry Toolbox',
-                style: TextStyle(color: LC.text, fontSize: 12, fontWeight: FontWeight.w600)),
+                style: TextStyle(color: LC.darkText, fontSize: 12, fontWeight: FontWeight.w600)),
               const Spacer(),
               GestureDetector(onTap: () => setState(() => showToolbox = false),
-                child: const Icon(Icons.close, color: LC.textDim, size: 15)),
+                child: const Icon(Icons.close, color: LC.darkTextDim, size: 15)),
             ])),
-          Container(height: 1, color: LC.border),
+          Container(height: 1, color: LC.darkBorder),
           _sectionLabel('EQUIPMENT'),
           Padding(padding: const EdgeInsets.symmetric(horizontal: 12),
             child: Wrap(spacing: 6, runSpacing: 6,
@@ -1236,14 +1332,14 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                     decoration: BoxDecoration(
-                      color: LC.panelElev,
+                      color: LC.darkPanelElev,
                       borderRadius: BorderRadius.circular(7),
-                      border: Border.all(color: LC.border)),
+                      border: Border.all(color: LC.darkBorder)),
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
-                      const Icon(Icons.menu_book, size: 14, color: LC.accentBright),
+                      const Icon(Icons.menu_book, size: 14, color: LC.darkAccentBright),
                       const SizedBox(width: 6),
                       Text('pH Color Chart',
-                        style: TextStyle(color: LC.textSub, fontSize: 10)),
+                        style: TextStyle(color: LC.darkTextSub, fontSize: 10)),
               const SizedBox(width: 6),
               Material(color: Colors.transparent,
                 child: InkWell(
@@ -1252,14 +1348,14 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
                     decoration: BoxDecoration(
-                      color: LC.panelElev,
+                      color: LC.darkPanelElev,
                       borderRadius: BorderRadius.circular(7),
-                      border: Border.all(color: LC.border)),
+                      border: Border.all(color: LC.darkBorder)),
                     child: Row(mainAxisSize: MainAxisSize.min, children: [
                       const Icon(Icons.description, size: 14, color: Color(0xFFE53935)),
                       const SizedBox(width: 6),
                       Text('Litmus Chart',
-                        style: TextStyle(color: LC.textSub, fontSize: 10)),
+                        style: TextStyle(color: LC.darkTextSub, fontSize: 10)),
                     ]),
                   ),
                 ),
@@ -1280,7 +1376,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
 
   Widget _sectionLabel(String title) => Padding(
     padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-    child: Text(title, style: const TextStyle(color: LC.textMuted,
+    child: Text(title, style: const TextStyle(color: LC.darkTextMuted,
       fontSize: 9, fontWeight: FontWeight.w600, letterSpacing: 1.2)));
 
   Widget _equipTile(EquipShape s) {
@@ -1289,15 +1385,15 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
         borderRadius: BorderRadius.circular(7),
         child: Container(width: 78,
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
-          decoration: BoxDecoration(color: LC.panelElev,
+          decoration: BoxDecoration(color: LC.darkPanelElev,
             borderRadius: BorderRadius.circular(7),
-            border: Border.all(color: LC.border)),
+            border: Border.all(color: LC.darkBorder)),
           child: Column(children: [
-            Icon(s.icon, color: LC.accentBright, size: 20),
+            Icon(s.icon, color: LC.darkAccentBright, size: 20),
             const SizedBox(height: 5),
             Text(s.label, textAlign: TextAlign.center,
               maxLines: 1, overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: LC.textSub, fontSize: 9)),
+              style: const TextStyle(color: LC.darkTextSub, fontSize: 9)),
           ]))));
   }
 
@@ -1314,7 +1410,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
             const SizedBox(height: 5),
             Text(effect.label, textAlign: TextAlign.center,
               maxLines: 1, overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: LC.textSub, fontSize: 9)),
+              style: const TextStyle(color: LC.darkTextSub, fontSize: 9)),
           ]))));
   }
 
@@ -1344,12 +1440,12 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
       margin: const EdgeInsets.symmetric(horizontal: 12),
       padding: const EdgeInsets.all(10), 
       decoration: BoxDecoration(
-        color: LC.panelElev,
+        color: LC.darkPanelElev,
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
           color: sideFx != null ? LC.danger.withValues(alpha: 0.6) :
                  rxn != null ? LC.success.withValues(alpha: 0.4) :
-                 hasNoReaction ? LC.warning.withValues(alpha: 0.4) : LC.border
+                 hasNoReaction ? LC.warning.withValues(alpha: 0.4) : LC.darkBorder
         ),
       ),
       child: SingleChildScrollView(
@@ -1365,7 +1461,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                   size: 12,
                   color: sideFx != null ? LC.danger :
                          rxn != null ? LC.success :
-                         hasNoReaction ? LC.warning : LC.accent,
+                         hasNoReaction ? LC.warning : LC.darkAccent,
                 ),
                 const SizedBox(width: 8),
                 Text(
@@ -1373,7 +1469,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                   rxn != null ? 'Reaction Info' :
                   hasNoReaction ? 'No Reaction' : 'Reaction Info',
                   style: TextStyle(
-                    color: sideFx != null ? LC.danger : LC.text,
+                    color: sideFx != null ? LC.danger : LC.darkText,
                     fontSize: 11, fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -1383,41 +1479,41 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
             if (sideFx != null) ...[
               Text(sideFx.label, style: TextStyle(color: LC.danger, fontSize: 11, fontWeight: FontWeight.w600)),
               const SizedBox(height: 4),
-              Text(sideFx.description, style: const TextStyle(color: LC.textSub, fontSize: 10, height: 1.3)),
+              Text(sideFx.description, style: const TextStyle(color: LC.darkTextSub, fontSize: 10, height: 1.3)),
               const SizedBox(height: 6),
               Wrap(spacing: 4, runSpacing: 4, children: [
                 if (sideFx.fizz) _badge('FIZZ', LC.info),
-                if (sideFx.smoke) _badge('SMOKE', LC.textSub),
+                if (sideFx.smoke) _badge('SMOKE', LC.darkTextSub),
                 if (sideFx.heatUp) _badge('HEAT', LC.danger),
                 if (sideFx.coolDown) _badge('COOL', LC.info),
                 if (sideFx.colorPulse) _badge('COLOR', LC.warning),
                 if (sideFx.smallPop) _badge('POP', LC.danger),
               ]),
             ] else if (rxn == null && !hasNoReaction)
-              const Text('Drag chemicals to equipment to see reaction', style: TextStyle(color: LC.textDim, fontSize: 10))
+              const Text('Drag chemicals to equipment to see reaction', style: TextStyle(color: LC.darkTextDim, fontSize: 10))
             else if (hasNoReaction) ...[
-              const Text('Chemicals mixed but no reaction occurs.', style: TextStyle(color: LC.textSub, fontSize: 10, height: 1.3)),
+              const Text('Chemicals mixed but no reaction occurs.', style: TextStyle(color: LC.darkTextSub, fontSize: 10, height: 1.3)),
             ] else ...[
-              Text(rxn!.name, style: const TextStyle(color: LC.text, fontSize: 10)),
+              Text(rxn!.name, style: const TextStyle(color: LC.darkText, fontSize: 10)),
               const SizedBox(height: 4),
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(6),
                 decoration: BoxDecoration(
-                  color: LC.bg,
+                  color: LC.darkBg,
                   borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: LC.border),
+                  border: Border.all(color: LC.darkBorder),
                 ),
                 child: Text(
                   rxn.equation,
                   maxLines: 2,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: LC.accentBright, fontSize: 11, fontWeight: FontWeight.w600),
+                  style: const TextStyle(color: LC.darkAccentBright, fontSize: 11, fontWeight: FontWeight.w600),
                   textAlign: TextAlign.center,
                 ),
               ),
               const SizedBox(height: 4),
-              Text(rxn.description, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: LC.textSub, fontSize: 9, height: 1.3)),
+              Text(rxn.description, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: LC.darkTextSub, fontSize: 9, height: 1.3)),
               if (rxn.releasesHeat) ...[
                 const SizedBox(height: 4),
                 Row(
@@ -1469,16 +1565,56 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
     );
   }
 
-  Widget _labArea() {
+    void _clampEquipmentToBench() {
+    if (_benchSize.width <= 0) return;
+    // Equipment size is roughly 120x150 based on _equipmentWidget
+    const equipW = 120.0;
+    const equipH = 150.0;
+    final maxX = (_benchSize.width - equipW).clamp(0.0, 5000.0);
+    final maxY = (_benchSize.height - equipH).clamp(0.0, 5000.0);
+    
+    for (final eq in equipment) {
+      final newX = eq.position.dx.clamp(0.0, maxX);
+      final newY = eq.position.dy.clamp(0.0, maxY);
+      if (newX != eq.position.dx || newY != eq.position.dy) {
+        eq.position = Offset(newX, newY);
+      }
+    }
+    
+    // Also clamp bench tools
+    const toolW = 70.0;
+    const toolH = 70.0;
+    final tMaxX = (_benchSize.width - toolW).clamp(0.0, 5000.0);
+    final tMaxY = (_benchSize.height - toolH).clamp(0.0, 5000.0);
+    for (final t in benchTools) {
+      final newX = t.position.dx.clamp(0.0, tMaxX);
+      final newY = t.position.dy.clamp(0.0, tMaxY);
+      if (newX != t.position.dx || newY != t.position.dy) {
+        t.position = Offset(newX, newY);
+      }
+    }
+  }
+Widget _labArea() {
     return Column(children: [
       _labHeader(),
       Expanded(child: Container(
         margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: LC.border), color: LC.bgDeep),
+          border: Border.all(color: LC.darkBorder), color: LC.darkBgDeep),
         child: ClipRRect(borderRadius: BorderRadius.circular(10),
           child: LayoutBuilder(builder: (context, constraints) {
             _benchSize = Size(constraints.maxWidth, constraints.maxHeight);
+              // Clamp equipment to fit within new bench size
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                if (mounted) {
+                  final needsClamp = equipment.any((e) =>
+                    e.position.dx + 120 > _benchSize.width ||
+                    e.position.dy + 150 > _benchSize.height);
+                  if (needsClamp) {
+                    setState(() => _clampEquipmentToBench());
+                  }
+                }
+              });
             return Stack(key: _benchKey, children: [
               Positioned.fill(child: CustomPaint(painter: MarbleBenchPainter())),
               ...equipment.map((eq) => Positioned(
@@ -1498,21 +1634,21 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
     return Container(height: 52,
       padding: const EdgeInsets.symmetric(horizontal: 14),
       child: Row(children: [
-        const Icon(Icons.science_outlined, size: 15, color: LC.accentBright),
+        const Icon(Icons.science_outlined, size: 15, color: LC.darkAccentBright),
         const SizedBox(width: 8),
         Flexible(child: Text('Virtual Laboratory',
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(color: LC.text, fontSize: 12, fontWeight: FontWeight.w600))),
+          style: const TextStyle(color: LC.darkText, fontSize: 12, fontWeight: FontWeight.w600))),
         const SizedBox(width: 16),
         Flexible(child: Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-          decoration: BoxDecoration(color: LC.panel,
+          decoration: BoxDecoration(color: LC.darkPanel,
             borderRadius: BorderRadius.circular(6),
-            border: Border.all(color: LC.border)),
+            border: Border.all(color: LC.darkBorder)),
           child: Row(children: [
             Flexible(child: Text('Experiment: $experimentName',
               overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: LC.textSub, fontSize: 10))),
-            const Icon(Icons.keyboard_arrow_down, color: LC.textDim, size: 13),
+              style: const TextStyle(color: LC.darkTextSub, fontSize: 10))),
+            const Icon(Icons.keyboard_arrow_down, color: LC.darkTextDim, size: 13),
           ]))),
         const Spacer(),
         _headerBtn(Icons.refresh, 'Reset', reset, false),
@@ -1529,13 +1665,13 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
     return Material(color: Colors.transparent,
       child: InkWell(onTap: onTap, borderRadius: BorderRadius.circular(6),
         child: Container(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-          decoration: BoxDecoration(color: primary ? LC.success : LC.panel,
+          decoration: BoxDecoration(color: primary ? LC.success : LC.darkPanel,
             borderRadius: BorderRadius.circular(6),
-            border: Border.all(color: primary ? LC.success : LC.border)),
+            border: Border.all(color: primary ? LC.success : LC.darkBorder)),
           child: Row(children: [
-            Icon(icon, size: 12, color: primary ? LC.text : LC.textSub),
+            Icon(icon, size: 12, color: primary ? LC.darkText : LC.darkTextSub),
             const SizedBox(width: 5),
-            Text(label, style: TextStyle(color: primary ? LC.text : LC.textSub, fontSize: 10)),
+            Text(label, style: TextStyle(color: primary ? LC.darkText : LC.darkTextSub, fontSize: 10)),
           ]))));
   }
 
@@ -1703,10 +1839,10 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 margin: const EdgeInsets.symmetric(horizontal: 2),
                 decoration: BoxDecoration(
-                  color: LC.panel.withValues(alpha: 0.9),
+                  color: LC.darkPanel.withValues(alpha: 0.9),
                   borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: LC.borderSoft)),
-                child: const Icon(Icons.remove, size: 16, color: LC.text)),
+                  border: Border.all(color: LC.darkBorderSoft)),
+                child: const Icon(Icons.remove, size: 16, color: LC.darkText)),
             ),
           Padding(padding: const EdgeInsets.symmetric(horizontal: 6),
             child: Text('${eq.temperature.toInt()}\u00B0 / ${eq.targetTemp.toInt()}\u00B0', style: TextStyle(color: eq.isHot ? const Color(0xFFFF8A65) : const Color(0xFF4FC3F7), fontSize: 18, fontWeight: FontWeight.w800))),
@@ -1730,10 +1866,10 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                 margin: const EdgeInsets.symmetric(horizontal: 2),
                 decoration: BoxDecoration(
-                  color: LC.panel.withValues(alpha: 0.9),
+                  color: LC.darkPanel.withValues(alpha: 0.9),
                   borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: LC.borderSoft)),
-                child: const Icon(Icons.add, size: 16, color: LC.text)),
+                  border: Border.all(color: LC.darkBorderSoft)),
+                child: const Icon(Icons.add, size: 16, color: LC.darkText)),
             ),
         ]),
       const SizedBox(height: 18),
@@ -1913,22 +2049,58 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
     );
   }
 
+      Widget _sideToggle({
+    required IconData icon,
+    required bool isActive,
+    required VoidCallback onTap,
+    required bool isLeft,
+  }) {
+    return MouseRegion(
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          width: 32,
+          height: 64,
+          decoration: BoxDecoration(
+            color: isActive ? LC.darkAccent : LC.darkPanelElev,
+            borderRadius: isLeft
+                ? const BorderRadius.only(topRight: Radius.circular(8), bottomRight: Radius.circular(8))
+                : const BorderRadius.only(topLeft: Radius.circular(8), bottomLeft: Radius.circular(8)),
+            border: Border.all(color: LC.darkBorder, width: 1.5),
+            boxShadow: [
+              BoxShadow(
+                color: Color(0xFF94A3B8).withValues(alpha: 0.2),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              )
+            ],
+          ),
+          child: Icon(
+            icon,
+            color: isActive ? Colors.white : LC.darkTextSub,
+            size: 20,
+          ),
+        ),
+      ),
+    );
+  }
   Widget _dustbin() {
     return AnimatedContainer(duration: const Duration(milliseconds: 180),
       width: dustbinHover ? 90 : 80, height: dustbinHover ? 110 : 100,
       decoration: BoxDecoration(
-        color: dustbinHover ? LC.danger.withValues(alpha: 0.35) : LC.panel.withValues(alpha: 0.85),
+        color: dustbinHover ? LC.danger.withValues(alpha: 0.35) : LC.darkPanel.withValues(alpha: 0.85),
         borderRadius: BorderRadius.circular(14),
-        border: Border.all(color: dustbinHover ? LC.danger : LC.borderSoft,
+        border: Border.all(color: dustbinHover ? LC.danger : LC.darkBorderSoft,
           width: dustbinHover ? 2.5 : 1.5)),
       child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
         Icon(Icons.delete_outline, size: dustbinHover ? 36 : 32,
-          color: dustbinHover ? LC.danger : LC.textSub),
+          color: dustbinHover ? LC.danger : LC.darkTextSub),
         const SizedBox(height: 4),
         Text(dustbinHover ? 'DROP' : 'Drag here\nto delete',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 8,
-            color: dustbinHover ? LC.danger : LC.textDim,
+            color: dustbinHover ? LC.danger : LC.darkTextDim,
             fontWeight: FontWeight.w600, height: 1.2)),
       ]));
   }
@@ -1948,16 +2120,16 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
     final any2 = equipment.any((e) => e.layers.length >= 2);
     final reacted = currentReaction != null;
     return Container(padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(color: LC.panel,
+      decoration: BoxDecoration(color: LC.darkPanel,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: LC.border)),
+        border: Border.all(color: LC.darkBorder)),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
         Row(children: [
-          Icon(Icons.play_circle_outline, color: LC.accentBright, size: 11),
+          Icon(Icons.play_circle_outline, color: LC.darkAccentBright, size: 11),
           SizedBox(width: 6),
           Flexible(child: Text('Current Experiment',
             overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: LC.text, fontSize: 10, fontWeight: FontWeight.w600))),
+            style: const TextStyle(color: LC.darkText, fontSize: 10, fontWeight: FontWeight.w600))),
         ]),
         const SizedBox(height: 8),
         Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
@@ -1976,56 +2148,178 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
     return Flexible(child: Column(mainAxisSize: MainAxisSize.min, children: [
       Container(width: 18, height: 18,
         decoration: BoxDecoration(
-          color: active ? LC.success : LC.panelElev, shape: BoxShape.circle,
-          border: Border.all(color: active ? LC.success : LC.border)),
+          color: active ? LC.success : LC.darkPanelElev, shape: BoxShape.circle,
+          border: Border.all(color: active ? LC.success : LC.darkBorder)),
         alignment: Alignment.center,
         child: Text(n, style: TextStyle(
-          color: active ? LC.bgDeep : LC.textDim, fontSize: 9, fontWeight: FontWeight.w600))),
+          color: active ? LC.darkBgDeep : LC.darkTextDim, fontSize: 9, fontWeight: FontWeight.w600))),
       const SizedBox(height: 3),
       Flexible(child: Text(t, overflow: TextOverflow.ellipsis, maxLines: 1,
-        softWrap: false, style: TextStyle(color: active ? LC.text : LC.textDim, fontSize: 8))),
+        softWrap: false, style: TextStyle(color: active ? LC.darkText : LC.darkTextDim, fontSize: 8))),
       ]));
   }
 
-  Widget _dotLine() => Expanded(child: Container(height: 1, color: LC.border,
+  Widget _dotLine() => Expanded(child: Container(height: 1, color: LC.darkBorder,
     margin: const EdgeInsets.only(bottom: 14)));
 
   Widget _resultPanel() {
-    final rxn = currentReaction;
-    return Container(padding: const EdgeInsets.all(10),
-      decoration: BoxDecoration(color: LC.panel,
+    // Collect all beakers with reactions (audit fix: multi-reaction display)
+    final List<MapEntry<String, ReactionInfo>> activeReactions = [];
+    for (final eq in equipment) {
+      if (eq.reaction != null) {
+        activeReactions.add(MapEntry(eq.shape.label, eq.reaction!));
+      }
+    }
+    
+    final anyMixed = equipment.any((e) => e.layers.length >= 2);
+    final hasAny = activeReactions.isNotEmpty;
+
+    return Container(
+      padding: const EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: LC.darkPanel,
         borderRadius: BorderRadius.circular(8),
-        border: Border.all(color: rxn != null
-          ? LC.success.withValues(alpha: 0.5) : LC.border)),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-        Row(children: [
-          Icon(rxn != null ? Icons.check_circle : Icons.science_outlined,
-            color: rxn != null ? LC.success : LC.textDim, size: 11),
-          const SizedBox(width: 6),
-          Flexible(child: Text('Reaction Result',
-            overflow: TextOverflow.ellipsis,
-            style: const TextStyle(color: LC.text, fontSize: 10, fontWeight: FontWeight.w600))),
-        ]),
-        const SizedBox(height: 6),
-        if (rxn == null)
-          Expanded(child: Center(child: Text(
-            equipment.any((e) => e.layers.length >= 2) ? 'No reaction occurs' : 'Drag chemicals to equipment',
-            style: TextStyle(
-              color: equipment.any((e) => e.layers.length >= 2) ? LC.warning : LC.textDim,
-              fontSize: 9))))
-        else
-          Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.center, children: [
-            Text(rxn.isViolent ? '⚠️ ILLUSTRATIVE & HAZARDOUS DEMO' : '', style: TextStyle(color: Colors.red, fontSize: 10, fontWeight: FontWeight.bold)),
-                Text(rxn.equation, style: const TextStyle(color: LC.accentBright,
-              fontSize: 11, fontWeight: FontWeight.w600)),
-            const SizedBox(height: 3),
-            Text(rxn.name, style: const TextStyle(color: LC.textSub, fontSize: 9)),
-          ])),
-      ]));
+        border: Border.all(
+          color: hasAny ? LC.success.withValues(alpha: 0.5) : LC.darkBorder,
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Row(
+            children: [
+              Icon(
+                hasAny ? Icons.check_circle : Icons.science_outlined,
+                color: hasAny ? LC.success : LC.darkTextDim,
+                size: 11,
+              ),
+              const SizedBox(width: 6),
+              Flexible(
+                child: Text(
+                  hasAny ? 'Reactions (${activeReactions.length})' : 'Reaction Result',
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(color: LC.darkText, fontSize: 10, fontWeight: FontWeight.w600),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 6),
+          
+          // Content
+          Expanded(
+            child: activeReactions.isEmpty
+                ? Center(
+                    child: Text(
+                      anyMixed ? 'No reaction occurs' : 'Drag chemicals to equipment',
+                      style: TextStyle(
+                        color: anyMixed ? LC.warning : LC.darkTextDim,
+                        fontSize: 9,
+                      ),
+                    ),
+                  )
+                : ListView.separated(
+                    itemCount: activeReactions.length,
+                    separatorBuilder: (_, __) => Container(
+                      height: 1,
+                      color: LC.darkBorder.withValues(alpha: 0.5),
+                      margin: const EdgeInsets.symmetric(vertical: 6),
+                    ),
+                    itemBuilder: (context, index) {
+                      final entry = activeReactions[index];
+                      final rxn = entry.value;
+                      return Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Beaker name badge
+                          Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: LC.darkAccent.withValues(alpha: 0.2),
+                                  borderRadius: BorderRadius.circular(3),
+                                  border: Border.all(color: LC.darkAccent.withValues(alpha: 0.5)),
+                                ),
+                                child: Text(
+                                  entry.key.toUpperCase(),
+                                  style: const TextStyle(
+                                    color: LC.darkAccentBright,
+                                    fontSize: 8,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 0.5,
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              Expanded(
+                                child: Text(
+                                  rxn.name,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(
+                                    color: LC.darkText,
+                                    fontSize: 9,
+                                    fontWeight: FontWeight.w500,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 4),
+                          // Equation
+                          Text(
+                            rxn.equation,
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                            style: const TextStyle(
+                              color: LC.darkAccentBright,
+                              fontSize: 10,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          // Quick indicators
+                          const SizedBox(height: 3),
+                          Wrap(
+                            spacing: 4,
+                            runSpacing: 2,
+                            children: [
+                              if (rxn.isViolent)
+                                _indicatorBadge('⚠️ VIOLENT', Colors.red),
+                              if (rxn.releasesHeat)
+                                _indicatorBadge('🔥 HEAT', LC.danger),
+                              if (rxn.bubbles)
+                                _indicatorBadge('💨 GAS', LC.info),
+                              if (rxn.precipitate)
+                                _indicatorBadge('⬇️ PPT', LC.warning),
+                              if (rxn.producesSmoke)
+                                _indicatorBadge('☁️ SMOKE', LC.darkTextSub),
+                            ],
+                          ),
+                        ],
+                      );
+                    },
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+  
+  Widget _indicatorBadge(String label, Color color) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 1),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.15),
+        borderRadius: BorderRadius.circular(3),
+        border: Border.all(color: color.withValues(alpha: 0.4)),
+      ),
+      child: Text(
+        label,
+        style: TextStyle(color: color, fontSize: 7, fontWeight: FontWeight.w600),
+      ),
+    );
   }
 }
-
 
 
 

@@ -1,4 +1,4 @@
-﻿part of chem_lab;
+part of chem_lab;
 
 class EquipItem {
   final String id;
@@ -19,6 +19,7 @@ class EquipItem {
   Color pourColor = Colors.transparent;
   bool wasHeated = false;
   HeatingEffect? activeHeatingEffect;
+  ReactionInfo? reaction; // Per-beaker reaction (audit fix)
 
   EquipItem({required this.id, required this.shape, required this.position});
 

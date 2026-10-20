@@ -1,4 +1,4 @@
-﻿part of chem_lab;
+part of chem_lab;
 
 class MiniBottlePainter extends CustomPainter {
   final Color color;

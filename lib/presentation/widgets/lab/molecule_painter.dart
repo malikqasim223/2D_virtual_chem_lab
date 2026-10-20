@@ -1,4 +1,4 @@
-﻿part of chem_lab;
+part of chem_lab;
 
 class MoleculePainter extends CustomPainter {
   final List<MoleculeAtom> atoms;
@@ -124,7 +124,7 @@ class MoleculePainter extends CustomPainter {
           center: const Alignment(0.55, 0.55),
           radius: 1.5,
           colors: [
-            Colors.black.withValues(alpha: 0.3),
+            Color(0xFF94A3B8).withValues(alpha: 0.2),
             Colors.black.withValues(alpha: 0.0),
           ],
           stops: const [0.0, 0.7],
@@ -140,7 +140,7 @@ class MoleculePainter extends CustomPainter {
       
       // Symbol text
       final symbolStyle = TextStyle(
-        color: Colors.black.withValues(alpha: 0.9),
+        color: Color(0xFF94A3B8).withValues(alpha: 0.2),
         fontSize: r * 0.88,
         fontWeight: FontWeight.w900,
         letterSpacing: -0.5,
