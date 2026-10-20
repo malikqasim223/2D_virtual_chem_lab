@@ -36,7 +36,7 @@ final Map<String, ReactionInfo> multiReactions = {
   ),
   'agno3+cuso4+naoh': const ReactionInfo(
     name: 'Competitive Precipitation',
-    equation: 'AgNO3 + NaCl -> AgCl + NaNO3 (favored)',
+    equation: '2AgNO3 + 2NaOH -> Ag2O + 2NaNO3 + H2O',
     type: 'Selective Precipitation',
     description: 'AgCl precipitates preferentially due to lower solubility.',
     products: ['AgCl', 'NaNO3'],
@@ -44,7 +44,7 @@ final Map<String, ReactionInfo> multiReactions = {
     precipitateColor: Color(0xFFF0F0F0),
     colorChange: Color(0xFF9BB8D0),
   ),
-  'hcl+naoh+cuso4': const ReactionInfo(
+  'cuso4+hcl+naoh': const ReactionInfo(
     name: 'Sequential Neutralization',
     equation: 'HCl + NaOH -> NaCl; CuSO4 + 2NaOH -> Cu(OH)2',
     type: 'Multi-step',
@@ -54,7 +54,7 @@ final Map<String, ReactionInfo> multiReactions = {
     releasesHeat: true,
     precipitateColor: Color(0xFF5DADE2),
   ),
-  'h2so4+naoh+cuso4': const ReactionInfo(
+  'cuso4+h2so4+naoh': const ReactionInfo(
     name: 'Complex Precipitation',
     equation: 'H2SO4 + 2NaOH -> Na2SO4; CuSO4 + 2NaOH -> Cu(OH)2',
     type: 'Multi-step',
@@ -64,7 +64,7 @@ final Map<String, ReactionInfo> multiReactions = {
     releasesHeat: true,
     precipitateColor: Color(0xFF5DADE2),
   ),
-  'hcl+naoh+cacl2': const ReactionInfo(
+  'cacl2+hcl+naoh': const ReactionInfo(
     name: 'Neutralization with spectator',
     equation: 'HCl + NaOH -> NaCl + H2O',
     type: 'Neutralization',

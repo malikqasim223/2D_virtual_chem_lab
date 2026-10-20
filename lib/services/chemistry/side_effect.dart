@@ -60,8 +60,8 @@ SideEffect? detectSideEffect(List<String> chemIds) {
 SideEffect defaultMixingEffect(List<String> chemIds) {
   return const SideEffect(
     label: 'MIXING',
-    description: 'Chemicals mix without reaction. Slight heat from solution.',
-    heatUp: true,
+    description: 'No validated reaction data for this combination. Visual mixing only.',
+    heatUp: false,
     tintColor: Color(0xFFB0BEC5),
   );
 }
