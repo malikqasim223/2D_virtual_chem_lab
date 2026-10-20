@@ -31,7 +31,11 @@ class RealisticEquipPainter extends CustomPainter {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 1.2
       ..color = LC.glassEdge.withValues(alpha: 0.6));
-    // Shine handled by gradients inside glass
+    // Glass shine highlight
+    canvas.drawPath(path, Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.5
+      ..color = Colors.white.withValues(alpha: 0.25));
 
     canvas.save();
     canvas.clipPath(path);
