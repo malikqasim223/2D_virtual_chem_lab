@@ -23,7 +23,7 @@ final Map<String, ReactionInfo> reactions = {
     baseDurationSec: 3.0,
   ),
 
-  // ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Ã ... [Corrupted comment cleaned]
+  //
   'hcl+naoh': const ReactionInfo(
     name: 'Neutralization',
     equation: 'HCl + NaOH -> NaCl + H2O',
@@ -43,7 +43,7 @@ final Map<String, ReactionInfo> reactions = {
     releasesHeat: true,
   ),
 
-  // ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Ã ... [Corrupted comment cleaned]
+  //
   'agno3+nacl': const ReactionInfo(
     name: 'Precipitation (AgCl)',
     equation: 'AgNO3 + NaCl -> AgCl + NaNO3',
@@ -80,7 +80,7 @@ final Map<String, ReactionInfo> reactions = {
         colorChange: Color(0xFF5DADE2),
       ),
 
-  // ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Ã ... [Corrupted comment cleaned]
+  //
   'hcl+naoh+cuso4': const ReactionInfo(
     name: 'Complex',
     equation: 'CuSO4 + 2NaOH -> Cu(OH)2',
@@ -111,7 +111,7 @@ final Map<String, ReactionInfo> reactions = {
     colorChange: Color(0xFF3D7FA8),
   ),
 
-  // ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Ã ... [Corrupted comment cleaned]
+  //
   'naoh+phenolphthalein': const ReactionInfo(
     name: 'Indicator - Pink',
     equation: 'NaOH + Phenolphthalein -> Pink',
@@ -135,7 +135,7 @@ final Map<String, ReactionInfo> reactions = {
         endColor: Color(0x00000000),
       ),
 
-  // ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Ã ... [Corrupted comment cleaned]
+  //
   'cuso4+hcl': const ReactionInfo(
     name: 'No Reaction',
     equation: 'HCl + CuSO4 -> no reaction',
@@ -1087,4 +1087,4 @@ final Map<String, ReactionInfo> reactions = {
 ),
 };
 
-// ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â ... [Corrupted comment cleaned]
+//

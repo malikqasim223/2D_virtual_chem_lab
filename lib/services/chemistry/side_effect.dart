@@ -54,9 +54,9 @@ SideEffect? detectSideEffect(List<String> chemIds) {
   return null;
 }
 
-//  â‚¬â„¢   ... [Corrupted comment cleaned]
+//
 // FALLBACK: Unknown combos -> tiny fizz + warmth (realistic "mixing")
-//  â‚¬â„¢   ... [Corrupted comment cleaned]
+//
 SideEffect defaultMixingEffect(List<String> chemIds) {
   return const SideEffect(
     label: 'MIXING',
@@ -66,8 +66,7 @@ SideEffect defaultMixingEffect(List<String> chemIds) {
   );
 }
 
-//  â‚¬â„¢   ... [Corrupted comment cleaned]
+//
 // PREDEFINED EXPERIMENTS (Manual Lab Guide)
-//  â‚¬â„¢   ... [Corrupted comment cleaned]
-
+//
 

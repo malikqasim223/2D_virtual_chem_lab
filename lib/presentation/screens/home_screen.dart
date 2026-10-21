@@ -303,7 +303,7 @@ class _ChemInfoScreenState extends State<ChemInfoScreen> with SingleTickerProvid
                           children: [
                             const Text('Chemical Encyclopedia', style: TextStyle(color: LC.text, fontSize: 20, fontWeight: FontWeight.w700)),
                             const SizedBox(height: 4),
-                            Text('${allChemicals.length} chemicals ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ ${reactions.length + multiReactions.length} reactions', style: TextStyle(color: LC.textSub, fontSize: 12)),
+                            Text('—', style: TextStyle(color: LC.textSub, fontSize: 12)),
                           ],
                         ),
                       ),
@@ -690,9 +690,9 @@ class ChemDetailPage extends StatelessWidget {
   Widget _keyValuesSection(ChemDetail d, Color accent) {
     final rows = <MapEntry<String, String>>[];
     if (d.molarMass != null) rows.add(MapEntry('Molar Mass', '${d.molarMass} g/mol'));
-    if (d.density != null) rows.add(MapEntry('Density', '${d.density} g/cmÃƒâ€šÃ‚Â³'));
-    if (d.meltingPoint != null) rows.add(MapEntry('Melting Point', '${d.meltingPoint} Ãƒâ€šÃ‚Â°C'));
-    if (d.boilingPoint != null) rows.add(MapEntry('Boiling Point', '${d.boilingPoint} Ãƒâ€šÃ‚Â°C'));
+    if (d.density != null) rows.add(MapEntry('Density', '${d.density} g/cm³'));
+    if (d.meltingPoint != null) rows.add(MapEntry('Melting Point', '${d.meltingPoint} °C'));
+    if (d.boilingPoint != null) rows.add(MapEntry('Boiling Point', '${d.boilingPoint} °C'));
     if (d.ph != null) rows.add(MapEntry('pH', d.ph!));
     if (rows.isEmpty) return const SizedBox.shrink();
     return Container(

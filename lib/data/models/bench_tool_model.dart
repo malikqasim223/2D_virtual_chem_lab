@@ -111,10 +111,9 @@ const List<Chemical> allChemicals = [
   Chemical(id: 'co2', name: 'Carbon Dioxide', formula: 'CO2', state: 'Gas', category: 'Others', color: Color(0xFFE0E0E0)),
 ];
 
-// ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â ... [Corrupted comment cleaned]
+//
 // HEATING EFFECTS (Bunsen burner + chemicals)
-// ÃƒÆ’Ã†â€™Ãƒâ€ â‚¬â„¢ÃƒÆ’â‚¬Â ÃƒÂ¢â€šÂ¬â€žÂ¢ÃƒÆ’Ã†â€™ÃƒÂ¢â€šÂ¬Â ÃƒÆ’Â¢ÃƒÂ¢â‚¬Å¡Â ... [Corrupted comment cleaned]
-
+//
 
 
 
