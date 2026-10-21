@@ -17,7 +17,7 @@ class HomeScreen extends StatelessWidget {
               // HERO BANNER
               // ==========================================
               Container(
-                height: 280, // Adjusted to fit text & fix overflow
+                height: 260, // Adjusted Hero Height
                 width: double.infinity,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(18),
@@ -32,8 +32,6 @@ class HomeScreen extends StatelessWidget {
                         fit: BoxFit.cover,
                         alignment: Alignment.bottomRight,
                       ),
-                      
-                      // Solid Left Gradient (No withOpacity)
                       const DecoratedBox(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
@@ -49,8 +47,6 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      
-                      // Content
                       Padding(
                         padding: const EdgeInsets.all(32),
                         child: Align(
@@ -69,9 +65,7 @@ class HomeScreen extends StatelessWidget {
                                 const SizedBox(height: 24),
                                 
                                 InkWell(
-                                  onTap: () {
-                                    Navigator.push(context, MaterialPageRoute(builder: (_) => const LabScreen()));
-                                  },
+                                  onTap: () { Navigator.push(context, MaterialPageRoute(builder: (_) => const LabScreen())); },
                                   borderRadius: BorderRadius.circular(8),
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
@@ -106,48 +100,60 @@ class HomeScreen extends StatelessWidget {
                 ),
               ),
               
-              const SizedBox(height: 20),
-              const Text('Choose a Feature', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 12),
+              const SizedBox(height: 24),
+              const Text('Choose a Feature', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 16),
               
+              // ==========================================
+              // 4 CARDS (Height Increased to 120)
+              // ==========================================
               Row(
                 children: [
-                  Expanded(child: _compactCard(context, title: 'Virtual Lab', icon: Icons.science, color: const Color(0xFF3B82F6), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LabScreen())))),
-                  const SizedBox(width: 12),
-                  Expanded(child: _compactCard(context, title: 'Chem Info', icon: Icons.menu_book, color: const Color(0xFF8B5CF6), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ChemInfoScreen())))),
-                  const SizedBox(width: 12),
+                  Expanded(child: _compactCard(
+                    context, 
+                    title: 'Virtual Lab', 
+                    icon: Icons.science, 
+                    color: const Color(0xFF3B82F6), 
+                    imagePath: 'assets/images/lab_card.jpg', // NEW IMAGE
+                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LabScreen()))
+                  )),
+                  const SizedBox(width: 16),
+                  Expanded(child: _compactCard(context, title: 'Chem Info', icon: Icons.menu_book, color: const Color(0xFF8B5CF6), imagePath: 'assets/images/chem_card.jpg', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ChemInfoScreen())))),
+                  const SizedBox(width: 16),
                   Expanded(child: _compactCard(context, title: 'History', icon: Icons.history, color: const Color(0xFF10B981), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HistoryScreen())))),
-                  const SizedBox(width: 12),
+                  const SizedBox(width: 16),
                   Expanded(child: _compactCard(context, title: 'Settings', icon: Icons.settings, color: const Color(0xFFF59E0B), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())))),
                 ],
               ),
 
-              const SizedBox(height: 20), 
+              const SizedBox(height: 24), 
               
-              const Text('Live Statistics', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 12),
+              const Text('Live Statistics', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 16),
 
-              Expanded(
-                child: Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(horizontal: 20),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF111827),
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: const Color(0xFF1F2937), width: 1.5),
-                  ),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                    children: [
-                      _statItem('Chemicals', '${allChemicals.length}', Icons.science, const Color(0xFF3B82F6)),
-                      _statItem('Reactions', '${reactions.length + multiReactions.length}', Icons.menu_book, const Color(0xFF8B5CF6)),
-                      _statItem('Sessions', '0', Icons.folder, const Color(0xFF10B981)),
-                      _statItem('Status', 'Online', Icons.check_circle, const Color(0xFFF59E0B)),
-                    ],
-                  ),
+              // ==========================================
+              // LIVE STATS (Height Reduced to 80)
+              // ==========================================
+              Container(
+                width: double.infinity,
+                height: 80, // Fixed height instead of Expanded
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF111827),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(color: const Color(0xFF1F2937), width: 1.5),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: [
+                    _statItem('Chemicals', '${allChemicals.length}', Icons.science, const Color(0xFF3B82F6)),
+                    _statItem('Reactions', '${reactions.length + multiReactions.length}', Icons.menu_book, const Color(0xFF8B5CF6)),
+                    _statItem('Sessions', '0', Icons.folder, const Color(0xFF10B981)),
+                    _statItem('Status', 'Online', Icons.check_circle, const Color(0xFFF59E0B)),
+                  ],
                 ),
               ),
-              const SizedBox(height: 8),
+              const Spacer(), // Pushes everything up
             ],
           ),
         ),
@@ -155,25 +161,73 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _compactCard(BuildContext context, {required String title, required IconData icon, required Color color, required VoidCallback onTap}) {
+  Widget _compactCard(BuildContext context, {required String title, required IconData icon, required Color color, required VoidCallback onTap, String? imagePath}) {
     return InkWell(
       onTap: onTap,
-      borderRadius: BorderRadius.circular(12),
+      borderRadius: BorderRadius.circular(16),
       child: Container(
-        height: 70, 
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+        height: 120, // Increased Height
         decoration: BoxDecoration(
           color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(16),
           border: Border.all(color: color.withOpacity(0.3)),
         ),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, color: color, size: 22),
-            const SizedBox(height: 6),
-            Text(title, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
-          ],
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(16),
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // 1. Background Image (If provided)
+              if (imagePath != null)
+                Image.asset(imagePath, fit: BoxFit.cover),
+                
+              // 2. Gradient Overlay (For Image)
+              if (imagePath != null)
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: const LinearGradient(
+                      begin: Alignment.centerLeft,
+                      end: Alignment.centerRight,
+                      colors: [
+                        Color(0xF20B101E), // 95% Dark on left for text
+                        Color(0x800B101E), // 50% Fade in middle
+                        Colors.transparent, // Clear on right for image
+                      ],
+                      stops: [0.0, 0.5, 1.0],
+                    ),
+                  ),
+                ),
+
+              // 3. Content
+              Padding(
+                padding: const EdgeInsets.all(12),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end, // Align to bottom
+                  crossAxisAlignment: imagePath != null ? CrossAxisAlignment.start : CrossAxisAlignment.center,
+                  children: [
+                    if (imagePath == null) ... [
+                      const Spacer(),
+                      Icon(icon, color: color, size: 28),
+                      const Spacer(),
+                    ],
+                    if (imagePath != null) ...[
+                      Icon(icon, color: Colors.white, size: 24),
+                      const SizedBox(height: 4),
+                    ],
+                    Text(
+                      title, 
+                      style: TextStyle(
+                        color: Colors.white, 
+                        fontSize: 13, 
+                        fontWeight: FontWeight.bold
+                      ), 
+                      textAlign: imagePath != null ? TextAlign.start : TextAlign.center
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
