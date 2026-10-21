@@ -1,4 +1,4 @@
-﻿name: virtual_chem_lab
+name: virtual_chem_lab
 description: 2D Interactive Virtual Chemistry Laboratory
 publish_to: 'none'
 version: 1.0.0+1
@@ -18,4 +18,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/
+
+    - assets/images/
 

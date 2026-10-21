@@ -6,227 +6,192 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: LC.bgDeep,
-      body: Column(
-        children: [
-          // === TOP HEADER (Same style as Lab Screen) ===
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-            decoration: BoxDecoration(
-              color: LC.panel,
-              border: Border(bottom: BorderSide(color: LC.border, width: 1)),
-            ),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: LC.accent.withValues(alpha: 0.15),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: const Icon(Icons.science, color: LC.accentBright, size: 28),
+      backgroundColor: const Color(0xFF0B101E),
+      body: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // ==========================================
+              // HERO BANNER
+              // ==========================================
+              Container(
+                height: 280, // Adjusted to fit text & fix overflow
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(18),
                 ),
-                const SizedBox(width: 16),
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const Text(
-                      'Virtual Chemistry Lab',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: LC.text,
-                        letterSpacing: 0.5,
-                      ),
-                    ),
-                    const SizedBox(height: 2),
-                    Text(
-                      'Explore / Experiment / Learn',
-                      style: TextStyle(
-                        fontSize: 12,
-                        color: LC.textSub,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
-            ),
-          ),
-
-          // === MAIN CONTENT ===
-          Expanded(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 800),
-                child: Padding(
-                  padding: const EdgeInsets.all(40),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(18),
+                  child: Stack(
+                    fit: StackFit.expand,
                     children: [
-                      // Section Title
-                      Text(
-                        'Choose an Option',
-                        style: TextStyle(
-                          fontSize: 22,
-                          fontWeight: FontWeight.w600,
-                          color: LC.text,
-                          letterSpacing: 0.5,
+                      Image.asset(
+                        'assets/images/lab_bg.jpg',
+                        fit: BoxFit.cover,
+                        alignment: Alignment.bottomRight,
+                      ),
+                      
+                      // Solid Left Gradient (No withOpacity)
+                      const DecoratedBox(
+                        decoration: BoxDecoration(
+                          gradient: LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: [
+                              Color(0xFF0B101E), // Solid
+                              Color(0xFF0B101E), // Solid
+                              Color(0xB30B101E), // 70% Opacity
+                              Color(0x000B101E), // Transparent
+                            ],
+                            stops: [0.0, 0.4, 0.6, 1.0],
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Select a feature to begin your chemistry journey',
-                        style: TextStyle(fontSize: 13, color: LC.textSub),
-                      ),
-                      const SizedBox(height: 40),
-
-                      // Feature Cards Grid
-                      GridView.count(
-                        crossAxisCount: 2,
-                        shrinkWrap: true,
-                        mainAxisSpacing: 16,
-                        crossAxisSpacing: 16,
-                        childAspectRatio: 2.8,
-                        children: [
-                          _buildCard(
-                            context,
-                            'Virtual Lab',
-                            'Interactive experiments with inventory & toolbox',
-                            Icons.biotech,
-                            LC.info,
-                            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LabScreen())),
+                      
+                      // Content
+                      Padding(
+                        padding: const EdgeInsets.all(32),
+                        child: Align(
+                          alignment: Alignment.centerLeft,
+                          child: SizedBox(
+                            width: 450,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                const Text('Welcome to', style: TextStyle(color: Colors.white70, fontSize: 15, fontWeight: FontWeight.w500)),
+                                const SizedBox(height: 6),
+                                const Text('Virtual Chemistry Lab', style: TextStyle(color: Colors.white, fontSize: 34, fontWeight: FontWeight.bold, letterSpacing: -0.5)),
+                                const SizedBox(height: 12),
+                                const Text('Explore real chemical reactions with interactive\nexperiments and stunning visuals.', style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.4)),
+                                const SizedBox(height: 24),
+                                
+                                InkWell(
+                                  onTap: () {
+                                    Navigator.push(context, MaterialPageRoute(builder: (_) => const LabScreen()));
+                                  },
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
+                                    decoration: BoxDecoration(
+                                      gradient: const LinearGradient(
+                                        colors: [Color(0xFF00E5FF), Color(0xFF2979FF)],
+                                        begin: Alignment.centerLeft,
+                                        end: Alignment.centerRight,
+                                      ),
+                                      borderRadius: BorderRadius.circular(8),
+                                      boxShadow: const [
+                                        BoxShadow(color: Color(0x4D00E5FF), blurRadius: 12, offset: Offset(0, 4))
+                                      ],
+                                    ),
+                                    child: const Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.rocket_launch, color: Colors.black, size: 18),
+                                        SizedBox(width: 8),
+                                        Text('Start Your Journey', style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold)),
+                                      ],
+                                    ),
+                                  ),
+                                )
+                              ],
+                            ),
                           ),
-                          _buildCard(
-                            context,
-                            'Chem Info',
-                            'Chemical encyclopedia & properties',
-                            Icons.menu_book,
-                            LC.warning,
-                            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ChemInfoScreen())),
-                          ),
-                          _buildCard(
-                            context,
-                            'History',
-                            'Past experiments & saved sessions',
-                            Icons.history,
-                            LC.success,
-                            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HistoryScreen())),
-                          ),
-                          _buildCard(
-                            context,
-                            'Settings',
-                            'App preferences & configuration',
-                            Icons.settings,
-                            LC.accentBright,
-                            () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())),
-                          ),
-                        ],
+                        ),
                       ),
                     ],
                   ),
                 ),
               ),
-            ),
-          ),
-
-          // === FOOTER ===
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-            decoration: BoxDecoration(
-              color: LC.panel,
-              border: Border(top: BorderSide(color: LC.border, width: 1)),
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  '2D Virtual Chemistry Lab (Illustrative)',
-                  style: TextStyle(fontSize: 11, color: LC.textDim),
-                ),
-                Text(
-                  'Final Year Project',
-                  style: TextStyle(fontSize: 11, color: LC.textDim),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildCard(
-    BuildContext context,
-    String title,
-    String subtitle,
-    IconData icon,
-    Color color,
-    VoidCallback onTap,
-  ) {
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(12),
-        child: Container(
-          padding: const EdgeInsets.all(20),
-          decoration: BoxDecoration(
-            color: LC.panelElev,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: LC.border, width: 1),
-          ),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(14),
-                decoration: BoxDecoration(
-                  color: color.withValues(alpha: 0.15),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: color.withValues(alpha: 0.3), width: 1),
-                ),
-                child: Icon(icon, size: 28, color: color),
+              
+              const SizedBox(height: 20),
+              const Text('Choose a Feature', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 12),
+              
+              Row(
+                children: [
+                  Expanded(child: _compactCard(context, title: 'Virtual Lab', icon: Icons.science, color: const Color(0xFF3B82F6), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LabScreen())))),
+                  const SizedBox(width: 12),
+                  Expanded(child: _compactCard(context, title: 'Chem Info', icon: Icons.menu_book, color: const Color(0xFF8B5CF6), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ChemInfoScreen())))),
+                  const SizedBox(width: 12),
+                  Expanded(child: _compactCard(context, title: 'History', icon: Icons.history, color: const Color(0xFF10B981), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HistoryScreen())))),
+                  const SizedBox(width: 12),
+                  Expanded(child: _compactCard(context, title: 'Settings', icon: Icons.settings, color: const Color(0xFFF59E0B), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())))),
+                ],
               ),
-              const SizedBox(width: 16),
+
+              const SizedBox(height: 20), 
+              
+              const Text('Live Statistics', style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+              const SizedBox(height: 12),
+
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Text(
-                      title,
-                      style: const TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: LC.text,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: TextStyle(
-                        fontSize: 11,
-                        color: LC.textSub,
-                        height: 1.3,
-                      ),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
+                child: Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF111827),
+                    borderRadius: BorderRadius.circular(16),
+                    border: Border.all(color: const Color(0xFF1F2937), width: 1.5),
+                  ),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      _statItem('Chemicals', '${allChemicals.length}', Icons.science, const Color(0xFF3B82F6)),
+                      _statItem('Reactions', '${reactions.length + multiReactions.length}', Icons.menu_book, const Color(0xFF8B5CF6)),
+                      _statItem('Sessions', '0', Icons.folder, const Color(0xFF10B981)),
+                      _statItem('Status', 'Online', Icons.check_circle, const Color(0xFFF59E0B)),
+                    ],
+                  ),
                 ),
               ),
-              Icon(Icons.arrow_forward_ios, size: 14, color: LC.textDim),
+              const SizedBox(height: 8),
             ],
           ),
         ),
       ),
     );
   }
+
+  Widget _compactCard(BuildContext context, {required String title, required IconData icon, required Color color, required VoidCallback onTap}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        height: 70, 
+        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 6),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.1),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: color.withOpacity(0.3)),
+        ),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(icon, color: color, size: 22),
+            const SizedBox(height: 6),
+            Text(title, style: const TextStyle(color: Colors.white, fontSize: 12, fontWeight: FontWeight.w600), textAlign: TextAlign.center),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _statItem(String label, String value, IconData icon, Color color) {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        Icon(icon, color: color, size: 20),
+        const SizedBox(height: 6),
+        Text(value, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+        const SizedBox(height: 2),
+        Text(label, style: const TextStyle(color: Colors.white54, fontSize: 11)),
+      ],
+    );
+  }
 }
-
-// ============================================================
-// PLACEHOLDER SCREENS (Chem Info, History, Settings)
-// ============================================================
-
 class ChemInfoScreen extends StatefulWidget {
   const ChemInfoScreen({super.key});
   @override
@@ -338,7 +303,7 @@ class _ChemInfoScreenState extends State<ChemInfoScreen> with SingleTickerProvid
                           children: [
                             const Text('Chemical Encyclopedia', style: TextStyle(color: LC.text, fontSize: 20, fontWeight: FontWeight.w700)),
                             const SizedBox(height: 4),
-                            Text('${allChemicals.length} chemicals • ${reactions.length + multiReactions.length} reactions', style: TextStyle(color: LC.textSub, fontSize: 12)),
+                            Text('${allChemicals.length} chemicals ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢ ${reactions.length + multiReactions.length} reactions', style: TextStyle(color: LC.textSub, fontSize: 12)),
                           ],
                         ),
                       ),
@@ -725,9 +690,9 @@ class ChemDetailPage extends StatelessWidget {
   Widget _keyValuesSection(ChemDetail d, Color accent) {
     final rows = <MapEntry<String, String>>[];
     if (d.molarMass != null) rows.add(MapEntry('Molar Mass', '${d.molarMass} g/mol'));
-    if (d.density != null) rows.add(MapEntry('Density', '${d.density} g/cm³'));
-    if (d.meltingPoint != null) rows.add(MapEntry('Melting Point', '${d.meltingPoint} °C'));
-    if (d.boilingPoint != null) rows.add(MapEntry('Boiling Point', '${d.boilingPoint} °C'));
+    if (d.density != null) rows.add(MapEntry('Density', '${d.density} g/cmÃƒâ€šÃ‚Â³'));
+    if (d.meltingPoint != null) rows.add(MapEntry('Melting Point', '${d.meltingPoint} Ãƒâ€šÃ‚Â°C'));
+    if (d.boilingPoint != null) rows.add(MapEntry('Boiling Point', '${d.boilingPoint} Ãƒâ€šÃ‚Â°C'));
     if (d.ph != null) rows.add(MapEntry('pH', d.ph!));
     if (rows.isEmpty) return const SizedBox.shrink();
     return Container(

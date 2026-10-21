@@ -2163,7 +2163,7 @@ Widget _labArea() {
               left: (s.width + 140) / 2 - 22.5,
               width: 45, height: 55,
               child: GestureDetector(behavior: HitTestBehavior.opaque,
-                onTap: () {},
+                onTap: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Double-tap the Litmus Strip to detach'), duration: Duration(seconds: 1))),
                 onDoubleTap: () => _detachTool(eq, LabEffect.litmus),
                 child: const SizedBox())),
           if (eq.hasPhPaper)
@@ -2172,7 +2172,7 @@ Widget _labArea() {
               left: (s.width + 140) / 2 - 22.5,
               width: 45, height: 55,
               child: GestureDetector(behavior: HitTestBehavior.opaque,
-                onTap: () {},
+                onTap: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Double-tap the pH Paper Strip to detach'), duration: Duration(seconds: 1))),
                 onDoubleTap: () => _detachTool(eq, LabEffect.phPaper),
                 child: const SizedBox())),
           if (eq.isStirring)
@@ -2569,7 +2569,6 @@ Widget _labArea() {
     );
   }
 }
-
 
 
 
