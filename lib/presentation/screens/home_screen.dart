@@ -7,42 +7,32 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: const Color(0xFF0B101E),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: Column(
+      body: Stack(
+        children: [
+          const Positioned.fill(child: _LiveBackground()),
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.all(24.0),
+              child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // ==========================================
               // HERO BANNER
-              // ==========================================
               Container(
-                height: 260, // Adjusted Hero Height
+                height: 280,
                 width: double.infinity,
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(18),
-                ),
+                decoration: BoxDecoration(borderRadius: BorderRadius.circular(18)),
                 child: ClipRRect(
                   borderRadius: BorderRadius.circular(18),
                   child: Stack(
                     fit: StackFit.expand,
                     children: [
-                      Image.asset(
-                        'assets/images/lab_bg.jpg',
-                        fit: BoxFit.cover,
-                        alignment: Alignment.bottomRight,
-                      ),
+                      Image.asset('assets/images/lab_bg.jpg', fit: BoxFit.cover, alignment: Alignment.bottomRight),
                       const DecoratedBox(
                         decoration: BoxDecoration(
                           gradient: LinearGradient(
                             begin: Alignment.centerLeft,
                             end: Alignment.centerRight,
-                            colors: [
-                              Color(0xFF0B101E), // Solid
-                              Color(0xFF0B101E), // Solid
-                              Color(0xB30B101E), // 70% Opacity
-                              Color(0x000B101E), // Transparent
-                            ],
+                            colors: [Color(0xFF0B101E), Color(0xFF0B101E), Color(0xB30B101E), Color(0x000B101E)],
                             stops: [0.0, 0.4, 0.6, 1.0],
                           ),
                         ),
@@ -61,31 +51,24 @@ class HomeScreen extends StatelessWidget {
                                 const SizedBox(height: 6),
                                 const Text('Virtual Chemistry Lab', style: TextStyle(color: Colors.white, fontSize: 34, fontWeight: FontWeight.bold, letterSpacing: -0.5)),
                                 const SizedBox(height: 12),
-                                const Text('Explore real chemical reactions with interactive\nexperiments and stunning visuals.', style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.4)),
+                                const Text('Explore chemical reactions with interactive\nexperiments and stunning visuals.', style: TextStyle(color: Colors.white70, fontSize: 14, height: 1.4)),
                                 const SizedBox(height: 24),
-                                
                                 InkWell(
                                   onTap: () { Navigator.push(context, MaterialPageRoute(builder: (_) => const LabScreen())); },
                                   borderRadius: BorderRadius.circular(8),
                                   child: Container(
                                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
                                     decoration: BoxDecoration(
-                                      gradient: const LinearGradient(
-                                        colors: [Color(0xFF00E5FF), Color(0xFF2979FF)],
-                                        begin: Alignment.centerLeft,
-                                        end: Alignment.centerRight,
-                                      ),
+                                      gradient: const LinearGradient(colors: [Color(0xFF00E5FF), Color(0xFF2979FF)], begin: Alignment.centerLeft, end: Alignment.centerRight),
                                       borderRadius: BorderRadius.circular(8),
-                                      boxShadow: const [
-                                        BoxShadow(color: Color(0x4D00E5FF), blurRadius: 12, offset: Offset(0, 4))
-                                      ],
+                                      boxShadow: const [BoxShadow(color: Color(0x4D00E5FF), blurRadius: 12, offset: Offset(0, 4))],
                                     ),
                                     child: const Row(
                                       mainAxisSize: MainAxisSize.min,
                                       children: [
                                         Icon(Icons.rocket_launch, color: Colors.black, size: 18),
                                         SizedBox(width: 8),
-                                        Text('Start Your Journey', style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold)),
+                                        Text('Open Virtual Lab', style: TextStyle(color: Colors.black, fontSize: 14, fontWeight: FontWeight.bold)),
                                       ],
                                     ),
                                   ),
@@ -101,134 +84,53 @@ class HomeScreen extends StatelessWidget {
               ),
               
               const SizedBox(height: 24),
-              const Text('Choose a Feature', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
+              const Text('CHOOSE A FEATURE', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
               const SizedBox(height: 16),
               
-              // ==========================================
-              // 4 CARDS (Height Increased to 120)
-              // ==========================================
+              // NAV CARDS
               Row(
                 children: [
-                  Expanded(child: _compactCard(
-                    context, 
-                    title: 'Virtual Lab', 
-                    icon: Icons.science, 
-                    color: const Color(0xFF3B82F6), 
-                    imagePath: 'assets/images/lab_card.jpg', // NEW IMAGE
-                    onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LabScreen()))
-                  )),
+                  Expanded(child: _NavHoverCard(title: 'Virtual Lab', color: const Color(0xFF3B82F6), imagePath: 'assets/images/lab_card.jpg', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const LabScreen())))),
                   const SizedBox(width: 16),
-                  Expanded(child: _compactCard(context, title: 'Chem Info', icon: Icons.menu_book, color: const Color(0xFF8B5CF6), imagePath: 'assets/images/chem_card.jpg', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ChemInfoScreen())))),
+                  Expanded(child: _NavHoverCard(title: 'Chem Info', color: const Color(0xFF8B5CF6), imagePath: 'assets/images/chem_card.jpg', onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const ChemInfoScreen())))),
                   const SizedBox(width: 16),
-                  Expanded(child: _compactCard(context, title: 'History', icon: Icons.history, color: const Color(0xFF10B981), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HistoryScreen())))),
+                  Expanded(child: _NavHoverCard(title: 'History', color: const Color(0xFF176571), imagePath: 'assets/images/history_card.jpg', imageOpacity: 1.0, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HistoryScreen())))),
                   const SizedBox(width: 16),
-                  Expanded(child: _compactCard(context, title: 'Settings', icon: Icons.settings, color: const Color(0xFFF59E0B), onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())))),
+                  Expanded(child: _NavHoverCard(title: 'Settings', color: const Color(0xFFF59E0B), imagePath: 'assets/images/settings_card.jpg', useTexture: true, imageOpacity: 1.0, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())))),
                 ],
               ),
 
-              const SizedBox(height: 24), 
+              const Spacer(), 
               
-              const Text('Live Statistics', style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 16),
+              const Text('QUICK OVERVIEW', style: TextStyle(color: Colors.white, fontSize: 16, fontWeight: FontWeight.w900, letterSpacing: 1.5)),
+              const SizedBox(height: 12),
 
-              // ==========================================
-              // LIVE STATS (Height Reduced to 80)
-              // ==========================================
+              // STATS (Expanded for Centering)
               Container(
                 width: double.infinity,
-                height: 80, // Fixed height instead of Expanded
+                height: 90,
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 decoration: BoxDecoration(
                   color: const Color(0xFF111827),
                   borderRadius: BorderRadius.circular(16),
                   border: Border.all(color: const Color(0xFF1F2937), width: 1.5),
+                  boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.4), blurRadius: 10, offset: const Offset(0, 4))],
                 ),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    _statItem('Chemicals', '${allChemicals.length}', Icons.science, const Color(0xFF3B82F6)),
-                    _statItem('Reactions', '${reactions.length + multiReactions.length}', Icons.menu_book, const Color(0xFF8B5CF6)),
-                    _statItem('Sessions', '0', Icons.folder, const Color(0xFF10B981)),
-                    _statItem('Status', 'Online', Icons.check_circle, const Color(0xFFF59E0B)),
+                    Expanded(child: _statItem('CHEMICALS', '${allChemicals.length}', Icons.science, const Color(0xFF3B82F6))),
+                    Expanded(child: _statItem('REACTIONS', '${reactions.length + multiReactions.length}', Icons.menu_book, const Color(0xFF8B5CF6))),
+                    Expanded(child: _statItem('VERSION', 'v1.0.0', Icons.info_outline, const Color(0xFFF59E0B))),
                   ],
                 ),
               ),
-              const Spacer(), // Pushes everything up
+              const SizedBox(height: 8),
             ],
           ),
-        ),
-      ),
-    );
-  }
-
-  Widget _compactCard(BuildContext context, {required String title, required IconData icon, required Color color, required VoidCallback onTap, String? imagePath}) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
-      child: Container(
-        height: 120, // Increased Height
-        decoration: BoxDecoration(
-          color: color.withOpacity(0.1),
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.3)),
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(16),
-          child: Stack(
-            fit: StackFit.expand,
-            children: [
-              // 1. Background Image (If provided)
-              if (imagePath != null)
-                Image.asset(imagePath, fit: BoxFit.cover),
-                
-              // 2. Gradient Overlay (For Image)
-              if (imagePath != null)
-                Container(
-                  decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      begin: Alignment.centerLeft,
-                      end: Alignment.centerRight,
-                      colors: [
-                        Color(0xF20B101E), // 95% Dark on left for text
-                        Color(0x800B101E), // 50% Fade in middle
-                        Colors.transparent, // Clear on right for image
-                      ],
-                      stops: [0.0, 0.5, 1.0],
-                    ),
-                  ),
-                ),
-
-              // 3. Content
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end, // Align to bottom
-                  crossAxisAlignment: imagePath != null ? CrossAxisAlignment.start : CrossAxisAlignment.center,
-                  children: [
-                    if (imagePath == null) ... [
-                      const Spacer(),
-                      Icon(icon, color: color, size: 28),
-                      const Spacer(),
-                    ],
-                    if (imagePath != null) ...[
-                      Icon(icon, color: Colors.white, size: 24),
-                      const SizedBox(height: 4),
-                    ],
-                    Text(
-                      title, 
-                      style: TextStyle(
-                        color: Colors.white, 
-                        fontSize: 13, 
-                        fontWeight: FontWeight.bold
-                      ), 
-                      textAlign: imagePath != null ? TextAlign.start : TextAlign.center
-                    ),
-                  ],
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -238,10 +140,10 @@ class HomeScreen extends StatelessWidget {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Icon(icon, color: color, size: 20),
-        const SizedBox(height: 6),
+        const SizedBox(height: 4),
         Text(value, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
         const SizedBox(height: 2),
-        Text(label, style: const TextStyle(color: Colors.white54, fontSize: 11)),
+        Text(label, style: const TextStyle(color: Colors.white54, fontSize: 9, fontWeight: FontWeight.w600, letterSpacing: 1.0)),
       ],
     );
   }
@@ -357,7 +259,7 @@ class _ChemInfoScreenState extends State<ChemInfoScreen> with SingleTickerProvid
                           children: [
                             const Text('Chemical Encyclopedia', style: TextStyle(color: LC.text, fontSize: 20, fontWeight: FontWeight.w700)),
                             const SizedBox(height: 4),
-                            Text('—', style: TextStyle(color: LC.textSub, fontSize: 12)),
+                            Text('ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â', style: TextStyle(color: LC.textSub, fontSize: 12)),
                           ],
                         ),
                       ),
@@ -511,7 +413,7 @@ class _ChemInfoScreenState extends State<ChemInfoScreen> with SingleTickerProvid
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(c.name, maxLines: 1, overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: LC.text, fontSize: 14, fontWeight: FontWeight.w600)),
+                  style: const TextStyle(color: LC.text, fontSize: 18, fontWeight: FontWeight.w600)),
                 const SizedBox(height: 4),
                 Row(children: [
                   Text(c.formula, style: const TextStyle(color: LC.accentBright, fontSize: 12, fontWeight: FontWeight.w700)),
@@ -559,7 +461,7 @@ class _ChemInfoScreenState extends State<ChemInfoScreen> with SingleTickerProvid
         children: [
           Row(
             children: [
-              Expanded(child: Text(r.name, style: const TextStyle(color: LC.text, fontSize: 14, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis)),
+              Expanded(child: Text(r.name, style: const TextStyle(color: LC.text, fontSize: 18, fontWeight: FontWeight.w600), maxLines: 1, overflow: TextOverflow.ellipsis)),
               if (r.isViolent) Container(padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2), decoration: BoxDecoration(color: LC.danger.withValues(alpha: 0.2), borderRadius: BorderRadius.circular(4)), child: Text('HAZARD', style: TextStyle(color: LC.danger, fontSize: 8, fontWeight: FontWeight.w700))),
             ],
           ),
@@ -744,9 +646,9 @@ class ChemDetailPage extends StatelessWidget {
   Widget _keyValuesSection(ChemDetail d, Color accent) {
     final rows = <MapEntry<String, String>>[];
     if (d.molarMass != null) rows.add(MapEntry('Molar Mass', '${d.molarMass} g/mol'));
-    if (d.density != null) rows.add(MapEntry('Density', '${d.density} g/cm³'));
-    if (d.meltingPoint != null) rows.add(MapEntry('Melting Point', '${d.meltingPoint} °C'));
-    if (d.boilingPoint != null) rows.add(MapEntry('Boiling Point', '${d.boilingPoint} °C'));
+    if (d.density != null) rows.add(MapEntry('Density', '${d.density} g/cmÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³'));
+    if (d.meltingPoint != null) rows.add(MapEntry('Melting Point', '${d.meltingPoint} ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°C'));
+    if (d.boilingPoint != null) rows.add(MapEntry('Boiling Point', '${d.boilingPoint} ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°C'));
     if (d.ph != null) rows.add(MapEntry('pH', d.ph!));
     if (rows.isEmpty) return const SizedBox.shrink();
     return Container(
@@ -1165,7 +1067,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(rxn.name, style: const TextStyle(color: LC.success, fontSize: 14, fontWeight: FontWeight.bold)),
+                      Text(rxn.name, style: const TextStyle(color: LC.success, fontSize: 18, fontWeight: FontWeight.bold)),
                       const SizedBox(height: 4),
                       Text(rxn.equation, style: const TextStyle(color: LC.accentBright, fontSize: 12, fontWeight: FontWeight.w600)),
                       const SizedBox(height: 6),
@@ -1268,7 +1170,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                               child: Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
                                 children: [
-                                  Text(name, style: const TextStyle(color: LC.text, fontSize: 16, fontWeight: FontWeight.bold)),
+                                  Text(name, style: const TextStyle(color: LC.text, fontSize: 18, fontWeight: FontWeight.bold)),
                                   const SizedBox(height: 4),
                                   Text(
                                     '${date.day}/${date.month}/${date.year} at ${date.hour}:${date.minute.toString().padLeft(2, '0')}',
@@ -1318,7 +1220,7 @@ class SettingsScreen extends StatelessWidget {
             const SizedBox(height: 8),
             const Text(
               'Configuration coming soon',
-              style: TextStyle(fontSize: 14, color: LC.textSub),
+              style: TextStyle(fontSize: 18, color: LC.textSub),
             ),
           ],
         ),
@@ -1355,6 +1257,326 @@ class _HoverListCardState extends State<_HoverListCard> {
             border: Border.all(color: _hovered ? LC.accent : LC.border),
           ),
           child: widget.child,
+        ),
+      ),
+    );
+  }
+}
+// ============================================================
+// LIVE WALLPAPER WIDGET - FLOATING PARTICLES
+// ============================================================
+class _LiveBackground extends StatefulWidget {
+  const _LiveBackground();
+
+  @override
+  State<_LiveBackground> createState() => _LiveBackgroundState();
+}
+
+class _LiveBackgroundState extends State<_LiveBackground>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  final List<_FloatingDot> _backDots = [];
+  final List<_FloatingDot> _midDots = [];
+  final List<_FloatingDot> _frontDots = [];
+  final Random _rng = Random(42);
+
+  @override
+  void initState() {
+    super.initState();
+    
+    // 1. BACKGROUND LAYER (Small, Faint, Slow)
+    for (int i = 0; i < 60; i++) {
+      _backDots.add(_FloatingDot(
+        startX: _rng.nextDouble(),
+        startY: _rng.nextDouble(),
+        offset: _rng.nextDouble() * 10,
+        radius: 0.5 + _rng.nextDouble() * 0.8,
+        opacity: 0.2,
+        speedMultiplier: 0.4,
+        color: i % 2 == 0 ? Colors.white : const Color(0xFF3B82F6),
+      ));
+    }
+
+    // 2. MIDDLE LAYER (Medium Size, Normal Speed)
+    for (int i = 0; i < 40; i++) {
+      _midDots.add(_FloatingDot(
+        startX: _rng.nextDouble(),
+        startY: _rng.nextDouble(),
+        offset: _rng.nextDouble() * 10,
+        radius: 1.0 + _rng.nextDouble() * 1.2,
+        opacity: 0.5,
+        speedMultiplier: 0.8,
+        color: i % 2 == 0 ? const Color(0xFF8B5CF6) : Colors.white,
+      ));
+    }
+
+    // 3. FOREGROUND LAYER (Large, Bright, Faster)
+    for (int i = 0; i < 20; i++) {
+      _frontDots.add(_FloatingDot(
+        startX: _rng.nextDouble(),
+        startY: _rng.nextDouble(),
+        offset: _rng.nextDouble() * 10,
+        radius: 1.8 + _rng.nextDouble() * 1.5,
+        opacity: 0.9,
+        speedMultiplier: 1.2,
+        color: i % 3 == 0 ? const Color(0xFF00E5FF) : Colors.white,
+      ));
+    }
+
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(seconds: 15), // 15 seconds loop
+    )..repeat();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return RepaintBoundary(
+      child: AnimatedBuilder(
+        animation: _controller,
+        builder: (context, child) {
+          return CustomPaint(
+            painter: _ParticlePainter(
+              backDots: _backDots,
+              midDots: _midDots,
+              frontDots: _frontDots,
+              progress: _controller.value,
+            ),
+            size: Size.infinite,
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _ParticlePainter extends CustomPainter {
+  final List<_FloatingDot> backDots;
+  final List<_FloatingDot> midDots;
+  final List<_FloatingDot> frontDots;
+  final double progress;
+
+  _ParticlePainter({
+    required this.backDots,
+    required this.midDots,
+    required this.frontDots,
+    required this.progress,
+  });
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint();
+
+    // Draw Back Layer
+    _drawLayer(canvas, size, backDots, paint, 0.02);
+    // Draw Middle Layer
+    _drawLayer(canvas, size, midDots, paint, 0.035);
+    // Draw Front Layer
+    _drawLayer(canvas, size, frontDots, paint, 0.05);
+  }
+
+  void _drawLayer(Canvas canvas, Size size, List<_FloatingDot> dots, Paint paint, double baseAmplitude) {
+    for (var p in dots) {
+      // Parallax math: slower layers move less, faster layers move more
+      final floatX = sin(progress * 2 * pi * p.speedMultiplier + p.offset) * (baseAmplitude * p.speedMultiplier);
+      final floatY = cos(progress * 2 * pi * p.speedMultiplier + p.offset * 1.3) * (baseAmplitude * p.speedMultiplier);
+
+      final x = (p.startX + floatX) * size.width;
+      final y = (p.startY + floatY) * size.height;
+
+      paint.color = p.color.withOpacity(p.opacity);
+      canvas.drawCircle(Offset(x, y), p.radius, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _ParticlePainter oldDelegate) {
+    return oldDelegate.progress != progress;
+  }
+}
+
+class _FloatingDot {
+  final double startX;
+  final double startY;
+  final double offset;
+  final double radius;
+  final double opacity;
+  final double speedMultiplier;
+  final Color color;
+
+  _FloatingDot({
+    required this.startX,
+    required this.startY,
+    required this.offset,
+    required this.radius,
+    required this.opacity,
+    required this.speedMultiplier,
+    required this.color,
+  });
+}
+
+// ============================================================
+// NAV HOVER CARD WIDGET
+// ============================================================
+class _NavHoverCard extends StatefulWidget {
+  final String title;
+  final IconData? icon;
+  final Color color;
+  final VoidCallback onTap;
+  final String? imagePath;
+  final bool useTexture;
+  final double imageOpacity;
+
+  const _NavHoverCard({
+    required this.title,
+    this.icon,
+    required this.color,
+    required this.onTap,
+    this.imagePath,
+    this.useTexture = false,
+    this.imageOpacity = 0.65,
+  });
+
+  @override
+  State<_NavHoverCard> createState() => _NavHoverCardState();
+}
+
+class _NavHoverCardState extends State<_NavHoverCard> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        curve: Curves.easeOutCubic,
+        transform: Matrix4.translationValues(0, _isHovered ? -8 : 0, 0),
+        child: GestureDetector(
+          onTap: widget.onTap,
+          child: Container(
+            height: 110,
+            decoration: BoxDecoration(
+              color: widget.color.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(16),
+              border: Border.all(
+                color: _isHovered 
+                    ? (widget.color.computeLuminance() < 0.3 
+                        ? Color.lerp(widget.color, Colors.white, 0.2)!
+                        : widget.color.withOpacity(0.9)) 
+                    : widget.color.withOpacity(0.15), 
+                width: _isHovered ? 1.5 : 1.0
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: _isHovered 
+                      ? (widget.color.computeLuminance() < 0.3 
+                          ? Color.lerp(widget.color, Colors.white, 0.1)!.withOpacity(0.5)
+                          : widget.color.withOpacity(0.4)) 
+                      : Colors.black.withOpacity(0.6), 
+                  blurRadius: _isHovered ? 22 : 12, 
+                  spreadRadius: _isHovered ? 3 : 0, 
+                  offset: const Offset(0, 10)
+                ),
+              ],
+            ),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(16),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  if (widget.imagePath != null)
+                    Opacity(
+                      opacity: widget.imageOpacity, 
+                      child: ColorFiltered(
+                        colorFilter: ColorFilter.mode(
+                          widget.color,
+                          BlendMode.color,
+                        ),
+                        child: Image.asset(widget.imagePath!, fit: BoxFit.cover),
+                      ),
+                    ),
+                  
+                  if (widget.imagePath != null)
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.bottomCenter,
+                          end: Alignment.topCenter,
+                          colors: [Colors.black.withOpacity(0.4), Colors.transparent],
+                          stops: const [0.0, 0.5],
+                        ),
+                      ),
+                    ),
+                  
+                  if (widget.imagePath == null)
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [widget.color.withOpacity(widget.useTexture ? 0.4 : 0.2), const Color(0xFF0B101E)],
+                        ),
+                      ),
+                    ),
+                  if (widget.useTexture)
+                    Container(
+                      decoration: BoxDecoration(
+                        gradient: RadialGradient(
+                          center: Alignment.center,
+                          radius: 1.2,
+                          colors: [widget.color.withOpacity(0.15), Colors.transparent],
+                        ),
+                      ),
+                    ),
+
+                  Container(
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.bottomCenter,
+                        end: Alignment.topCenter,
+                        colors: [
+                          Colors.black.withOpacity(0.7),
+                          Colors.transparent,
+                        ],
+                      ),
+                    ),
+                  ),
+                  
+                  Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        if (widget.icon != null) ...[
+                          Icon(widget.icon!, color: Colors.white, size: 28),
+                          const SizedBox(height: 8),
+                        ],
+                        Text(
+                          widget.title,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 21,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 0.5,
+                            shadows: [Shadow(color: Colors.black, blurRadius: 10, offset: Offset(0, 2))],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
         ),
       ),
     );
