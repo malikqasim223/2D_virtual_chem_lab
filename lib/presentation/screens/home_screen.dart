@@ -96,7 +96,7 @@ class HomeScreen extends StatelessWidget {
                   const SizedBox(width: 16),
                   Expanded(child: _NavHoverCard(title: 'History', color: const Color(0xFF176571), imagePath: 'assets/images/history_card.jpg', imageOpacity: 1.0, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const HistoryScreen())))),
                   const SizedBox(width: 16),
-                  Expanded(child: _NavHoverCard(title: 'Settings', color: const Color(0xFFF59E0B), imagePath: 'assets/images/settings_card.jpg', useTexture: true, imageOpacity: 1.0, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())))),
+                  Expanded(child: _NavHoverCard(title: 'Settings', color: const Color(0xFF8877A8), imagePath: 'assets/images/settings_card.jpg', useTexture: true, imageOpacity: 1.0, onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const SettingsScreen())))),
                 ],
               ),
 
@@ -1565,9 +1565,14 @@ class _NavHoverCardState extends State<_NavHoverCard> {
                           style: const TextStyle(
                             color: Colors.white,
                             fontSize: 21,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w900,
                             letterSpacing: 0.5,
-                            shadows: [Shadow(color: Colors.black, blurRadius: 10, offset: Offset(0, 2))],
+                            shadows: [
+                              // Strong black shadow (multiple layers for depth)
+                              Shadow(color: Colors.black, blurRadius: 8, offset: Offset(0, 2)),
+                              Shadow(color: Colors.black, blurRadius: 16, offset: Offset(0, 0)),
+                              Shadow(color: Colors.black87, blurRadius: 4, offset: Offset(0, 1)),
+                            ],
                           ),
                         ),
                       ],

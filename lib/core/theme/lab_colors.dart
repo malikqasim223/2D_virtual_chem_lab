@@ -3,12 +3,12 @@ part of chem_lab;
 /// ORIGINAL SIMPLE DARK THEME
 /// Clean, professional, no experimental themes
 class LC {
-  static const Color bgDeep = Color(0xFF0E1116);
+  static const Color bgDeep = Color(0xFF0B101E);
   static const Color bg = Color(0xFF141922);
-  static const Color panel = Color(0xFF1A1F2E);
-  static const Color panelElev = Color(0xFF222836);
-  static const Color border = Color(0xFF2A3142);
-  static const Color borderSoft = Color(0xFF353D52);
+  static const Color panel = Color(0xFF111827);
+  static const Color panelElev = Color(0xFF1A2538);
+  static const Color border = Color(0xFF1F2937);
+  static const Color borderSoft = Color(0xFF334155);
   static const Color accent = Color(0xFF4A90E2);
   static const Color accentBright = Color(0xFF6BB6FF);
   static const Color success = Color(0xFF4CAF50);
@@ -24,12 +24,12 @@ class LC {
   static const Color glassTint = Color(0xFFB0C4DE);
   static const Color marbleBase = Color(0xFF1E2430);
   static const Color marbleHighlight = Color(0xFF2A3142);
-  static const Color darkBgDeep = Color(0xFF0E1116);
+  static const Color darkBgDeep = Color(0xFF0B101E);
   static const Color darkBg = Color(0xFF141922);
-  static const Color darkPanel = Color(0xFF1A1F2E);
-  static const Color darkPanelElev = Color(0xFF222836);
-  static const Color darkBorder = Color(0xFF2A3142);
-  static const Color darkBorderSoft = Color(0xFF353D52);
+  static const Color darkPanel = Color(0xFF111827);
+  static const Color darkPanelElev = Color(0xFF1A2538);
+  static const Color darkBorder = Color(0xFF1F2937);
+  static const Color darkBorderSoft = Color(0xFF334155);
   static const Color darkText = Color(0xFFE8EBF0);
   static const Color darkTextSub = Color(0xFF9BA3B4);
   static const Color darkTextDim = Color(0xFF6B7280);
