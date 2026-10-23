@@ -1703,28 +1703,18 @@ Widget _labArea() {
           const Spacer(), // Pushes everything after this to the extreme right
           
           // --- RIGHT SIDE BUTTONS ---
-          _headerBtn(Icons.save, 'Save', _saveExperiment, false),
+          _headerBtn(Icons.save, 'Save', _saveExperiment, hoverColor: Colors.green),
           const SizedBox(width: 8),
-          _headerBtn(Icons.folder_open, 'Load', _loadExperiment, false),
+          _headerBtn(Icons.folder_open, 'Load', _loadExperiment, hoverColor: Colors.grey),
           const SizedBox(width: 8),
-          _headerBtn(Icons.refresh, 'Reset', reset, false),
+          _headerBtn(Icons.refresh, 'Reset', reset, hoverColor: Colors.red),
         ],
       ),
     );
   }
 
-  Widget _headerBtn(IconData icon, String label, VoidCallback onTap, bool primary) {
-    return Material(color: Colors.transparent,
-      child: InkWell(onTap: onTap, borderRadius: BorderRadius.circular(6),
-        child: Container(padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
-          decoration: BoxDecoration(color: primary ? LC.success : LC.darkPanel,
-            borderRadius: BorderRadius.circular(6),
-            border: Border.all(color: primary ? LC.success : LC.darkBorder)),
-          child: Row(children: [
-            Icon(icon, size: 12, color: primary ? LC.darkText : LC.darkTextSub),
-            const SizedBox(width: 5),
-            Text(label, style: TextStyle(color: primary ? LC.darkText : LC.darkTextSub, fontSize: 10)),
-          ]))));
+  Widget _headerBtn(IconData icon, String label, VoidCallback onTap, {bool primary = false, Color hoverColor = Colors.blue}) {
+    return _PremiumHeaderBtn(icon: icon, label: label, onTap: onTap, primary: primary, hoverColor: hoverColor);
   }
 
   // Determine reaction specific to this equipment only
@@ -1838,7 +1828,7 @@ Widget _labArea() {
             Text(label, style: const TextStyle(
               color: Colors.white, fontSize: 8,
               fontWeight: FontWeight.w500, height: 1.1)),
-            Text(value, style: const TextStyle(color: Colors.white, fontSize: 11.5, shadows: [Shadow(color: Colors.black87, blurRadius: 4, offset: Offset(0, 1))],
+            Text(value, style: const TextStyle(color: Colors.white, fontSize: 10.5, shadows: [Shadow(color: Colors.black87, blurRadius: 4, offset: Offset(0, 1))],
               fontWeight: FontWeight.w700, height: 1.1)),
           ]),
       ]),
@@ -2498,7 +2488,7 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 13.0, // Size Increased
+                    fontSize: 12.0, // Size Increased
                     fontWeight: FontWeight.w700,
                     shadows: [
                       Shadow(
@@ -2512,7 +2502,7 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
                 const SizedBox(height: 3),
                 Text(
                   widget.c.formula,
-                  style: const TextStyle(color: Colors.white, fontSize: 13.0,  // Size Increased
+                  style: const TextStyle(color: Colors.white, fontSize: 12.0,  // Size Increased
                     fontWeight: FontWeight.w700,
                     shadows: [
                       Shadow(
@@ -2687,6 +2677,95 @@ class _PremiumEffectCardState extends State<_PremiumEffectCard> {
               ),
             ),
           ]),
+        ),
+      ),
+    );
+  }
+}
+// ============================================================
+// PREMIUM HEADER BUTTON (Toolbar)
+// ============================================================
+class _PremiumHeaderBtn extends StatefulWidget {
+  final IconData icon; final String label; final VoidCallback onTap; final bool primary; final Color hoverColor;
+  const _PremiumHeaderBtn({required this.icon, required this.label, required this.onTap, this.primary = false, this.hoverColor = Colors.blue});
+  @override
+  State<_PremiumHeaderBtn> createState() => _PremiumHeaderBtnState();
+}
+
+class _PremiumHeaderBtnState extends State<_PremiumHeaderBtn> {
+  bool _isHovered = false;
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 7),
+          decoration: BoxDecoration(
+            color: _isHovered ? widget.hoverColor.withValues(alpha: 0.15) : (widget.primary ? LC.success : LC.darkPanel),
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(color: _isHovered ? widget.hoverColor : (widget.primary ? LC.success : LC.darkBorder), width: 1.0),
+            boxShadow: _isHovered ? [BoxShadow(color: widget.hoverColor.withValues(alpha: 0.3), blurRadius: 8, offset: const Offset(0, 2))] : [],
+          ),
+          child: Row(children: [
+            Icon(widget.icon, size: 12, color: _isHovered ? widget.hoverColor : (widget.primary ? LC.darkText : LC.darkTextSub)),
+            const SizedBox(width: 5),
+            Text(widget.label, style: TextStyle(color: _isHovered ? widget.hoverColor : (widget.primary ? LC.darkText : LC.darkTextSub), fontSize: 10, fontWeight: _isHovered ? FontWeight.w600 : FontWeight.normal)),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+// ============================================================
+// PREMIUM FILTER CHIP
+// ============================================================
+class _PremiumFilterChip extends StatefulWidget {
+  final String label; final bool isActive; final VoidCallback onTap;
+  const _PremiumFilterChip({required this.label, required this.isActive, required this.onTap});
+  @override
+  State<_PremiumFilterChip> createState() => _PremiumFilterChipState();
+}
+
+class _PremiumFilterChipState extends State<_PremiumFilterChip> {
+  bool _isHovered = false;
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutCubic,
+          transform: Matrix4.translationValues(0, _isHovered && !widget.isActive ? -2 : 0, 0),
+          padding: const EdgeInsets.symmetric(horizontal: 10),
+          decoration: BoxDecoration(
+            color: widget.isActive ? LC.darkAccent : (_isHovered ? LC.darkPanelElev.withValues(alpha: 0.8) : LC.darkPanelElev),
+            borderRadius: BorderRadius.circular(5),
+            border: Border.all(
+              color: widget.isActive ? LC.darkAccentBright : (_isHovered ? LC.darkAccentBright.withValues(alpha: 0.5) : LC.darkBorder),
+              width: _isHovered && !widget.isActive ? 1.2 : 1.0,
+            ),
+            boxShadow: _isHovered && !widget.isActive ? [BoxShadow(color: LC.darkAccentBright.withValues(alpha: 0.15), blurRadius: 6, offset: const Offset(0, 2))] : [],
+          ),
+          child: Center(
+            child: Text(
+              widget.label,
+              style: TextStyle(
+                color: widget.isActive || _isHovered ? Colors.white : LC.darkTextSub,
+                fontSize: 10,
+                fontWeight: widget.isActive || _isHovered ? FontWeight.w600 : FontWeight.normal,
+              ),
+            ),
+          ),
         ),
       ),
     );
