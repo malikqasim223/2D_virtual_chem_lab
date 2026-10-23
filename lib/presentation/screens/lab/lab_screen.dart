@@ -2745,29 +2745,28 @@ class _PremiumFilterChipState extends State<_PremiumFilterChip> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeOutCubic,
-          // Hover par 3px lift
           transform: Matrix4.translationValues(0, _isHovered && !widget.isActive ? -3 : 0, 0),
           padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
-            color: widget.isActive ? LC.darkAccent : (_isHovered ? LC.darkPanelElev.withValues(alpha: 0.8) : LC.darkPanelElev),
+            color: widget.isActive ? LC.darkAccent : (_isHovered ? LC.darkPanelElev.withValues(alpha: 0.9) : LC.darkPanelElev),
             borderRadius: BorderRadius.circular(5),
             border: Border.all(
-              color: widget.isActive ? LC.darkAccentBright : (_isHovered ? LC.darkAccentBright.withValues(alpha: 0.5) : LC.darkBorder),
+              color: widget.isActive ? LC.darkAccentBright : (_isHovered ? LC.darkAccentBright : LC.darkBorder),
               width: _isHovered && !widget.isActive ? 1.2 : 1.0,
             ),
             boxShadow: [
-              // Normal state mein bhi floating shadow (taaki chip bench se utha hua lage)
+              // Normal state floating shadow
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.4),
-                blurRadius: 6,
-                offset: const Offset(0, 3),
+                color: Colors.black.withValues(alpha: 0.45),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
               ),
-              // Hover par extra glow
+              // Hover glow
               if (_isHovered && !widget.isActive)
                 BoxShadow(
-                  color: LC.darkAccentBright.withValues(alpha: 0.2),
-                  blurRadius: 8,
-                  offset: const Offset(0, 4),
+                  color: LC.darkAccentBright.withValues(alpha: 0.3),
+                  blurRadius: 10,
+                  offset: const Offset(0, 5),
                 ),
             ],
           ),
@@ -2777,7 +2776,7 @@ class _PremiumFilterChipState extends State<_PremiumFilterChip> {
               style: TextStyle(
                 color: widget.isActive || _isHovered ? Colors.white : LC.darkTextSub,
                 fontSize: 10,
-                fontWeight: widget.isActive || _isHovered ? FontWeight.w600 : FontWeight.normal,
+                fontWeight: widget.isActive || _isHovered ? FontWeight.w700 : FontWeight.normal,
               ),
             ),
           ),
