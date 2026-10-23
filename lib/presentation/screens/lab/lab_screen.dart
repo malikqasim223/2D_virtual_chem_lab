@@ -1296,7 +1296,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                 );
               }).toList()))),
         Expanded(child: ListView.builder(
-          padding: const EdgeInsets.fromLTRB(12, 4, 8, 12),
+          padding: const EdgeInsets.fromLTRB(12, 4, 20, 12),
           itemCount: filteredChemicals.length,
           itemBuilder: (_, i) => _chemTile(filteredChemicals[i]))),
       ]));
@@ -1323,7 +1323,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
     return Container(width: 170,
       decoration: const BoxDecoration(color: LC.darkPanel,
         border: Border(left: BorderSide(color: LC.darkBorder))),
-      child: Scrollbar(thickness: 4, radius: const Radius.circular(2), child: SingleChildScrollView(
+      child: ScrollConfiguration(behavior: ScrollConfiguration.of(context).copyWith(scrollbars: false), child: SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Container(padding: const EdgeInsets.fromLTRB(12, 14, 8, 10),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
