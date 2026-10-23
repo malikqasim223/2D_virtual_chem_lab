@@ -2538,20 +2538,19 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
           state?.endChemicalDrag();
         },
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOutCubic,
+          duration: const Duration(milliseconds: 300), // SMOOTHER
+          curve: Curves.easeOutQuart, // SMOOTHER CURVE
           transform: Matrix4.translationValues(0, _isHovered ? -6 : 0, 0),
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            // MINOR GRADIENT ON HOVER
             gradient: _isHovered
                 ? LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
-                      LC.darkAccent.withValues(alpha: 0.25), // Subtle blue glow top-left
-                      LC.darkPanelElev.withValues(alpha: 0.9), // Fades into base color
+                      LC.darkAccent.withValues(alpha: 0.25),
+                      LC.darkPanelElev.withValues(alpha: 0.9),
                     ],
                   )
                 : null,
@@ -2578,7 +2577,8 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
           ),
           child: Row(children: [
             AnimatedScale(
-              duration: const Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 300), // SMOOTHER
+              curve: Curves.easeOutQuart,
               scale: _isHovered ? 1.1 : 1.0,
               child: SizedBox(
                 width: 28,
@@ -2617,7 +2617,8 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
               ],
             )),
             AnimatedOpacity(
-              duration: const Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 300), // SMOOTHER
+              curve: Curves.easeOutQuart,
               opacity: _isHovered ? 1.0 : 0.0,
               child: Icon(Icons.drag_indicator, size: 14, color: LC.darkAccentBright),
             ),
@@ -2651,8 +2652,8 @@ class _PremiumEquipCardState extends State<_PremiumEquipCard> {
       child: GestureDetector(
         onTap: widget.onTap,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOutCubic,
+          duration: const Duration(milliseconds: 300), // SMOOTHER
+          curve: Curves.easeOutQuart,
           transform: Matrix4.translationValues(0, _isHovered ? -4 : 0, 0),
           width: 62,
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
@@ -2679,7 +2680,8 @@ class _PremiumEquipCardState extends State<_PremiumEquipCard> {
           ),
           child: Column(children: [
             AnimatedScale(
-              duration: const Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 300), // SMOOTHER
+              curve: Curves.easeOutQuart,
               scale: _isHovered ? 1.1 : 1.0,
               child: Icon(widget.s.icon, color: _isHovered ? Colors.white : LC.darkAccentBright, size: 20),
             ),
@@ -2735,8 +2737,8 @@ class _PremiumEffectCardState extends State<_PremiumEffectCard> {
           state?.endEffectDrag();
         },
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOutCubic,
+          duration: const Duration(milliseconds: 300), // SMOOTHER
+          curve: Curves.easeOutQuart,
           transform: Matrix4.translationValues(0, _isHovered ? -4 : 0, 0),
           width: 56, height: 56,
           decoration: BoxDecoration(
@@ -2762,7 +2764,8 @@ class _PremiumEffectCardState extends State<_PremiumEffectCard> {
           ),
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             AnimatedScale(
-              duration: const Duration(milliseconds: 200),
+              duration: const Duration(milliseconds: 300), // SMOOTHER
+              curve: Curves.easeOutQuart,
               scale: _isHovered ? 1.15 : 1.0,
               child: Icon(widget.effect.icon, color: _isHovered ? Colors.white : widget.effect.color, size: 20),
             ),
