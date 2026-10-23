@@ -2544,21 +2544,25 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            color: _isHovered ? widget.c.color.withValues(alpha: 0.15) : LC.darkPanelElev,
+            // BLUE HOVER BACKGROUND
+            color: _isHovered ? LC.darkAccent.withValues(alpha: 0.15) : LC.darkPanelElev,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              color: _isHovered ? widget.c.color : LC.darkBorder,
+              // BLUE BORDER
+              color: _isHovered ? LC.darkAccentBright : LC.darkBorder,
               width: _isHovered ? 1.4 : 1.0,
             ),
             boxShadow: [
+              // FLOATING SHADOW
               BoxShadow(
                 color: Colors.black.withValues(alpha: _isHovered ? 0.6 : 0.4),
                 blurRadius: _isHovered ? 12 : 6,
                 offset: Offset(0, _isHovered ? 8 : 3),
               ),
+              // BLUE GLOW ON HOVER
               if (_isHovered)
                 BoxShadow(
-                  color: widget.c.color.withValues(alpha: 0.2),
+                  color: LC.darkAccentBright.withValues(alpha: 0.2),
                   blurRadius: 10,
                   spreadRadius: 1,
                   offset: const Offset(0, 0),
@@ -2588,17 +2592,17 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
                   widget.c.name,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    color: Colors.white, // Force White
+                  style: const TextStyle(
+                    color: Colors.white, // HAMESHA WHITE
                     fontSize: 11.5,
-                    fontWeight: _isHovered ? FontWeight.w700 : FontWeight.w500,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 const SizedBox(height: 3),
                 Text(
                   widget.c.formula,
-                  style: TextStyle(
-                    color: _isHovered ? Colors.white : widget.c.color,
+                  style: const TextStyle(
+                    color: Colors.white, // HAMESHA WHITE
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                   ),
@@ -2608,7 +2612,7 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
             AnimatedOpacity(
               duration: const Duration(milliseconds: 200),
               opacity: _isHovered ? 1.0 : 0.0,
-              child: Icon(Icons.drag_indicator, size: 14, color: widget.c.color),
+              child: Icon(Icons.drag_indicator, size: 14, color: LC.darkAccentBright),
             ),
           ]),
         ),
