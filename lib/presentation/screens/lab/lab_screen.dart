@@ -1448,7 +1448,6 @@ Widget _labArea() {
                 }
               });
             return Stack(key: _benchKey, children: [
-              Positioned.fill(child: const LabLiveBackground()),
               Positioned.fill(child: CustomPaint(painter: MarbleBenchPainter())),
               ...equipment.map((eq) => Positioned(
                 left: eq.position.dx, top: eq.position.dy,
@@ -2849,3 +2848,4 @@ class _PremiumColorChartBtnState extends State<_PremiumColorChartBtn> {
 // ============================================================
 // PREMIUM FLOATING pH COLOR CHART BUTTON
 // ============================================================
+

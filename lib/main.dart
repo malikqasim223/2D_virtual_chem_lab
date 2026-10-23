@@ -7,7 +7,6 @@ import 'dart:async';
 import 'dart:math';
 import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
-import 'presentation/widgets/lab/live_background.dart';
 
 part 'presentation/widgets/lab/realistic_equip_painter.dart';
 part 'data/models/bench_tool_model.dart';
