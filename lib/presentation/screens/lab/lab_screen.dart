@@ -2401,24 +2401,25 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       cursor: SystemMouseCursors.grab,
-      child: Listener(
-        onPointerDown: (event) {
+      child: GestureDetector(
+        // INSTANT drag (no threshold) - smooth & responsive
+        dragStartBehavior: DragStartBehavior.down,
+        onPanStart: (d) {
           final state = context.findAncestorStateOfType<_LabScreenState>();
-          state?.startChemicalDrag(widget.c, event.position);
+          state?.startChemicalDrag(widget.c, d.globalPosition);
         },
-        onPointerMove: (event) {
+        onPanUpdate: (d) {
           final state = context.findAncestorStateOfType<_LabScreenState>();
-          state?.updateChemicalDrag(event.position);
+          state?.updateChemicalDrag(d.globalPosition);
         },
-        onPointerUp: (_) {
+        onPanEnd: (_) {
           final state = context.findAncestorStateOfType<_LabScreenState>();
           state?.endChemicalDrag();
         },
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 250),
+          duration: const Duration(milliseconds: 220),
           curve: Curves.easeOutCubic,
           transform: Matrix4.translationValues(0, _isHovered ? -4 : 0, 0),
-          // Increased margin so cards NEVER overlap on hover
           margin: const EdgeInsets.only(bottom: 14),
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
@@ -2455,7 +2456,7 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
           ),
           child: Row(children: [
             AnimatedScale(
-              duration: const Duration(milliseconds: 250),
+              duration: const Duration(milliseconds: 220),
               curve: Curves.easeOutCubic,
               scale: _isHovered ? 1.08 : 1.0,
               child: SizedBox(
@@ -2497,7 +2498,7 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
               ],
             )),
             AnimatedOpacity(
-              duration: const Duration(milliseconds: 250),
+              duration: const Duration(milliseconds: 220),
               curve: Curves.easeOutCubic,
               opacity: _isHovered ? 1.0 : 0.0,
               child: Icon(Icons.drag_indicator, size: 14, color: LC.darkAccentBright),
