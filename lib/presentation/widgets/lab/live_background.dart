@@ -13,7 +13,7 @@ class _LiveBackgroundState extends State<LiveBackground> with SingleTickerProvid
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 20))..repeat();
+    _controller = AnimationController(vsync: this, duration: const Duration(seconds: 15))..repeat();
   }
 
   @override
@@ -30,17 +30,17 @@ class _LiveBackgroundState extends State<LiveBackground> with SingleTickerProvid
         return Container(
           decoration: const BoxDecoration(
             gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
               colors: [
+                Color(0xFF0B101E),
                 Color(0xFF0F172A),
-                Color(0xFF1E293B),
                 Color(0xFF0B101E),
               ],
             ),
           ),
           child: CustomPaint(
-            painter: _MoleculePainter(_controller.value),
+            painter: _BubblePainter(_controller.value),
           ),
         );
       },
@@ -48,48 +48,42 @@ class _LiveBackgroundState extends State<LiveBackground> with SingleTickerProvid
   }
 }
 
-class _MoleculePainter extends CustomPainter {
+class _BubblePainter extends CustomPainter {
   final double time;
-  _MoleculePainter(this.time);
+  _BubblePainter(this.time);
 
   @override
   void paint(Canvas canvas, Size size) {
-    final paint = Paint()
-      ..color = Colors.blueAccent.withValues(alpha: 0.08)
-      ..style = PaintingStyle.fill;
+    final paint = Paint()..style = PaintingStyle.fill;
+    final borderPaint = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5;
 
-    final linePaint = Paint()
-      ..color = Colors.blueAccent.withValues(alpha: 0.05)
-      ..strokeWidth = 1.2;
-
+    final random = Random(42);
     const int count = 25;
-    List<Offset> positions = [];
 
     for (int i = 0; i < count; i++) {
-      double speed = 0.5 + (i % 5) * 0.2;
-      double angle = (i * 137.5 + time * 360 * speed) % 360;
-      double radius = 8 + (i % 4) * 12;
+      double speed = 0.2 + random.nextDouble() * 0.3;
+      double startX = random.nextDouble() * size.width;
+      double radius = 5 + random.nextDouble() * 25;
+      
+      // Move upwards
+      double y = size.height + 100 - ((time * speed * size.height * 2 + i * 50) % (size.height + 200));
+      
+      // Sway left/right
+      double x = startX + sin(time * 2 * 3.14 + i) * 20;
 
-      double cx = size.width * 0.5 + (size.width * 0.45) * (angle * 3.14159 / 180).abs() + (i % 7) * 40;
-      double cy = size.height * 0.5 + (size.height * 0.45) * ((angle + 90) * 3.14159 / 180).abs() + (i % 5) * 50;
+      // Color (Cyan/Blue glow)
+      Color bubbleColor = Colors.cyanAccent.withValues(alpha: 0.1 + random.nextDouble() * 0.15);
 
-      cx = cx % size.width;
-      cy = cy % size.height;
+      paint.color = bubbleColor;
+      borderPaint.color = bubbleColor.withValues(alpha: 0.3);
 
-      positions.add(Offset(cx, cy));
-      canvas.drawCircle(Offset(cx, cy), radius, paint);
-    }
-
-    for (int i = 0; i < count; i++) {
-      for (int j = i + 1; j < count; j++) {
-        double distance = (positions[i] - positions[j]).distance;
-        if (distance < 180) {
-          canvas.drawLine(positions[i], positions[j], linePaint);
-        }
-      }
+      canvas.drawCircle(Offset(x, y), radius, paint);
+      canvas.drawCircle(Offset(x, y), radius, borderPaint);
     }
   }
 
   @override
-  bool shouldRepaint(covariant _MoleculePainter oldDelegate) => true;
+  bool shouldRepaint(covariant _BubblePainter oldDelegate) => true;
 }

@@ -10,8 +10,8 @@ class MarbleBenchPainter extends CustomPainter {
         begin: Alignment.topCenter,
         end: Alignment.bottomCenter,
         colors: [
-          Color(0xCC222D42), // Dark bench color
-          Color(0xCC161E2E), // Even darker
+          Color(0xFF222D42), // Dark bench color
+          Color(0xFF161E2E), // Even darker
         ],
       ).createShader(rect);
     canvas.drawRect(rect, paint);
