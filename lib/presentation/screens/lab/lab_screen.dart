@@ -2488,7 +2488,7 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 12.0, // Size Increased
+                    fontSize: 11.5, // Size Increased
                     fontWeight: FontWeight.w700,
                     shadows: [
                       Shadow(
@@ -2502,7 +2502,7 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
                 const SizedBox(height: 3),
                 Text(
                   widget.c.formula,
-                  style: const TextStyle(color: Colors.white, fontSize: 12.0,  // Size Increased
+                  style: const TextStyle(color: Colors.white, fontSize: 11.5,  // Size Increased
                     fontWeight: FontWeight.w700,
                     shadows: [
                       Shadow(

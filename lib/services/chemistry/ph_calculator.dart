@@ -80,7 +80,7 @@ class PhCalculator {
     if (ph <= 7) return const Color(0xFF9CCC65);   // Yellow-green
     if (ph <= 8) return const Color(0xFF66BB6A);   // Green
     if (ph <= 9) return const Color(0xFF26A69A);   // Teal
-    if (ph <= 10) return const Color(0xFF29B6F6);  // Light blue
+    if (ph <= 10) return const Color(0xFF29B6F6);  // Light 
     if (ph <= 11) return const Color(0xFF42A5F5);  // Blue
     if (ph <= 12) return const Color(0xFF5C6BC0);  // Deep blue
     if (ph <= 13) return const Color(0xFF7E57C2);  // Purple
