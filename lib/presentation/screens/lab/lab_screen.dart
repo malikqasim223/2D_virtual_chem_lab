@@ -1308,33 +1308,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
       ]));
   }
 
-  Widget _chemTile(Chemical c) {
-    return MouseRegion(cursor: SystemMouseCursors.grab,
-      child: GestureDetector(behavior: HitTestBehavior.opaque,
-        onPanStart: (d) => startChemicalDrag(c, d.globalPosition),
-        onPanUpdate: (d) => updateChemicalDrag(d.globalPosition),
-        onPanEnd: (_) => endChemicalDrag(),
-        onPanCancel: endChemicalDrag,
-        child: Container(margin: const EdgeInsets.only(bottom: 6),
-          padding: const EdgeInsets.all(10),
-          decoration: BoxDecoration(color: LC.darkPanelElev,
-            borderRadius: BorderRadius.circular(8),
-            border: Border.all(color: LC.darkBorder)),
-          child: Row(children: [
-            SizedBox(width: 28, height: 40,
-              child: CustomPaint(painter: MiniBottlePainter(color: c.color, state: c.state))),
-            const SizedBox(width: 10),
-            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(c.name, maxLines: 1, overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: LC.darkText, fontSize: 11, fontWeight: FontWeight.w500)),
-                const SizedBox(height: 3),
-                Text(c.formula, style: const TextStyle(color: LC.darkAccentBright,
-                  fontSize: 10, fontWeight: FontWeight.w600)),
-              ])),
-            const Icon(Icons.drag_indicator, size: 14, color: LC.darkTextDim),
-          ]))));
-  }
+  Widget _chemTile(Chemical c) => _PremiumChemTile(c: c);
 
   Widget _toolboxPanel() {
     return Container(width: 280,
@@ -1401,40 +1375,9 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
     child: Text(title, style: const TextStyle(color: LC.darkTextMuted,
       fontSize: 9, fontWeight: FontWeight.w600, letterSpacing: 1.2)));
 
-  Widget _equipTile(EquipShape s) {
-    return Material(color: Colors.transparent,
-      child: InkWell(onTap: () => addEquipment(s),
-        borderRadius: BorderRadius.circular(7),
-        child: Container(width: 78,
-          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
-          decoration: BoxDecoration(color: LC.darkPanelElev,
-            borderRadius: BorderRadius.circular(7),
-            border: Border.all(color: LC.darkBorder)),
-          child: Column(children: [
-            Icon(s.icon, color: LC.darkAccentBright, size: 20),
-            const SizedBox(height: 5),
-            Text(s.label, textAlign: TextAlign.center,
-              maxLines: 1, overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: LC.darkTextSub, fontSize: 9)),
-          ]))));
-  }
+  Widget _equipTile(EquipShape s) => _PremiumEquipCard(s: s, onTap: () => addEquipment(s));
 
-  Widget _effectTile(LabEffect effect) {
-    return MouseRegion(cursor: SystemMouseCursors.grab,
-      child: GestureDetector(behavior: HitTestBehavior.opaque,
-        onPanStart: (d) => startEffectDrag(effect, d.globalPosition),
-        onPanUpdate: (d) => updateEffectDrag(d.globalPosition),
-        onPanEnd: (_) => endEffectDrag(),
-        onPanCancel: endEffectDrag,
-        child: SizedBox(width: 62, height: 62,
-          child: Column(children: [
-            Icon(effect.icon, color: effect.color, size: 20),
-            const SizedBox(height: 5),
-            Text(effect.label, textAlign: TextAlign.center,
-              maxLines: 1, overflow: TextOverflow.ellipsis,
-              style: const TextStyle(color: LC.darkTextSub, fontSize: 9)),
-          ]))));
-  }
+  Widget _effectTile(LabEffect effect) => _PremiumEffectCard(effect: effect);
 
   Widget _actionChip(IconData icon, String label, Color color, VoidCallback onTap) {
     return IconButton(
@@ -2560,3 +2503,273 @@ Widget _labArea() {
 
 
 
+
+// ============================================================
+// PREMIUM CHEMICAL CARD (Left Sidebar)
+// ============================================================
+class _PremiumChemTile extends StatefulWidget {
+  final Chemical c;
+  const _PremiumChemTile({required this.c});
+  @override
+  State<_PremiumChemTile> createState() => _PremiumChemTileState();
+}
+
+class _PremiumChemTileState extends State<_PremiumChemTile> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.grab,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onPanStart: (d) {
+          final state = context.findAncestorStateOfType<_LabScreenState>();
+          state?.startChemicalDrag(widget.c, d.globalPosition);
+        },
+        onPanUpdate: (d) {
+          final state = context.findAncestorStateOfType<_LabScreenState>();
+          state?.updateChemicalDrag(d.globalPosition);
+        },
+        onPanEnd: (_) {
+          final state = context.findAncestorStateOfType<_LabScreenState>();
+          state?.endChemicalDrag();
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutCubic,
+          transform: Matrix4.translationValues(0, _isHovered ? -6 : 0, 0),
+          margin: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.all(10),
+          decoration: BoxDecoration(
+            color: _isHovered ? widget.c.color.withValues(alpha: 0.15) : LC.darkPanelElev,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: _isHovered ? widget.c.color : LC.darkBorder,
+              width: _isHovered ? 1.4 : 1.0,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: _isHovered ? 0.6 : 0.4),
+                blurRadius: _isHovered ? 12 : 6,
+                offset: Offset(0, _isHovered ? 8 : 3),
+              ),
+              if (_isHovered)
+                BoxShadow(
+                  color: widget.c.color.withValues(alpha: 0.2),
+                  blurRadius: 10,
+                  spreadRadius: 1,
+                  offset: const Offset(0, 0),
+                ),
+            ],
+          ),
+          child: Row(children: [
+            AnimatedScale(
+              duration: const Duration(milliseconds: 200),
+              scale: _isHovered ? 1.1 : 1.0,
+              child: SizedBox(
+                width: 28,
+                height: 40,
+                child: CustomPaint(
+                  painter: MiniBottlePainter(
+                    color: widget.c.color,
+                    state: widget.c.state,
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(width: 10),
+            Expanded(child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  widget.c.name,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    color: Colors.white, // Force White
+                    fontSize: 11.5,
+                    fontWeight: _isHovered ? FontWeight.w700 : FontWeight.w500,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  widget.c.formula,
+                  style: TextStyle(
+                    color: _isHovered ? Colors.white : widget.c.color,
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            )),
+            AnimatedOpacity(
+              duration: const Duration(milliseconds: 200),
+              opacity: _isHovered ? 1.0 : 0.0,
+              child: Icon(Icons.drag_indicator, size: 14, color: widget.c.color),
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+// ============================================================
+// PREMIUM EQUIPMENT CARD (Right Sidebar)
+// ============================================================
+class _PremiumEquipCard extends StatefulWidget {
+  final EquipShape s; 
+  final VoidCallback onTap;
+  const _PremiumEquipCard({required this.s, required this.onTap});
+  @override
+  State<_PremiumEquipCard> createState() => _PremiumEquipCardState();
+}
+
+class _PremiumEquipCardState extends State<_PremiumEquipCard> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutCubic,
+          transform: Matrix4.translationValues(0, _isHovered ? -4 : 0, 0),
+          width: 62,
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
+          decoration: BoxDecoration(
+            color: _isHovered ? LC.darkAccent.withValues(alpha: 0.15) : LC.darkPanelElev,
+            borderRadius: BorderRadius.circular(8),
+            border: Border.all(
+              color: _isHovered ? LC.darkAccentBright : LC.darkBorder,
+              width: _isHovered ? 1.4 : 1.0,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: _isHovered ? 0.45 : 0.2),
+                blurRadius: _isHovered ? 16 : 6,
+                offset: Offset(0, _isHovered ? 8 : 3),
+              ),
+              if (_isHovered)
+                BoxShadow(
+                  color: LC.darkAccentBright.withValues(alpha: 0.2),
+                  blurRadius: 10,
+                  offset: const Offset(0, 0),
+                ),
+            ],
+          ),
+          child: Column(children: [
+            AnimatedScale(
+              duration: const Duration(milliseconds: 200),
+              scale: _isHovered ? 1.1 : 1.0,
+              child: Icon(widget.s.icon, color: _isHovered ? Colors.white : LC.darkAccentBright, size: 20),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              widget.s.label,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: _isHovered ? Colors.white : LC.darkTextSub,
+                fontSize: 9,
+                fontWeight: _isHovered ? FontWeight.w600 : FontWeight.normal,
+              ),
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+// ============================================================
+// PREMIUM EFFECT CARD (Right Sidebar Tools)
+// ============================================================
+class _PremiumEffectCard extends StatefulWidget {
+  final LabEffect effect;
+  const _PremiumEffectCard({required this.effect});
+  @override
+  State<_PremiumEffectCard> createState() => _PremiumEffectCardState();
+}
+
+class _PremiumEffectCardState extends State<_PremiumEffectCard> {
+  bool _isHovered = false;
+
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.grab,
+      child: GestureDetector(
+        onPanStart: (d) {
+          final state = context.findAncestorStateOfType<_LabScreenState>();
+          state?.startEffectDrag(widget.effect, d.globalPosition);
+        },
+        onPanUpdate: (d) {
+          final state = context.findAncestorStateOfType<_LabScreenState>();
+          state?.updateEffectDrag(d.globalPosition);
+        },
+        onPanEnd: (_) {
+          final state = context.findAncestorStateOfType<_LabScreenState>();
+          state?.endEffectDrag();
+        },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutCubic,
+          transform: Matrix4.translationValues(0, _isHovered ? -4 : 0, 0),
+          width: 56, height: 56,
+          decoration: BoxDecoration(
+            color: _isHovered ? widget.effect.color.withValues(alpha: 0.15) : LC.darkPanelElev,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: _isHovered ? widget.effect.color : LC.darkBorder,
+              width: _isHovered ? 1.4 : 1.0,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: _isHovered ? 0.45 : 0.2),
+                blurRadius: _isHovered ? 16 : 6,
+                offset: Offset(0, _isHovered ? 8 : 3),
+              ),
+              if (_isHovered)
+                BoxShadow(
+                  color: widget.effect.color.withValues(alpha: 0.2),
+                  blurRadius: 10,
+                  offset: const Offset(0, 0),
+                ),
+            ],
+          ),
+          child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
+            AnimatedScale(
+              duration: const Duration(milliseconds: 200),
+              scale: _isHovered ? 1.15 : 1.0,
+              child: Icon(widget.effect.icon, color: _isHovered ? Colors.white : widget.effect.color, size: 20),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              widget.effect.label,
+              textAlign: TextAlign.center,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(
+                color: _isHovered ? Colors.white : LC.darkTextSub,
+                fontSize: 8,
+                fontWeight: _isHovered ? FontWeight.w600 : FontWeight.normal,
+              ),
+            ),
+          ]),
+        ),
+      ),
+    );
+  }
+}
