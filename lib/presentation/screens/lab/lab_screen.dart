@@ -2784,22 +2784,60 @@ class _PremiumColorChartBtn extends StatefulWidget {
 }
 
 class _PremiumColorChartBtnState extends State<_PremiumColorChartBtn> {
+  bool _isHovered = false;
+
   @override
   Widget build(BuildContext context) {
-    return Material(color: Colors.transparent,
-      child: InkWell(
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
         onTap: () => PhColorBook.show(context),
-        borderRadius: BorderRadius.circular(7),
-        child: Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutCubic,
+          transform: Matrix4.translationValues(0, _isHovered ? -4 : 0, 0),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
           decoration: BoxDecoration(
-            color: LC.darkPanelElev,
+            gradient: _isHovered
+                ? LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [LC.darkAccent.withValues(alpha: 0.25), LC.darkPanelElev],
+                  )
+                : null,
+            color: _isHovered ? null : LC.darkPanelElev,
             borderRadius: BorderRadius.circular(7),
-            border: Border.all(color: LC.darkBorder)),
+            border: Border.all(
+              color: _isHovered ? LC.darkAccentBright : LC.darkBorder,
+              width: _isHovered ? 1.4 : 1.0,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: _isHovered ? 0.5 : 0.3),
+                blurRadius: _isHovered ? 10 : 6,
+                offset: Offset(0, _isHovered ? 6 : 3),
+              ),
+              if (_isHovered)
+                BoxShadow(
+                  color: LC.darkAccentBright.withValues(alpha: 0.2),
+                  blurRadius: 8,
+                  offset: const Offset(0, 0),
+                ),
+            ],
+          ),
           child: Row(mainAxisSize: MainAxisSize.min, children: [
-            const Icon(Icons.menu_book, size: 14, color: LC.darkAccentBright),
-            const SizedBox(width: 6),
-            Text('pH Color Chart', style: TextStyle(color: LC.darkTextSub, fontSize: 10)),
+            Icon(Icons.menu_book, size: 16, color: _isHovered ? Colors.white : LC.darkAccentBright),
+            const SizedBox(width: 8),
+            Text(
+              'pH Color Chart',
+              style: TextStyle(
+                color: _isHovered ? Colors.white : LC.darkTextSub,
+                fontSize: 11,
+                fontWeight: _isHovered ? FontWeight.w600 : FontWeight.normal,
+              ),
+            ),
           ]),
         ),
       ),
