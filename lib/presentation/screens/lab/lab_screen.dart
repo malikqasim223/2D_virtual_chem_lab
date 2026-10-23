@@ -1311,7 +1311,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
   Widget _chemTile(Chemical c) => _PremiumChemTile(c: c);
 
   Widget _toolboxPanel() {
-    return Container(width: 280,
+    return Container(width: 200,
       decoration: const BoxDecoration(color: LC.darkPanel,
         border: Border(left: BorderSide(color: LC.darkBorder))),
       child: SingleChildScrollView(
@@ -1329,17 +1329,17 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
           Container(height: 1, color: LC.darkBorder),
           _sectionLabel('EQUIPMENT'),
           Padding(padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Wrap(spacing: 6, runSpacing: 6,
+            child: Wrap(spacing: 6, runSpacing: 6, alignment: WrapAlignment.center,
               children: EquipShape.values.map(_equipTile).toList())),
           const SizedBox(height: 16),
           _sectionLabel('TOOLS - Drag to bench'),
           Padding(padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Wrap(spacing: 6, runSpacing: 6,
+            child: Wrap(spacing: 6, runSpacing: 6, alignment: WrapAlignment.center,
               children: LabEffect.values.map(_effectTile).toList())),
           const SizedBox(height: 16),
           _sectionLabel('QUICK ACTIONS'),
           Padding(padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Wrap(spacing: 6, runSpacing: 6, children: [
+            child: Wrap(spacing: 6, runSpacing: 6, alignment: WrapAlignment.center, children: [
               Material(color: Colors.transparent,
                 child: InkWell(
                   onTap: () => PhColorBook.show(context),
