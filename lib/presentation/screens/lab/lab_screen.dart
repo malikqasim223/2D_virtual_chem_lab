@@ -1258,7 +1258,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
         Container(height: 1, color: LC.darkBorder),
         Padding(padding: const EdgeInsets.fromLTRB(12, 10, 12, 0),
           child: Container(height: 30,
-            decoration: BoxDecoration(color: LC.darkPanelElev,
+            decoration: BoxDecoration(boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.5), blurRadius: 10, offset: Offset(0, 5))], color: LC.darkPanelElev,
               borderRadius: BorderRadius.circular(6),
               border: Border.all(color: LC.darkBorder)),
             child: Row(children: [
@@ -2745,7 +2745,8 @@ class _PremiumFilterChipState extends State<_PremiumFilterChip> {
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
           curve: Curves.easeOutCubic,
-          transform: Matrix4.translationValues(0, _isHovered && !widget.isActive ? -2 : 0, 0),
+          // Hover par 3px lift
+          transform: Matrix4.translationValues(0, _isHovered && !widget.isActive ? -3 : 0, 0),
           padding: const EdgeInsets.symmetric(horizontal: 10),
           decoration: BoxDecoration(
             color: widget.isActive ? LC.darkAccent : (_isHovered ? LC.darkPanelElev.withValues(alpha: 0.8) : LC.darkPanelElev),
@@ -2754,7 +2755,21 @@ class _PremiumFilterChipState extends State<_PremiumFilterChip> {
               color: widget.isActive ? LC.darkAccentBright : (_isHovered ? LC.darkAccentBright.withValues(alpha: 0.5) : LC.darkBorder),
               width: _isHovered && !widget.isActive ? 1.2 : 1.0,
             ),
-            boxShadow: _isHovered && !widget.isActive ? [BoxShadow(color: LC.darkAccentBright.withValues(alpha: 0.15), blurRadius: 6, offset: const Offset(0, 2))] : [],
+            boxShadow: [
+              // Normal state mein bhi floating shadow (taaki chip bench se utha hua lage)
+              BoxShadow(
+                color: Colors.black.withValues(alpha: 0.4),
+                blurRadius: 6,
+                offset: const Offset(0, 3),
+              ),
+              // Hover par extra glow
+              if (_isHovered && !widget.isActive)
+                BoxShadow(
+                  color: LC.darkAccentBright.withValues(alpha: 0.2),
+                  blurRadius: 8,
+                  offset: const Offset(0, 4),
+                ),
+            ],
           ),
           child: Center(
             child: Text(
