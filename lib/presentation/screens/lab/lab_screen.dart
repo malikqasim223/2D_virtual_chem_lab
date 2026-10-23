@@ -572,6 +572,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
               angle: rot,
               child: Stack(
                 children: [
+                  Positioned.fill(child: LiveBackground()),
                   Column(children: [
                     // _topBar(), // Removed as requested
                     Expanded(
@@ -1449,7 +1450,7 @@ Widget _labArea() {
               });
             return Stack(key: _benchKey, children: [
               Positioned.fill(child: CustomPaint(painter: MarbleBenchPainter())),
-                Positioned.fill(child: LiveBackground()),
+                
               ...equipment.map((eq) => Positioned(
                 left: eq.position.dx, top: eq.position.dy,
                 child: _equipmentWidget(eq))),
