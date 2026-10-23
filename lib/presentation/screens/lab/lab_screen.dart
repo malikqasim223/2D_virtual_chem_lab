@@ -593,7 +593,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                           Expanded(child: _labArea()),
                           if (showToolbox)
                             Container(
-                              width: 200, constraints: const BoxConstraints.tightFor(width: 200), child: _toolboxPanel(),
+                              width: 180, constraints: const BoxConstraints.tightFor(width: 180), child: _toolboxPanel(),
                             ),
                         ],
                       ),
@@ -1311,7 +1311,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
   Widget _chemTile(Chemical c) => _PremiumChemTile(c: c);
 
   Widget _toolboxPanel() {
-    return Container(width: 200,
+    return Container(width: 180,
       decoration: const BoxDecoration(color: LC.darkPanel,
         border: Border(left: BorderSide(color: LC.darkBorder))),
       child: SingleChildScrollView(
@@ -1329,17 +1329,17 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
           Container(height: 1, color: LC.darkBorder),
           _sectionLabel('EQUIPMENT'),
           Padding(padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Wrap(spacing: 6, runSpacing: 6, alignment: WrapAlignment.center,
+            child: Wrap(spacing: 8, runSpacing: 8, alignment: WrapAlignment.center,
               children: EquipShape.values.map(_equipTile).toList())),
           const SizedBox(height: 16),
           _sectionLabel('TOOLS - Drag to bench'),
           Padding(padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Wrap(spacing: 6, runSpacing: 6, alignment: WrapAlignment.center,
+            child: Wrap(spacing: 8, runSpacing: 8, alignment: WrapAlignment.center,
               children: LabEffect.values.map(_effectTile).toList())),
           const SizedBox(height: 16),
           _sectionLabel('QUICK ACTIONS'),
           Padding(padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Wrap(spacing: 6, runSpacing: 6, alignment: WrapAlignment.center, children: [
+            child: Wrap(spacing: 8, runSpacing: 8, alignment: WrapAlignment.center, children: [
               Material(color: Colors.transparent,
                 child: InkWell(
                   onTap: () => PhColorBook.show(context),
@@ -2532,7 +2532,7 @@ class _PremiumEquipCardState extends State<_PremiumEquipCard> {
           duration: const Duration(milliseconds: 300), // SMOOTHER
           curve: Curves.easeOutQuart,
           transform: Matrix4.translationValues(0, _isHovered ? -4 : 0, 0),
-          width: 62,
+          width: 64,
           padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 4),
           decoration: BoxDecoration(
             color: _isHovered ? LC.darkAccent.withValues(alpha: 0.15) : LC.darkPanelElev,
@@ -2617,7 +2617,7 @@ class _PremiumEffectCardState extends State<_PremiumEffectCard> {
           duration: const Duration(milliseconds: 300), // SMOOTHER
           curve: Curves.easeOutQuart,
           transform: Matrix4.translationValues(0, _isHovered ? -4 : 0, 0),
-          width: 56, height: 56,
+          width: 58, height: 58,
           decoration: BoxDecoration(
             color: _isHovered ? widget.effect.color.withValues(alpha: 0.15) : LC.darkPanelElev,
             borderRadius: BorderRadius.circular(10),
