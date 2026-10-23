@@ -6,7 +6,7 @@ extension LabEffectX on LabEffect {
   ][index];
   IconData get icon => const [
     Icons.local_fire_department, Icons.ac_unit, Icons.rotate_right,
-    Icons.thermostat, Icons.water_drop, Icons.colorize
+    Icons.thermostat, Icons.water_drop, Icons.receipt_long
   ][index];
   Color get color => const [
     Color(0xFFC99050), Color(0xFF6B92B8), Color(0xFF7C8FA3),
