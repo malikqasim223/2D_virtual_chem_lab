@@ -2544,22 +2544,29 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            // BLUE HOVER BACKGROUND
-            color: _isHovered ? LC.darkAccent.withValues(alpha: 0.15) : LC.darkPanelElev,
+            // MINOR GRADIENT ON HOVER
+            gradient: _isHovered
+                ? LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
+                      LC.darkAccent.withValues(alpha: 0.25), // Subtle blue glow top-left
+                      LC.darkPanelElev.withValues(alpha: 0.9), // Fades into base color
+                    ],
+                  )
+                : null,
+            color: _isHovered ? null : LC.darkPanelElev,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
-              // BLUE BORDER
               color: _isHovered ? LC.darkAccentBright : LC.darkBorder,
               width: _isHovered ? 1.4 : 1.0,
             ),
             boxShadow: [
-              // FLOATING SHADOW
               BoxShadow(
                 color: Colors.black.withValues(alpha: _isHovered ? 0.6 : 0.4),
                 blurRadius: _isHovered ? 12 : 6,
                 offset: Offset(0, _isHovered ? 8 : 3),
               ),
-              // BLUE GLOW ON HOVER
               if (_isHovered)
                 BoxShadow(
                   color: LC.darkAccentBright.withValues(alpha: 0.2),
@@ -2593,7 +2600,7 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    color: Colors.white, // HAMESHA WHITE
+                    color: Colors.white,
                     fontSize: 11.5,
                     fontWeight: FontWeight.w600,
                   ),
@@ -2602,7 +2609,7 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
                 Text(
                   widget.c.formula,
                   style: const TextStyle(
-                    color: Colors.white, // HAMESHA WHITE
+                    color: Colors.white,
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                   ),
