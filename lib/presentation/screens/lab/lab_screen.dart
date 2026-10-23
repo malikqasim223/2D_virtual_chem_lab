@@ -1643,28 +1643,7 @@ Widget _labArea() {
       child: Row(
         children: [
           // --- HOME / BACK BUTTON ---
-          Material(
-            color: Colors.transparent,
-            child: InkWell(
-              onTap: () => Navigator.pop(context),
-              borderRadius: BorderRadius.circular(6),
-              child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-                decoration: BoxDecoration(
-                  color: LC.panel,
-                  borderRadius: BorderRadius.circular(6),
-                  border: Border.all(color: LC.border),
-                ),
-                child: const Row(
-                  children: [
-                    Icon(Icons.arrow_back_ios_new, size: 12, color: LC.textSub),
-                    SizedBox(width: 6),
-                    Text('Home', style: TextStyle(color: LC.text, fontSize: 11, fontWeight: FontWeight.w500)),
-                  ],
-                ),
-              ),
-            ),
-          ),
+          _headerBtn(Icons.arrow_back, 'Home', () => Navigator.of(context).pop(), hoverColor: Colors.blue),
           const SizedBox(width: 20),
           
           // --- TITLE ---
@@ -2858,6 +2837,55 @@ class _PremiumColorChartBtnState extends State<_PremiumColorChartBtn> {
                 fontWeight: _isHovered ? FontWeight.w600 : FontWeight.normal,
               ),
             ),
+          ]),
+        ),
+      ),
+    );
+  }
+}
+
+// ============================================================
+// PREMIUM FLOATING pH COLOR CHART BUTTON
+// ============================================================
+class _FloatingPhBtn extends StatefulWidget {
+  const _FloatingPhBtn();
+  @override
+  State<_FloatingPhBtn> createState() => _FloatingPhBtnState();
+}
+
+class _FloatingPhBtnState extends State<_FloatingPhBtn> {
+  bool _isHovered = false;
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: () => PhColorBook.show(context),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutCubic,
+          transform: Matrix4.translationValues(0, _isHovered ? -4 : 0, 0),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: _isHovered ? LC.darkAccent.withValues(alpha: 0.15) : LC.darkPanelElev,
+            borderRadius: BorderRadius.circular(7),
+            border: Border.all(color: _isHovered ? LC.darkAccentBright : LC.darkBorder),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: _isHovered ? 0.5 : 0.3),
+                blurRadius: _isHovered ? 10 : 6,
+                offset: Offset(0, _isHovered ? 6 : 3),
+              ),
+              if (_isHovered)
+                BoxShadow(color: LC.darkAccentBright.withValues(alpha: 0.2), blurRadius: 8, offset: const Offset(0, 0)),
+            ],
+          ),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            Icon(Icons.menu_book, size: 16, color: _isHovered ? Colors.white : LC.darkAccentBright),
+            const SizedBox(width: 8),
+            Text('pH Color Chart', style: TextStyle(color: _isHovered ? Colors.white : LC.darkTextSub, fontSize: 11, fontWeight: _isHovered ? FontWeight.w600 : FontWeight.normal)),
           ]),
         ),
       ),
