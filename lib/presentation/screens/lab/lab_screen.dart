@@ -1092,13 +1092,13 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                     const SizedBox(width: 12),
                     // Data table
                     Expanded(child: Column(children: [
-                      _dataRow('Molar Mass', detail?.molarMass != null ? '${detail!.molarMass} g/mol' : 'ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â'),
+                      _dataRow('Molar Mass', detail?.molarMass != null ? '${detail!.molarMass} g/mol' : 'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â'),
                       if (detail?.boilingPoint != null)
-                        _dataRow('Boiling Point', '${detail!.boilingPoint} Ãƒâ€šÃ‚Â°C'),
+                        _dataRow('Boiling Point', '${detail!.boilingPoint} ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°C'),
                       if (detail?.meltingPoint != null)
-                        _dataRow('Melting Point', '${detail!.meltingPoint} Ãƒâ€šÃ‚Â°C'),
+                        _dataRow('Melting Point', '${detail!.meltingPoint} ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°C'),
                       if (detail?.density != null)
-                        _dataRow('Density', '${detail!.density} g/cmÃƒâ€šÃ‚Â³'),
+                        _dataRow('Density', '${detail!.density} g/cmÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³'),
                       if (detail?.ph != null)
                         _dataRow('pH', detail!.ph!),
                       if (detail?.hazards != null && detail!.hazards.isNotEmpty)
@@ -1323,7 +1323,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
     return Container(width: 170,
       decoration: const BoxDecoration(color: LC.darkPanel,
         border: Border(left: BorderSide(color: LC.darkBorder))),
-      child: Scrollbar(thumbVisibility: true, thickness: 6, radius: const Radius.circular(3), interactive: true, child: SingleChildScrollView(
+      child: Scrollbar(thickness: 4, radius: const Radius.circular(2), child: SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Container(padding: const EdgeInsets.fromLTRB(12, 14, 8, 10),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -1588,7 +1588,7 @@ Widget _labArea() {
                           style: const TextStyle(color: LC.text, fontWeight: FontWeight.w600),
                         ),
                         subtitle: Text(
-                          '${date.day}/${date.month}/${date.year}  ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢  $chemCount chemicals  ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢  In: ${eqNames.join(", ")}',
+                          '${date.day}/${date.month}/${date.year}  ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢  $chemCount chemicals  ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢  In: ${eqNames.join(", ")}',
                           style: const TextStyle(color: LC.textDim, fontSize: 11),
                         ),
                         onTap: () => Navigator.pop(ctx, i),
@@ -1718,7 +1718,7 @@ Widget _labArea() {
     if (rx.requiresHeat && (!eq.isHot || eq.temperature < 60)) {
       return const ReactionInfo(
         name: 'Condition Not Met',
-        equation: 'Heat required (>= 60Ãƒâ€šÃ‚Â°C)',
+        equation: 'Heat required (>= 60ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°C)',
         type: 'Condition',
         description: 'Turn on the Bunsen burner to proceed.',
         products: [],
