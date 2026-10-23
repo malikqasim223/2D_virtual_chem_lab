@@ -2485,8 +2485,15 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 11.5,
-                    fontWeight: FontWeight.w600,
+                    fontSize: 13.0, // Size Increased
+                    fontWeight: FontWeight.w700,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black87, // Black Shadow
+                        blurRadius: 4,
+                        offset: Offset(0, 1),
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 3),
@@ -2494,8 +2501,15 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
                   widget.c.formula,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 10,
+                    fontSize: 11.5, // Size Increased
                     fontWeight: FontWeight.w700,
+                    shadows: [
+                      Shadow(
+                        color: Colors.black87, // Black Shadow
+                        blurRadius: 4,
+                        offset: Offset(0, 1),
+                      ),
+                    ],
                   ),
                 ),
               ],
