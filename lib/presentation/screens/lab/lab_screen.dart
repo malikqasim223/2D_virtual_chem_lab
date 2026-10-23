@@ -2538,23 +2538,26 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
           state?.endChemicalDrag();
         },
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300), // SMOOTHER
-          curve: Curves.easeOutQuart, // SMOOTHER CURVE
+          duration: const Duration(milliseconds: 300),
+          curve: Curves.easeOutQuart,
           transform: Matrix4.translationValues(0, _isHovered ? -6 : 0, 0),
           margin: const EdgeInsets.only(bottom: 8),
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            gradient: _isHovered
-                ? LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
+            // ALWAYS GRADIENT (This fixes the delay!)
+            gradient: LinearGradient(
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: _isHovered
+                  ? [
                       LC.darkAccent.withValues(alpha: 0.25),
-                      LC.darkPanelElev.withValues(alpha: 0.9),
+                      LC.darkPanelElev,
+                    ]
+                  : [
+                      LC.darkPanelElev,
+                      LC.darkPanelElev,
                     ],
-                  )
-                : null,
-            color: _isHovered ? null : LC.darkPanelElev,
+            ),
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: _isHovered ? LC.darkAccentBright : LC.darkBorder,
@@ -2577,7 +2580,7 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
           ),
           child: Row(children: [
             AnimatedScale(
-              duration: const Duration(milliseconds: 300), // SMOOTHER
+              duration: const Duration(milliseconds: 300),
               curve: Curves.easeOutQuart,
               scale: _isHovered ? 1.1 : 1.0,
               child: SizedBox(
@@ -2617,7 +2620,7 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
               ],
             )),
             AnimatedOpacity(
-              duration: const Duration(milliseconds: 300), // SMOOTHER
+              duration: const Duration(milliseconds: 300),
               curve: Curves.easeOutQuart,
               opacity: _isHovered ? 1.0 : 0.0,
               child: Icon(Icons.drag_indicator, size: 14, color: LC.darkAccentBright),
