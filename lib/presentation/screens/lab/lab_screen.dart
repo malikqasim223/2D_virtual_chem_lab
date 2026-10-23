@@ -1365,7 +1365,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
           Padding(padding: const EdgeInsets.symmetric(horizontal: 12),
             child: _actionChip(Icons.cleaning_services, 'Clear', LC.danger, reset)),
           const SizedBox(height: 16),
-          _reactionInfoBox(),
+          const SizedBox.shrink(),
           const SizedBox(height: 16),
         ])));
   }
@@ -1388,133 +1388,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
   }
 
   // ============ PH TEST HELPERS ============
-            Widget _reactionInfoBox() {
-    final rxn = currentReaction;
-    List<String>? multiMix;
-    for (final eq in equipment) {
-      if (eq.layers.length >= 3) {
-        multiMix = eq.layers.map((l) => l.chemId).toList();
-        break;
-      }
-    }
-    final sideFx = multiMix != null ? detectSideEffect(multiMix) : null;
-    final anyEquipment = equipment.any((e) => e.layers.length >= 2);
-    final hasNoReaction = anyEquipment && rxn == null && sideFx == null;
-
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 12),
-      padding: const EdgeInsets.all(10), 
-      decoration: BoxDecoration(
-        color: LC.darkPanelElev,
-        borderRadius: BorderRadius.circular(8),
-        border: Border.all(
-          color: sideFx != null ? LC.danger.withValues(alpha: 0.6) :
-                 rxn != null ? LC.success.withValues(alpha: 0.4) :
-                 hasNoReaction ? LC.warning.withValues(alpha: 0.4) : LC.darkBorder
-        ),
-      ),
-      child: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
-              children: [
-                Icon(
-                  sideFx != null ? Icons.warning_amber :
-                  rxn != null ? Icons.check_circle_outline :
-                  hasNoReaction ? Icons.block : Icons.info_outline,
-                  size: 12,
-                  color: sideFx != null ? LC.danger :
-                         rxn != null ? LC.success :
-                         hasNoReaction ? LC.warning : LC.darkAccent,
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  sideFx != null ? 'Side Effect' :
-                  rxn != null ? 'Reaction Info' :
-                  hasNoReaction ? 'No Reaction' : 'Reaction Info',
-                  style: TextStyle(
-                    color: sideFx != null ? LC.danger : LC.darkText,
-                    fontSize: 11, fontWeight: FontWeight.w600,
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 6),
-            if (sideFx != null) ...[
-              Text(sideFx.label, style: TextStyle(color: LC.danger, fontSize: 11, fontWeight: FontWeight.w600)),
-              const SizedBox(height: 4),
-              Text(sideFx.description, style: const TextStyle(color: LC.darkTextSub, fontSize: 10, height: 1.3)),
-              const SizedBox(height: 6),
-              Wrap(spacing: 4, runSpacing: 4, children: [
-                if (sideFx.fizz) _badge('FIZZ', LC.info),
-                if (sideFx.smoke) _badge('SMOKE', LC.darkTextSub),
-                if (sideFx.heatUp) _badge('HEAT', LC.danger),
-                if (sideFx.coolDown) _badge('COOL', LC.info),
-                if (sideFx.colorPulse) _badge('COLOR', LC.warning),
-                if (sideFx.smallPop) _badge('POP', LC.danger),
-              ]),
-            ] else if (rxn == null && !hasNoReaction)
-              const Text('Drag chemicals to equipment to see reaction', style: TextStyle(color: LC.darkTextDim, fontSize: 10))
-            else if (hasNoReaction) ...[
-              const Text('Chemicals mixed but no reaction occurs.', style: TextStyle(color: LC.darkTextSub, fontSize: 10, height: 1.3)),
-            ] else ...[
-              Text(rxn!.name, style: const TextStyle(color: LC.darkText, fontSize: 10)),
-              const SizedBox(height: 4),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.all(6),
-                decoration: BoxDecoration(
-                  color: LC.darkBg,
-                  borderRadius: BorderRadius.circular(5),
-                  border: Border.all(color: LC.darkBorder),
-                ),
-                child: Text(
-                  rxn.equation,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(color: LC.darkAccentBright, fontSize: 11, fontWeight: FontWeight.w600),
-                  textAlign: TextAlign.center,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(rxn.description, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(color: LC.darkTextSub, fontSize: 9, height: 1.3)),
-              if (rxn.releasesHeat) ...[
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Icon(Icons.thermostat, size: 11, color: LC.danger),
-                    const SizedBox(width: 4),
-                    const Text('Exothermic reaction', style: TextStyle(color: LC.danger, fontSize: 9)),
-                  ],
-                ),
-              ],
-              if (rxn.bubbles) ...[
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Icon(Icons.bubble_chart, size: 11, color: LC.info),
-                    const SizedBox(width: 4),
-                    const Text('Gas bubbles evolve', style: TextStyle(color: LC.info, fontSize: 9)),
-                  ],
-                ),
-              ],
-              if (rxn.precipitate) ...[
-                const SizedBox(height: 4),
-                Row(
-                  children: [
-                    Icon(Icons.water_drop, size: 11, color: LC.warning),
-                    const SizedBox(width: 4),
-                    const Text('Precipitate forms', style: TextStyle(color: LC.warning, fontSize: 9)),
-                  ],
-                ),
-              ],
-            ],
-          ],
-        ),
-      ),
-    );
-  }
+            
 
   Widget _badge(String label, Color color) {
     return Container(
