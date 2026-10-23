@@ -2401,41 +2401,38 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       cursor: SystemMouseCursors.grab,
-      child: GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onPanStart: (d) {
+      child: Listener(
+        onPointerDown: (event) {
           final state = context.findAncestorStateOfType<_LabScreenState>();
-          state?.startChemicalDrag(widget.c, d.globalPosition);
+          state?.startChemicalDrag(widget.c, event.position);
         },
-        onPanUpdate: (d) {
+        onPointerMove: (event) {
           final state = context.findAncestorStateOfType<_LabScreenState>();
-          state?.updateChemicalDrag(d.globalPosition);
+          state?.updateChemicalDrag(event.position);
         },
-        onPanEnd: (_) {
+        onPointerUp: (_) {
           final state = context.findAncestorStateOfType<_LabScreenState>();
           state?.endChemicalDrag();
         },
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          curve: Curves.easeOutQuart,
-          transform: Matrix4.translationValues(0, _isHovered ? -6 : 0, 0),
-          margin: const EdgeInsets.only(bottom: 8),
+          duration: const Duration(milliseconds: 250),
+          curve: Curves.easeOutCubic,
+          transform: Matrix4.translationValues(0, _isHovered ? -4 : 0, 0),
+          // Increased margin so cards NEVER overlap on hover
+          margin: const EdgeInsets.only(bottom: 14),
           padding: const EdgeInsets.all(10),
           decoration: BoxDecoration(
-            // ALWAYS GRADIENT (This fixes the delay!)
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: _isHovered
-                  ? [
+            gradient: _isHovered
+                ? LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    colors: [
                       LC.darkAccent.withValues(alpha: 0.25),
                       LC.darkPanelElev,
-                    ]
-                  : [
-                      LC.darkPanelElev,
-                      LC.darkPanelElev,
                     ],
-            ),
+                  )
+                : null,
+            color: _isHovered ? null : LC.darkPanelElev,
             borderRadius: BorderRadius.circular(8),
             border: Border.all(
               color: _isHovered ? LC.darkAccentBright : LC.darkBorder,
@@ -2443,14 +2440,14 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
             ),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: _isHovered ? 0.6 : 0.4),
-                blurRadius: _isHovered ? 12 : 6,
-                offset: Offset(0, _isHovered ? 8 : 3),
+                color: Colors.black.withValues(alpha: _isHovered ? 0.6 : 0.35),
+                blurRadius: _isHovered ? 10 : 5,
+                offset: Offset(0, _isHovered ? 6 : 2),
               ),
               if (_isHovered)
                 BoxShadow(
                   color: LC.darkAccentBright.withValues(alpha: 0.2),
-                  blurRadius: 10,
+                  blurRadius: 8,
                   spreadRadius: 1,
                   offset: const Offset(0, 0),
                 ),
@@ -2458,9 +2455,9 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
           ),
           child: Row(children: [
             AnimatedScale(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOutQuart,
-              scale: _isHovered ? 1.1 : 1.0,
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeOutCubic,
+              scale: _isHovered ? 1.08 : 1.0,
               child: SizedBox(
                 width: 28,
                 height: 40,
@@ -2482,36 +2479,26 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 11.5, // Size Increased
-                    fontWeight: FontWeight.w700,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black87, // Black Shadow
-                        blurRadius: 4,
-                        offset: Offset(0, 1),
-                      ),
-                    ],
+                    fontSize: 11.5,
+                    fontWeight: FontWeight.w600,
+                    shadows: [Shadow(color: Colors.black87, blurRadius: 3, offset: Offset(0, 1))],
                   ),
                 ),
                 const SizedBox(height: 3),
                 Text(
                   widget.c.formula,
-                  style: const TextStyle(color: Colors.white, fontSize: 11.5,  // Size Increased
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 10.0,
                     fontWeight: FontWeight.w700,
-                    shadows: [
-                      Shadow(
-                        color: Colors.black87, // Black Shadow
-                        blurRadius: 4,
-                        offset: Offset(0, 1),
-                      ),
-                    ],
+                    shadows: [Shadow(color: Colors.black87, blurRadius: 3, offset: Offset(0, 1))],
                   ),
                 ),
               ],
             )),
             AnimatedOpacity(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeOutQuart,
+              duration: const Duration(milliseconds: 250),
+              curve: Curves.easeOutCubic,
               opacity: _isHovered ? 1.0 : 0.0,
               child: Icon(Icons.drag_indicator, size: 14, color: LC.darkAccentBright),
             ),
@@ -2545,7 +2532,7 @@ class _PremiumEquipCardState extends State<_PremiumEquipCard> {
       child: GestureDetector(
         onTap: widget.onTap,
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300), // SMOOTHER
+          duration: const Duration(milliseconds: 250), // SMOOTHER
           curve: Curves.easeOutQuart,
           transform: Matrix4.translationValues(0, _isHovered ? -4 : 0, 0),
           width: 68,
@@ -2573,7 +2560,7 @@ class _PremiumEquipCardState extends State<_PremiumEquipCard> {
           ),
           child: Column(children: [
             AnimatedScale(
-              duration: const Duration(milliseconds: 300), // SMOOTHER
+              duration: const Duration(milliseconds: 250), // SMOOTHER
               curve: Curves.easeOutQuart,
               scale: _isHovered ? 1.1 : 1.0,
               child: Icon(widget.s.icon, color: _isHovered ? Colors.white : LC.darkAccentBright, size: 20),
@@ -2614,21 +2601,22 @@ class _PremiumEffectCardState extends State<_PremiumEffectCard> {
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
       cursor: SystemMouseCursors.grab,
-      child: GestureDetector(
-        onPanStart: (d) {
+      child: Listener(
+        onPointerDown: (event) {
           final state = context.findAncestorStateOfType<_LabScreenState>();
-          state?.startEffectDrag(widget.effect, d.globalPosition);
+          state?.startEffectDrag(widget.effect, event.position);
         },
-        onPanUpdate: (d) {
+        onPointerMove: (event) {
           final state = context.findAncestorStateOfType<_LabScreenState>();
-          state?.updateEffectDrag(d.globalPosition);
+          state?.updateEffectDrag(event.position);
         },
-        onPanEnd: (_) {
+        
+        onPointerUp: (_) {
           final state = context.findAncestorStateOfType<_LabScreenState>();
           state?.endEffectDrag();
         },
         child: AnimatedContainer(
-          duration: const Duration(milliseconds: 300), // SMOOTHER
+          duration: const Duration(milliseconds: 250), // SMOOTHER
           curve: Curves.easeOutQuart,
           transform: Matrix4.translationValues(0, _isHovered ? -4 : 0, 0),
           width: 62, height: 62,
@@ -2655,7 +2643,7 @@ class _PremiumEffectCardState extends State<_PremiumEffectCard> {
           ),
           child: Column(mainAxisAlignment: MainAxisAlignment.center, children: [
             AnimatedScale(
-              duration: const Duration(milliseconds: 300), // SMOOTHER
+              duration: const Duration(milliseconds: 250), // SMOOTHER
               curve: Curves.easeOutQuart,
               scale: _isHovered ? 1.15 : 1.0,
               child: Icon(widget.effect.icon, color: _isHovered ? Colors.white : widget.effect.color, size: 20),
