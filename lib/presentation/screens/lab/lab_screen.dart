@@ -728,7 +728,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
           ]),
         const SizedBox(width: 30),
         Expanded(child: Container(height: 34,
-          decoration: BoxDecoration(color: LC.darkPanel,
+          decoration: BoxDecoration(color: LC.darkPanel, boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.4), blurRadius: 8, offset: Offset(0, 4))],
             borderRadius: BorderRadius.circular(17),
             border: Border.all(color: LC.darkBorder)),
           padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -740,7 +740,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
           ]))),
         const SizedBox(width: 16),
         Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(color: LC.darkPanel,
+          decoration: BoxDecoration(color: LC.darkPanel, boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.4), blurRadius: 8, offset: Offset(0, 4))],
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: LC.darkBorder)),
           child: Row(children: const [
@@ -798,7 +798,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
           ]),
         const SizedBox(width: 30),
         Expanded(child: Container(height: 34,
-          decoration: BoxDecoration(color: LC.darkPanel,
+          decoration: BoxDecoration(color: LC.darkPanel, boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.4), blurRadius: 8, offset: Offset(0, 4))],
             borderRadius: BorderRadius.circular(17),
             border: Border.all(color: LC.darkBorder)),
           padding: const EdgeInsets.symmetric(horizontal: 14),
@@ -810,7 +810,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
           ]))),
         const SizedBox(width: 16),
         Container(padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(color: LC.darkPanel,
+          decoration: BoxDecoration(color: LC.darkPanel, boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.4), blurRadius: 8, offset: Offset(0, 4))],
             borderRadius: BorderRadius.circular(20),
             border: Border.all(color: LC.darkBorder)),
           child: Row(children: const [
@@ -1284,22 +1284,16 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                   child: Icon(Icons.close, size: 13, color: LC.darkTextDim))),
             ]))),
         Padding(padding: const EdgeInsets.fromLTRB(12, 12, 12, 8),
-          child: SizedBox(height: 28,
+          child: SizedBox(height: 34,
             child: ListView(scrollDirection: Axis.horizontal,
               children: ['All', 'Acids', 'Bases', 'Salts', 'Others'].map((c) {
-                final active = category == c;
                 return Padding(padding: const EdgeInsets.only(right: 4),
-                  child: GestureDetector(onTap: () => setState(() => category = c),
-                    child: Container(padding: const EdgeInsets.symmetric(horizontal: 10),
-                      decoration: BoxDecoration(
-                        color: active ? LC.darkAccent : LC.darkPanelElev,
-                        borderRadius: BorderRadius.circular(5),
-                        border: Border.all(color: active ? LC.darkAccentBright : LC.darkBorder)),
-                      alignment: Alignment.center,
-                      child: Text(c, style: TextStyle(
-                        color: active ? LC.darkBgDeep : LC.darkTextSub,
-                        fontSize: 10,
-                        fontWeight: active ? FontWeight.w600 : FontWeight.w400)))));
+                  child: _PremiumFilterChip(
+                    label: c,
+                    isActive: category == c,
+                    onTap: () => setState(() => category = c),
+                  ),
+                );
               }).toList()))),
         Expanded(child: ListView.builder(
           padding: const EdgeInsets.fromLTRB(12, 4, 8, 12),
