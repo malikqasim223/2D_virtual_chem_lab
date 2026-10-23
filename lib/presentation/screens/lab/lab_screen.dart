@@ -1092,13 +1092,13 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                     const SizedBox(width: 12),
                     // Data table
                     Expanded(child: Column(children: [
-                      _dataRow('Molar Mass', detail?.molarMass != null ? '${detail!.molarMass} g/mol' : 'ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â'),
+                      _dataRow('Molar Mass', detail?.molarMass != null ? '${detail!.molarMass} g/mol' : 'ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â'),
                       if (detail?.boilingPoint != null)
-                        _dataRow('Boiling Point', '${detail!.boilingPoint} ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°C'),
+                        _dataRow('Boiling Point', '${detail!.boilingPoint} ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°C'),
                       if (detail?.meltingPoint != null)
-                        _dataRow('Melting Point', '${detail!.meltingPoint} ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°C'),
+                        _dataRow('Melting Point', '${detail!.meltingPoint} ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°C'),
                       if (detail?.density != null)
-                        _dataRow('Density', '${detail!.density} g/cmÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³'),
+                        _dataRow('Density', '${detail!.density} g/cmÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â³'),
                       if (detail?.ph != null)
                         _dataRow('pH', detail!.ph!),
                       if (detail?.hazards != null && detail!.hazards.isNotEmpty)
@@ -1432,7 +1432,7 @@ Widget _labArea() {
       Expanded(child: Container(
         margin: const EdgeInsets.fromLTRB(12, 0, 12, 8),
         decoration: BoxDecoration(borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: LC.darkBorder), color: LC.darkBgDeep),
+          border: Border.all(color: LC.darkBorder), color: Colors.transparent),
         child: ClipRRect(borderRadius: BorderRadius.circular(10),
           child: LayoutBuilder(builder: (context, constraints) {
             _benchSize = Size(constraints.maxWidth, constraints.maxHeight);
@@ -1448,6 +1448,7 @@ Widget _labArea() {
                 }
               });
             return Stack(key: _benchKey, children: [
+              Positioned.fill(child: LiveBackground()),
               Positioned.fill(child: CustomPaint(painter: MarbleBenchPainter())),
               ...equipment.map((eq) => Positioned(
                 left: eq.position.dx, top: eq.position.dy,
@@ -1568,7 +1569,7 @@ Widget _labArea() {
                           style: const TextStyle(color: LC.text, fontWeight: FontWeight.w600),
                         ),
                         subtitle: Text(
-                          '${date.day}/${date.month}/${date.year}  ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢  $chemCount chemicals  ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢  In: ${eqNames.join(", ")}',
+                          '${date.day}/${date.month}/${date.year}  ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢  $chemCount chemicals  ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¢  In: ${eqNames.join(", ")}',
                           style: const TextStyle(color: LC.textDim, fontSize: 11),
                         ),
                         onTap: () => Navigator.pop(ctx, i),
@@ -1677,7 +1678,7 @@ Widget _labArea() {
     if (rx.requiresHeat && (!eq.isHot || eq.temperature < 60)) {
       return const ReactionInfo(
         name: 'Condition Not Met',
-        equation: 'Heat required (>= 60ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°C)',
+        equation: 'Heat required (>= 60ÃƒÆ’Ã†â€™Ãƒâ€ Ã¢â‚¬â„¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€¦Ã‚Â¡ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â°C)',
         type: 'Condition',
         description: 'Turn on the Bunsen burner to proceed.',
         products: [],
@@ -2848,4 +2849,3 @@ class _PremiumColorChartBtnState extends State<_PremiumColorChartBtn> {
 // ============================================================
 // PREMIUM FLOATING pH COLOR CHART BUTTON
 // ============================================================
-
