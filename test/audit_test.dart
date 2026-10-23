@@ -1,5 +1,4 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:virtual_chem_lab/main.dart';
 
 void main() {
   test('pH Casing Fix - NaOH should match naoh', () {
