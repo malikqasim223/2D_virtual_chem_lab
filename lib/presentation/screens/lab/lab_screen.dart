@@ -1316,15 +1316,22 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
         border: Border(left: BorderSide(color: LC.darkBorder))),
       child: SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
-          Container(padding: const EdgeInsets.fromLTRB(16, 14, 12, 10),
-            child: Row(children: [
+          Container(padding: const EdgeInsets.fromLTRB(12, 14, 8, 10),
+            child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
               const Icon(Icons.build_circle_outlined, size: 14, color: LC.darkAccentBright),
-              const SizedBox(width: 10),
-              const Text('Chemistry Toolbox',
-                style: TextStyle(color: LC.darkText, fontSize: 12, fontWeight: FontWeight.w600)),
-              const Spacer(),
+              const SizedBox(width: 8),
+              const Expanded(
+                child: Text('Chemistry Toolbox',
+                  maxLines: 2,
+                  softWrap: true,
+                  style: TextStyle(color: LC.darkText, fontSize: 12, fontWeight: FontWeight.w600)),
+              ),
+              const SizedBox(width: 4),
               GestureDetector(onTap: () => setState(() => showToolbox = false),
-                child: const Icon(Icons.close, color: LC.darkTextDim, size: 15)),
+                child: const Padding(
+                  padding: EdgeInsets.only(top: 2),
+                  child: Icon(Icons.close, color: LC.darkTextDim, size: 15),
+                )),
             ])),
           Container(height: 1, color: LC.darkBorder),
           _sectionLabel('EQUIPMENT'),
