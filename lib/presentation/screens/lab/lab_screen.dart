@@ -1310,6 +1310,21 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
 
   Widget _chemTile(Chemical c) => _PremiumChemTile(c: c);
 
+  
+  Widget _equipTile(EquipShape s) => _PremiumEquipCard(s: s, onTap: () => addEquipment(s));
+
+  Widget _effectTile(LabEffect effect) => _PremiumEffectCard(effect: effect);
+
+  Widget _actionChip(IconData icon, String label, Color color, VoidCallback onTap) {
+    return IconButton(
+      tooltip: label,
+      onPressed: onTap,
+      icon: Icon(icon, size: 20, color: color),
+    );
+  }
+
+
+
   Widget _toolboxPanel() {
     return Container(width: 170,
       decoration: const BoxDecoration(color: LC.darkPanel,
@@ -1377,20 +1392,19 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
         ])));
   }
 
-  Widget _sectionLabel(String title) => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
-    child: Text(title, style: const TextStyle(color: LC.darkTextMuted,
-      fontSize: 9, fontWeight: FontWeight.w600, letterSpacing: 1.2)));
-
-  Widget _equipTile(EquipShape s) => _PremiumEquipCard(s: s, onTap: () => addEquipment(s));
-
-  Widget _effectTile(LabEffect effect) => _PremiumEffectCard(effect: effect);
-
-  Widget _actionChip(IconData icon, String label, Color color, VoidCallback onTap) {
-    return IconButton(
-      tooltip: label,
-      onPressed: onTap,
-      icon: Icon(icon, size: 20, color: color),
+  Widget _sectionLabel(String text) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(12, 16, 12, 8),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: LC.darkTextSub.withValues(alpha: 0.9),
+          fontSize: 10,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 1.2,
+          shadows: const [Shadow(color: Colors.black54, blurRadius: 2, offset: Offset(0, 1))],
+        ),
+      ),
     );
   }
 
