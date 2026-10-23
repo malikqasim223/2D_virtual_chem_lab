@@ -590,7 +590,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                               constraints: const BoxConstraints.tightFor(width: 280),
                               child: _chemInfoPanel(),
                             ),
-                          Expanded(child: ClipRect(child: _labArea())),
+                          Expanded(child: _labArea()),
                           if (showToolbox)
                             Container(
                               width: 200, constraints: const BoxConstraints.tightFor(width: 200), child: _toolboxPanel(),
@@ -1092,13 +1092,13 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                     const SizedBox(width: 12),
                     // Data table
                     Expanded(child: Column(children: [
-                      _dataRow('Molar Mass', detail?.molarMass != null ? '${detail!.molarMass} g/mol' : '—'),
+                      _dataRow('Molar Mass', detail?.molarMass != null ? '${detail!.molarMass} g/mol' : 'â€”'),
                       if (detail?.boilingPoint != null)
-                        _dataRow('Boiling Point', '${detail!.boilingPoint} °C'),
+                        _dataRow('Boiling Point', '${detail!.boilingPoint} Â°C'),
                       if (detail?.meltingPoint != null)
-                        _dataRow('Melting Point', '${detail!.meltingPoint} °C'),
+                        _dataRow('Melting Point', '${detail!.meltingPoint} Â°C'),
                       if (detail?.density != null)
-                        _dataRow('Density', '${detail!.density} g/cm³'),
+                        _dataRow('Density', '${detail!.density} g/cmÂ³'),
                       if (detail?.ph != null)
                         _dataRow('pH', detail!.ph!),
                       if (detail?.hazards != null && detail!.hazards.isNotEmpty)
@@ -1758,7 +1758,7 @@ Widget _labArea() {
                           style: const TextStyle(color: LC.text, fontWeight: FontWeight.w600),
                         ),
                         subtitle: Text(
-                          '${date.day}/${date.month}/${date.year}  •  $chemCount chemicals  •  In: ${eqNames.join(", ")}',
+                          '${date.day}/${date.month}/${date.year}  â€¢  $chemCount chemicals  â€¢  In: ${eqNames.join(", ")}',
                           style: const TextStyle(color: LC.textDim, fontSize: 11),
                         ),
                         onTap: () => Navigator.pop(ctx, i),
@@ -1898,7 +1898,7 @@ Widget _labArea() {
     if (rx.requiresHeat && (!eq.isHot || eq.temperature < 60)) {
       return const ReactionInfo(
         name: 'Condition Not Met',
-        equation: 'Heat required (>= 60°C)',
+        equation: 'Heat required (>= 60Â°C)',
         type: 'Condition',
         description: 'Turn on the Bunsen burner to proceed.',
         products: [],
