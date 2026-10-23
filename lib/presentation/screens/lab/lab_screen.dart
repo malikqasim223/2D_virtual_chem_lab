@@ -1092,13 +1092,13 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                     const SizedBox(width: 12),
                     // Data table
                     Expanded(child: Column(children: [
-                      _dataRow('Molar Mass', detail?.molarMass != null ? '${detail!.molarMass} g/mol' : 'â€”'),
+                      _dataRow('Molar Mass', detail?.molarMass != null ? '${detail!.molarMass} g/mol' : 'Ã¢â‚¬â€'),
                       if (detail?.boilingPoint != null)
-                        _dataRow('Boiling Point', '${detail!.boilingPoint} Â°C'),
+                        _dataRow('Boiling Point', '${detail!.boilingPoint} Ã‚Â°C'),
                       if (detail?.meltingPoint != null)
-                        _dataRow('Melting Point', '${detail!.meltingPoint} Â°C'),
+                        _dataRow('Melting Point', '${detail!.meltingPoint} Ã‚Â°C'),
                       if (detail?.density != null)
-                        _dataRow('Density', '${detail!.density} g/cmÂ³'),
+                        _dataRow('Density', '${detail!.density} g/cmÃ‚Â³'),
                       if (detail?.ph != null)
                         _dataRow('pH', detail!.ph!),
                       if (detail?.hazards != null && detail!.hazards.isNotEmpty)
@@ -1582,7 +1582,7 @@ Widget _labArea() {
                           style: const TextStyle(color: LC.text, fontWeight: FontWeight.w600),
                         ),
                         subtitle: Text(
-                          '${date.day}/${date.month}/${date.year}  â€¢  $chemCount chemicals  â€¢  In: ${eqNames.join(", ")}',
+                          '${date.day}/${date.month}/${date.year}  Ã¢â‚¬Â¢  $chemCount chemicals  Ã¢â‚¬Â¢  In: ${eqNames.join(", ")}',
                           style: const TextStyle(color: LC.textDim, fontSize: 11),
                         ),
                         onTap: () => Navigator.pop(ctx, i),
@@ -1722,7 +1722,7 @@ Widget _labArea() {
     if (rx.requiresHeat && (!eq.isHot || eq.temperature < 60)) {
       return const ReactionInfo(
         name: 'Condition Not Met',
-        equation: 'Heat required (>= 60Â°C)',
+        equation: 'Heat required (>= 60Ã‚Â°C)',
         type: 'Condition',
         description: 'Turn on the Bunsen burner to proceed.',
         products: [],
@@ -1824,8 +1824,7 @@ Widget _labArea() {
             Text(label, style: const TextStyle(
               color: Colors.white, fontSize: 8,
               fontWeight: FontWeight.w500, height: 1.1)),
-            Text(value, style: const TextStyle(
-              color: Colors.white, fontSize: 10,
+            Text(value, style: const TextStyle(color: Colors.white, fontSize: 11.5, shadows: [Shadow(color: Colors.black87, blurRadius: 4, offset: Offset(0, 1))],
               fontWeight: FontWeight.w700, height: 1.1)),
           ]),
       ]),
@@ -2499,9 +2498,7 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
                 const SizedBox(height: 3),
                 Text(
                   widget.c.formula,
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 11.5, // Size Increased
+                  style: const TextStyle(color: Colors.white, fontSize: 13.0,  // Size Increased
                     fontWeight: FontWeight.w700,
                     shadows: [
                       Shadow(
@@ -2589,9 +2586,7 @@ class _PremiumEquipCardState extends State<_PremiumEquipCard> {
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: _isHovered ? Colors.white : LC.darkTextSub,
-                fontSize: 9,
+              style: TextStyle(color: _isHovered ? Colors.white : LC.darkText, fontSize: 10, shadows: [Shadow(color: Colors.black87, blurRadius: 3, offset: Offset(0, 1))],
                 fontWeight: _isHovered ? FontWeight.w600 : FontWeight.normal,
               ),
             ),
@@ -2673,9 +2668,7 @@ class _PremiumEffectCardState extends State<_PremiumEffectCard> {
               textAlign: TextAlign.center,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                color: _isHovered ? Colors.white : LC.darkTextSub,
-                fontSize: 8,
+              style: TextStyle(color: _isHovered ? Colors.white : LC.darkText, fontSize: 9, shadows: [Shadow(color: Colors.black87, blurRadius: 3, offset: Offset(0, 1))],
                 fontWeight: _isHovered ? FontWeight.w600 : FontWeight.normal,
               ),
             ),
