@@ -1092,13 +1092,13 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                     const SizedBox(width: 12),
                     // Data table
                     Expanded(child: Column(children: [
-                      _dataRow('Molar Mass', detail?.molarMass != null ? '${detail!.molarMass} g/mol' : 'Ã¢â‚¬â€'),
+                      _dataRow('Molar Mass', detail?.molarMass != null ? '${detail!.molarMass} g/mol' : 'ÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Â'),
                       if (detail?.boilingPoint != null)
-                        _dataRow('Boiling Point', '${detail!.boilingPoint} Ã‚Â°C'),
+                        _dataRow('Boiling Point', '${detail!.boilingPoint} Ãƒâ€šÃ‚Â°C'),
                       if (detail?.meltingPoint != null)
-                        _dataRow('Melting Point', '${detail!.meltingPoint} Ã‚Â°C'),
+                        _dataRow('Melting Point', '${detail!.meltingPoint} Ãƒâ€šÃ‚Â°C'),
                       if (detail?.density != null)
-                        _dataRow('Density', '${detail!.density} g/cmÃ‚Â³'),
+                        _dataRow('Density', '${detail!.density} g/cmÃƒâ€šÃ‚Â³'),
                       if (detail?.ph != null)
                         _dataRow('pH', detail!.ph!),
                       if (detail?.hazards != null && detail!.hazards.isNotEmpty)
@@ -1323,7 +1323,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
     return Container(width: 170,
       decoration: const BoxDecoration(color: LC.darkPanel,
         border: Border(left: BorderSide(color: LC.darkBorder))),
-      child: SingleChildScrollView(
+      child: Scrollbar(thumbVisibility: true, thickness: 6, radius: const Radius.circular(3), interactive: true, child: SingleChildScrollView(
         child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: [
           Container(padding: const EdgeInsets.fromLTRB(12, 14, 8, 10),
             child: Row(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -1379,11 +1379,9 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
             ])),
           const SizedBox(height: 12),
           Padding(padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: _actionChip(Icons.cleaning_services, 'Clear', LC.danger, reset)),
+            child: _PremiumClearBtn(onTap: reset)),
           const SizedBox(height: 16),
-          const SizedBox.shrink(),
-          const SizedBox(height: 16),
-        ])));
+        ]))));
   }
 
   Widget _sectionLabel(String text) {
@@ -1590,7 +1588,7 @@ Widget _labArea() {
                           style: const TextStyle(color: LC.text, fontWeight: FontWeight.w600),
                         ),
                         subtitle: Text(
-                          '${date.day}/${date.month}/${date.year}  Ã¢â‚¬Â¢  $chemCount chemicals  Ã¢â‚¬Â¢  In: ${eqNames.join(", ")}',
+                          '${date.day}/${date.month}/${date.year}  ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢  $chemCount chemicals  ÃƒÂ¢Ã¢â€šÂ¬Ã‚Â¢  In: ${eqNames.join(", ")}',
                           style: const TextStyle(color: LC.textDim, fontSize: 11),
                         ),
                         onTap: () => Navigator.pop(ctx, i),
@@ -1720,7 +1718,7 @@ Widget _labArea() {
     if (rx.requiresHeat && (!eq.isHot || eq.temperature < 60)) {
       return const ReactionInfo(
         name: 'Condition Not Met',
-        equation: 'Heat required (>= 60Ã‚Â°C)',
+        equation: 'Heat required (>= 60Ãƒâ€šÃ‚Â°C)',
         type: 'Condition',
         description: 'Turn on the Bunsen burner to proceed.',
         products: [],
@@ -2763,6 +2761,55 @@ class _PremiumFilterChipState extends State<_PremiumFilterChip> {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+// ============================================================
+// PREMIUM CLEAR BUTTON (Red Icon)
+// ============================================================
+class _PremiumClearBtn extends StatefulWidget {
+  final VoidCallback onTap;
+  const _PremiumClearBtn({required this.onTap});
+  @override
+  State<_PremiumClearBtn> createState() => _PremiumClearBtnState();
+}
+
+class _PremiumClearBtnState extends State<_PremiumClearBtn> {
+  bool _isHovered = false;
+  @override
+  Widget build(BuildContext context) {
+    return MouseRegion(
+      onEnter: (_) => setState(() => _isHovered = true),
+      onExit: (_) => setState(() => _isHovered = false),
+      cursor: SystemMouseCursors.click,
+      child: GestureDetector(
+        onTap: widget.onTap,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          curve: Curves.easeOutCubic,
+          transform: Matrix4.translationValues(0, _isHovered ? -3 : 0, 0),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+          decoration: BoxDecoration(
+            color: _isHovered ? LC.danger.withValues(alpha: 0.15) : LC.darkPanelElev,
+            borderRadius: BorderRadius.circular(7),
+            border: Border.all(color: _isHovered ? LC.danger : LC.darkBorder),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withValues(alpha: _isHovered ? 0.5 : 0.3),
+                blurRadius: _isHovered ? 10 : 6,
+                offset: Offset(0, _isHovered ? 5 : 3),
+              ),
+              if (_isHovered)
+                BoxShadow(color: LC.danger.withValues(alpha: 0.2), blurRadius: 8, offset: const Offset(0, 0)),
+            ],
+          ),
+          child: Row(mainAxisSize: MainAxisSize.min, children: [
+            Icon(Icons.cleaning_services, size: 16, color: _isHovered ? LC.danger : LC.darkTextSub),
+            const SizedBox(width: 8),
+            Text('Clear', style: TextStyle(color: _isHovered ? LC.danger : LC.darkTextSub, fontSize: 11, fontWeight: _isHovered ? FontWeight.w600 : FontWeight.normal)),
+          ]),
         ),
       ),
     );
