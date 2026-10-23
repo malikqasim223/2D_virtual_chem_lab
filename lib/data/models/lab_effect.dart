@@ -1,3 +1,3 @@
-﻿part of chem_lab;
+part of chem_lab;
 
-enum LabEffect { heat, cool, stir, thermometer, dropper, litmus, phPaper }
+enum LabEffect { heat, cool, stir, thermometer, dropper, phPaper }

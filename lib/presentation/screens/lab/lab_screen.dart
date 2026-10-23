@@ -71,7 +71,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
       bool needs = false;
       for (final eq in equipment) {
         // Strip color animation
-        if (eq.effects.contains(LabEffect.litmus) || eq.effects.contains(LabEffect.phPaper)) {
+        if (eq.effects.contains(LabEffect.phPaper) || eq.effects.contains(LabEffect.phPaper)) {
           if (eq.stripColorProgress < 1.0 && eq.layers.isNotEmpty) {
             eq.stripColorProgress = (eq.stripColorProgress + 0.006).clamp(0.0, 1.0);
             needs = true;
@@ -1384,26 +1384,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                       Text('pH Color Chart',
                         style: TextStyle(color: LC.darkTextSub, fontSize: 10)),
               const SizedBox(width: 6),
-              Material(color: Colors.transparent,
-                child: InkWell(
-                  onTap: () => LitmusColorBook.show(context),
-                  borderRadius: BorderRadius.circular(7),
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                    decoration: BoxDecoration(
-                      color: LC.darkPanelElev,
-                      borderRadius: BorderRadius.circular(7),
-                      border: Border.all(color: LC.darkBorder)),
-                    child: Row(mainAxisSize: MainAxisSize.min, children: [
-                      const Icon(Icons.description, size: 14, color: Color(0xFFE53935)),
-                      const SizedBox(width: 6),
-                      Text('Litmus Chart',
-                        style: TextStyle(color: LC.darkTextSub, fontSize: 10)),
-                    ]),
-                  ),
-                ),
-              ),
-                    ]),
+              ]),
                   ),
                 ),
               ),
@@ -1969,7 +1950,7 @@ Widget _labArea() {
     if (eq.layers.length < 2) return const SizedBox.shrink();
     if (eq.layers.isEmpty) return const SizedBox.shrink();
     
-    final hasLitmus = eq.effects.contains(LabEffect.litmus);
+    final hasLitmus = eq.effects.contains(LabEffect.phPaper);
     final hasPhPaper = eq.effects.contains(LabEffect.phPaper);
     
     if (!hasLitmus && !hasPhPaper) return const SizedBox.shrink();
@@ -2051,7 +2032,7 @@ Widget _labArea() {
 
   Color _getStripColor(EquipItem eq, LabEffect type) {
     final ph = LabPhService.calculatePh(eq) ?? 7.0;
-    return type == LabEffect.litmus
+    return type == LabEffect.phPaper
         ? PhCalculator.litmusColor(ph)
         : PhCalculator.colorForPh(ph);
   }
@@ -2060,7 +2041,7 @@ Widget _labArea() {
     final totalH = s.height + 175;
     return Column(mainAxisSize: MainAxisSize.min, children: [
       if (eq.layers.isNotEmpty &&
-          (eq.effects.contains(LabEffect.litmus) ||
+          (eq.effects.contains(LabEffect.phPaper) ||
            eq.effects.contains(LabEffect.phPaper)))
         Padding(
           padding: const EdgeInsets.only(bottom: 6),
@@ -2164,7 +2145,7 @@ Widget _labArea() {
               width: 45, height: 55,
               child: GestureDetector(behavior: HitTestBehavior.opaque,
                 onTap: () => ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Double-tap the Litmus Strip to detach'), duration: Duration(seconds: 1))),
-                onDoubleTap: () => _detachTool(eq, LabEffect.litmus),
+                onDoubleTap: () => _detachTool(eq, LabEffect.phPaper),
                 child: const SizedBox())),
           if (eq.hasPhPaper)
             Positioned(

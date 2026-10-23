@@ -24,7 +24,7 @@ class BenchToolPainter extends CustomPainter {
       case LabEffect.stir: _stirrer(canvas, w, h); break;
       case LabEffect.thermometer: _thermometer(canvas, w, h); break;
       case LabEffect.dropper: _dropper(canvas, w, h); break;
-      case LabEffect.litmus: _litmus(canvas, w, h); break;
+      
       case LabEffect.phPaper: _phPaper(canvas, w, h); break;
     }
   }
