@@ -14,3 +14,7 @@ backups/
 *.zip
 *.bak
 *.log
+# Backups - should not be pushed to git
+backups/
+*.zip
+
