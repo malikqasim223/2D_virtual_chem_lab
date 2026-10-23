@@ -11,7 +11,7 @@ class PhColorBook {
         child: Container(
           width: 520,
           constraints: const BoxConstraints(maxHeight: 600),
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.fromLTRB(20, 20, 32, 20),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,7 +49,7 @@ class PhColorBook {
                         child: Row(children: [
                           Container(
                             width: 50, height: 28,
-                            decoration: BoxDecoration(
+                            decoration: BoxDecoration(boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.6), blurRadius: 20, offset: Offset(0, 10))], 
                               color: color,
                               borderRadius: BorderRadius.circular(6),
                               border: Border.all(color: Colors.white.withValues(alpha: 0.3)),
