@@ -590,12 +590,10 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                               constraints: const BoxConstraints.tightFor(width: 280),
                               child: _chemInfoPanel(),
                             ),
-                          Expanded(child: _labArea()),
+                          Expanded(child: ClipRect(child: _labArea())),
                           if (showToolbox)
                             Container(
-                              width: 280,
-                              constraints: const BoxConstraints.tightFor(width: 280),
-                              child: _toolboxPanel(),
+                              width: 200, constraints: const BoxConstraints.tightFor(width: 200), child: _toolboxPanel(),
                             ),
                         ],
                       ),
