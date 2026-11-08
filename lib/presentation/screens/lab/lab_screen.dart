@@ -722,6 +722,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
               angle: rot,
               child: Stack(
                 children: [
+                  const Positioned.fill(child: _LiveBackground()),
                   Column(
                     children: [
                       // _topBar(), // Removed as requested
@@ -854,6 +855,8 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
                       },
                     ),
                   ),
+
+                  const _TeacherGuide(),
                 ],
               ),
             ),
@@ -3643,8 +3646,21 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
+      onEnter: (_) {
+        setState(() => _isHovered = true);
+        if (userWasAway) {
+          userWasAway = false;
+          final name = userName.value == 'Student' ? 'friend' : userName.value;
+          sayToUser(
+            "Ohhhh thank god $name, you are back! Let me tell you about ${widget.c.name} first, then we will move forward.",
+          );
+        } else {
+          sayChemicalIntro(widget.c);
+        }
+      },
+      onExit: (_) {
+        setState(() => _isHovered = false);
+      },
       cursor: SystemMouseCursors.grab,
       child: GestureDetector(
         // INSTANT drag (no threshold) - smooth & responsive

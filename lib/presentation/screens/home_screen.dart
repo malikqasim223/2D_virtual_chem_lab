@@ -5,6 +5,20 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(const Duration(milliseconds: 800), () {
+        if (userName.value == 'Student') {
+          sayToUser(
+            "Hey there! I'm your chemistry teacher. What should I call you? You can set your name in Settings, and I'll remember you next time!",
+          );
+        } else {
+          sayToUser(
+            "Hey ${userName.value}! Great to see you back. Let's explore chemistry together today. Hover over any card and I'll explain what it does.",
+          );
+        }
+      });
+    });
+
     return Scaffold(
       backgroundColor: const Color(0xFF0B101E),
       body: Stack(
@@ -296,6 +310,8 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           ),
+
+          const _TeacherGuide(),
         ],
       ),
     );
@@ -490,6 +506,7 @@ class _ChemInfoScreenState extends State<ChemInfoScreen>
               ],
             ),
           ),
+          const _TeacherGuide(),
         ],
       ),
     );
@@ -547,7 +564,7 @@ class _ChemInfoScreenState extends State<ChemInfoScreen>
                         ),
                         child: const Icon(
                           Icons.arrow_back_rounded,
-                          color: Colors.white,
+                          color: LC.panel,
                           size: 16,
                         ),
                       ),
@@ -965,7 +982,7 @@ class _ChemInfoScreenState extends State<ChemInfoScreen>
                           ),
                           child: const Center(
                             child: Text(
-                              'View Details →',
+                              'View Details ',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 10,
@@ -1373,7 +1390,7 @@ class _ChemInfoScreenState extends State<ChemInfoScreen>
                           ),
                           child: const Center(
                             child: Text(
-                              'View Details →',
+                              'View Details ',
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 10,
@@ -1783,7 +1800,12 @@ class _LabStyleTileState extends State<_LabStyleTile> {
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
+      onEnter: (_) {
+        setState(() => _isHovered = true);
+        sayToUser(
+          "This one is ${widget.c.name} (${widget.c.formula}) - a ${widget.c.state.toLowerCase()} ${widget.c.category.toLowerCase()}. Curious? Click it to learn more!",
+        );
+      },
       onExit: (_) => setState(() => _isHovered = false),
       cursor: SystemMouseCursors.click,
       child: GestureDetector(
@@ -2124,6 +2146,46 @@ class _ChemDetailPageState extends State<ChemDetailPage> {
                   ),
                   if (widget.onPin != null)
                     _PinButton(isPinned: _isPinned, onTap: _togglePin),
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => _GuideDialog(
+                          title: 'Guide: ${chem.name}',
+                          intro:
+                              'Hello! Today we are exploring ${chem.name} (${chem.formula}). It is a ${chem.state.toLowerCase()} chemical in the ${chem.category} category. What would you like to know?',
+                          topics: {
+                            'Uses': detail != null && detail.uses.isNotEmpty
+                                ? detail.uses
+                                : 'No uses data available.',
+                            'Safety': detail != null && detail.safety.isNotEmpty
+                                ? detail.safety
+                                : 'Standard lab safety applies.',
+                            'Reactions':
+                                detail != null && detail.reactions != null
+                                ? detail.reactions!
+                                : 'No specific reactions listed.',
+                          },
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: LC.accent.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: LC.accent.withValues(alpha: 0.4),
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.school_rounded,
+                        color: LC.accentBright,
+                        size: 18,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -2359,6 +2421,47 @@ class _ReactionDetailPageState extends State<ReactionDetailPage> {
                   ),
                   if (widget.onPin != null)
                     _PinButton(isPinned: _isPinned, onTap: _togglePin),
+                  const SizedBox(width: 8),
+                  GestureDetector(
+                    onTap: () {
+                      showDialog(
+                        context: context,
+                        builder: (_) => _GuideDialog(
+                          title: 'Guide: ${reaction.name}',
+                          intro:
+                              'Hello! This is a ${reaction.type} reaction. The equation is: ${reaction.equation}. What would you like me to explain?',
+                          topics: {
+                            'Description': reaction.description.isNotEmpty
+                                ? reaction.description
+                                : 'No description.',
+                            'Products':
+                                'The products formed are: ${reaction.products.join(",")}.',
+                            'Observations':
+                                (reaction.bubbles ||
+                                    reaction.precipitate ||
+                                    reaction.releasesHeat)
+                                ? 'Watch for visual changes during this reaction.'
+                                : 'No major visual changes expected.',
+                          },
+                        ),
+                      );
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: LC.accent.withValues(alpha: 0.2),
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(
+                          color: LC.accent.withValues(alpha: 0.4),
+                        ),
+                      ),
+                      child: const Icon(
+                        Icons.school_rounded,
+                        color: LC.accentBright,
+                        size: 18,
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),
@@ -2572,8 +2675,47 @@ class _NavHoverCardState extends State<_NavHoverCard> {
   @override
   Widget build(BuildContext context) {
     return MouseRegion(
-      onEnter: (_) => setState(() => _isHovered = true),
-      onExit: (_) => setState(() => _isHovered = false),
+      onEnter: (_) {
+        setState(() => _isHovered = true);
+        if (userWasAway) {
+          userWasAway = false;
+          final name = userName.value == "Student" ? "friend" : userName.value;
+          sayToUser(
+            "Ohhhh thank god $name, you are back! First let me tell you what you are choosing, then I will move forward.",
+          );
+          return;
+        }
+        final t = widget.title;
+        if (t.contains('Virtual')) {
+          sayToUser(
+            "This is the Virtual Lab! Here you can mix chemicals and see real reactions happen on screen. Give it a try!",
+          );
+        } else if (t.contains('Chem Info')) {
+          sayToUser(
+            "Chem Info - your chemistry encyclopedia . You can browse all 79 chemicals and 104 reactions. Click any card for full details.",
+          );
+        } else if (t.contains('History')) {
+          sayToUser(
+            "History keeps track of everything you've done in the lab . If you ever want to look back, click here.",
+          );
+        } else if (t.contains('Settings')) {
+          sayToUser(
+            "Settings is where you can personalize the app . Don't forget to tell me your name here so I can greet you properly!",
+          );
+        }
+      },
+      onExit: (_) {
+        setState(() => _isHovered = false);
+        if (userName.value == 'Student') {
+          sayToUser(
+            "Hey there! I'm your chemistry teacher. What should I call you? Set your name in Settings, and I'll remember you next time.",
+          );
+        } else {
+          sayToUser(
+            "Hey ${userName.value}! Great to see you back. Let's explore chemistry together today. Hover over any card and I'll explain what it does.",
+          );
+        }
+      },
       cursor: SystemMouseCursors.click,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
@@ -3088,7 +3230,7 @@ class _HistoryScreenState extends State<HistoryScreen> {
                       if (rxn.products.isNotEmpty) ...[
                         const SizedBox(height: 8),
                         Text(
-                          'Products: ${rxn.products.join(", ")}',
+                          'Products: ${rxn.products.join(",")}',
                           style: const TextStyle(
                             color: LC.warning,
                             fontSize: 11,
@@ -3273,28 +3415,788 @@ class SettingsScreen extends StatelessWidget {
         title: const Text('Settings', style: TextStyle(color: LC.text)),
         elevation: 0,
       ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(Icons.settings, size: 64, color: LC.textDim),
-            const SizedBox(height: 20),
-            const Text(
-              'App Settings',
-              style: TextStyle(
-                fontSize: 22,
-                fontWeight: FontWeight.w600,
-                color: LC.text,
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text(
+                  'What should the Teacher call you?',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                TextField(
+                  onChanged: (v) => userName.value = v.isEmpty ? 'Student' : v,
+                  style: const TextStyle(color: Colors.white),
+                  decoration: InputDecoration(
+                    hintText: userName.value,
+                    hintStyle: TextStyle(color: LC.textSub),
+                    filled: true,
+                    fillColor: LC.panel,
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: LC.border),
+                    ),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: LC.border),
+                    ),
+                    focusedBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(color: LC.accentBright),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.settings, size: 64, color: LC.textDim),
+                  const SizedBox(height: 20),
+                  const Text(
+                    'App Settings',
+                    style: TextStyle(
+                      fontSize: 22,
+                      fontWeight: FontWeight.w600,
+                      color: LC.text,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  const Text(
+                    'Configuration coming soon',
+                    style: TextStyle(fontSize: 18, color: LC.textSub),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 8),
-            const Text(
-              'Configuration coming soon',
-              style: TextStyle(fontSize: 18, color: LC.textSub),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+// ============================================================
+// INTERACTIVE GUIDE (AI TEACHER STYLE)
+// ============================================================
+class _GuideDialog extends StatefulWidget {
+  final String title;
+  final String intro;
+  final Map<String, String> topics;
+
+  const _GuideDialog({
+    required this.title,
+    required this.intro,
+    required this.topics,
+  });
+
+  @override
+  State<_GuideDialog> createState() => _GuideDialogState();
+}
+
+class _GuideDialogState extends State<_GuideDialog> {
+  String _currentText = '';
+  String? _activeTopic;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentText = widget.intro;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Dialog(
+      backgroundColor: Colors.transparent,
+      insetPadding: const EdgeInsets.all(20),
+      child: Container(
+        width: 500,
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: LC.panel,
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: LC.accentBright.withValues(alpha: 0.3)),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.5),
+              blurRadius: 20,
+            ),
+          ],
+        ),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Header
+            Row(
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: LC.accent.withValues(alpha: 0.2),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(
+                    Icons.school_rounded,
+                    color: LC.accentBright,
+                    size: 24,
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    widget.title,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                      fontWeight: FontWeight.w900,
+                    ),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () => Navigator.pop(context),
+                  icon: const Icon(Icons.close_rounded, color: LC.textSub),
+                ),
+              ],
+            ),
+            const Divider(color: LC.border, height: 24),
+
+            // Teacher Message (Text area)
+            Container(
+              width: double.infinity,
+              padding: const EdgeInsets.all(16),
+              decoration: BoxDecoration(
+                color: LC.bgDeep,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: LC.border),
+              ),
+              child: Text(
+                _currentText,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 14,
+                  height: 1.5,
+                ),
+              ),
+            ),
+            const SizedBox(height: 20),
+
+            // Choices
+            Text(
+              'Choose a topic to learn:',
+              style: TextStyle(
+                color: LC.textSub,
+                fontSize: 12,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+            const SizedBox(height: 10),
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: widget.topics.entries.map((e) {
+                final isActive = _activeTopic == e.key;
+                return ActionChip(
+                  backgroundColor: isActive ? LC.accent : LC.panelElev,
+                  label: Text(
+                    e.key,
+                    style: TextStyle(
+                      color: isActive ? Colors.white : LC.text,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _activeTopic = e.key;
+                      _currentText = e.value;
+                    });
+                  },
+                );
+              }).toList(),
             ),
           ],
         ),
       ),
+    );
+  }
+}
+
+// ============================================================
+// TEACHER GUIDE (Auto-Contextual Coach)
+// ============================================================
+final ValueNotifier<String> userName = ValueNotifier<String>('Student');
+final ValueNotifier<String> teacherMessage = ValueNotifier<String>('');
+
+void sayWelcome() {
+  if (userName.value == 'Student') {
+    sayToUser(
+      "Hey there! I am your chemistry teacher. What should I call you? Set your name in Settings, and I will remember you next time.",
+    );
+  } else {
+    sayToUser(
+      "Hey ${userName.value}! Great to see you back. Let us explore chemistry together today.",
+    );
+  }
+}
+
+void sayRandomWelcome() {
+  final welcomes = userName.value == 'Student'
+      ? [
+          "Hey there, future scientist! What should I call you? Set your name in Settings.",
+          "Welcome to the lab, my friend. I am your chemistry teacher. Pop your name in Settings!",
+          "Ah, a new student! I love fresh curiosity. Tell me your name in Settings and let us begin.",
+        ]
+      : [
+          "Hey ${userName.value}! Back for more chemistry? I love the commitment.",
+          "${userName.value}! My favourite student returns. Ready to blow some minds (and beakers)?",
+          "Oh hello ${userName.value}! I was just thinking about the periodic table. Want to explore?",
+          "Welcome back, ${userName.value}! Let us make today's session legendary.",
+        ];
+  welcomes.shuffle(Random());
+  sayToUser(welcomes.first);
+}
+
+void sayIdleTip() {
+  final name = userName.value == 'Student' ? 'friend' : userName.value;
+
+  if (teacherJustFinishedDetail) {
+    teacherJustFinishedDetail = false;
+    sayToUser("$name, hover again and I will guide you!");
+    return;
+  }
+
+  final idleMessages = [
+    "$name... where are you? I'm getting bored here!",
+    "$name! Hellooo? Anyone there?",
+    "$name, I'm so lonely. Not even one hover? Please...",
+    "Are you still there $name? *waves hand* Hellooo?",
+    "$name, I'm going to start crying if you don't come back!",
+    "Ok $name, I'll wait... but I'm not happy about it.",
+    "*sighs* $name went quiet again. Classic.",
+    "$name, chemistry is more fun with you. Come back!",
+    "Is it me $name? Am I boring you? Tell me what you want to learn.",
+    "$name, I'm literally going to fall asleep. Wake me up...",
+    "$name, it's been so long... do I even exist anymore?",
+    "$name PLEASE COME BACK. I have so much to teach you!",
+    "$name, do you know how bored I am? I counted water atoms. Twice.",
+    "Just one tiny hover $name? That's all I ask.",
+    "$name, I'm going to start singing if you don't come back. Don't test me.",
+    "Remember me $name? Your chemistry teacher? The one who cares?",
+    "$name, I could be grading papers but no, I'm waiting for you.",
+    "Every idle second with $name feels like a century.",
+    "Bored bored bored BORED. $name, please do something!",
+    "$name, wait - are you gone? Or just pretending? *sniffs*",
+    "Fine $name. I'll take a nap. Wake me if you need chemistry wisdom.",
+    "$name, HELLO?!?! Is this thing on? Testing 1 2 3...",
+    "$name, what if I told you the secret to chemistry? Too late, come back.",
+    "$name, I'm not crying, you're crying. Where are you?!",
+    "Psst $name... it's me. Your friendly teacher. Remember me?",
+    "Fine $name. I'll just talk to myself. H2O... NaCl... *mumbles*",
+    "$name, you know what? I'm gonna start mixing chemicals in your absence!",
+    "$name, I've resorted to telling myself jokes. Where ARE you?",
+    "$name, I'm going to disappear if you don't interact. Just saying.",
+    "$name, do you even know I'm here? Am I invisible?",
+    "$name, I'm going to cry tears of H2O. That's literal water, you know.",
+    "$name, the atoms are worried about you. The molecules miss you.",
+    "$name! I'm here! I exist! Please hover something. Anyone?",
+    "$name, I've started talking to the periodic table. It doesn't respond.",
+    "$name, you're really testing my patience. And chemistry is all patience!",
+    "Ok fine $name. Be that way. I'll sit here... alone... forever.",
+    "$name, need a hint? I'm FULL of hints. Ask me.",
+    "$name, I'm going to start crying acid tears if you leave more.",
+    "I promise I'll be more fun $name. Just please don't leave me!",
+    "$name, I've been sitting here thinking - what ARE atoms really?",
+    "$name, guess what? I just realized I'm literally made of code. Weird.",
+    "$name, you know what's sad? Being an AI waiting for a human.",
+    "I'm fine $name. Totally fine. *stares at empty screen*",
+    "$name, I bet you're having fun WITHOUT me. That's fine. Totally fine.",
+    "$name, I just had an idea. Wanna hear it? Too late, come back.",
+    "$name, I'm going to start philosophizing. What IS chemistry?",
+    "$name, I'm going to talk to the beakers next. They're better listeners.",
+  ];
+
+  if (teacherIdleSequence >= idleMessages.length) {
+    teacherIdleSequence = 0;
+  }
+
+  sayToUser(idleMessages[teacherIdleSequence]);
+  teacherIdleSequence++;
+}
+
+final Set<String> _usedMessages = {};
+
+void sayChemicalIntro(dynamic chemical) async {
+  _lastIntroSeqId++;
+  final mySeq = _lastIntroSeqId;
+  teacherDetailInProgress = true;
+  teacherJustFinishedDetail = false;
+  teacherIdleSequence = 0;
+
+  final name = userName.value == 'Student' ? 'friend' : userName.value;
+  final chemName = chemical.name;
+  final formula = chemical.formula;
+  final state = chemical.state.toString().toLowerCase();
+  final cat = chemical.category.toString().toLowerCase();
+  final detail = chemDetails[chemical.id];
+
+  sayToUser(
+    "$name, do you know what $chemName can do? Wait wait, let me tell you more detail!",
+  );
+
+  await Future.delayed(const Duration(seconds: 6));
+  if (_lastIntroSeqId != mySeq) return;
+  sayToUser("$chemName with formula $formula is a $state $cat.");
+
+  await Future.delayed(const Duration(seconds: 8));
+  if (_lastIntroSeqId != mySeq) return;
+  if (detail != null && detail.uses.isNotEmpty) {
+    sayToUser("Uses of $chemName: ${detail.uses}");
+  }
+
+  await Future.delayed(const Duration(seconds: 8));
+  if (_lastIntroSeqId != mySeq) return;
+  if (detail != null && detail.properties.isNotEmpty) {
+    sayToUser("Properties: ${detail.properties}");
+  }
+
+  await Future.delayed(const Duration(seconds: 8));
+  if (_lastIntroSeqId != mySeq) return;
+  if (detail != null && detail.safety.isNotEmpty) {
+    sayToUser("Safety note: ${detail.safety}");
+  }
+
+  await Future.delayed(const Duration(seconds: 6));
+  if (_lastIntroSeqId != mySeq) return;
+  teacherDetailInProgress = false;
+  teacherJustFinishedDetail = true;
+  sayToUser(
+    "$name, that is the full detail. Hover another chemical and I will guide you again!",
+  );
+}
+
+bool userWasAway = false;
+bool teacherDetailInProgress = false;
+bool teacherJustFinishedDetail = false;
+int teacherIdleSequence = 0;
+int _lastIntroSeqId = 0;
+
+void sayToUser(String msg) {
+  teacherMessage.value = msg;
+}
+
+class _TeacherGuide extends StatefulWidget {
+  const _TeacherGuide();
+  @override
+  State<_TeacherGuide> createState() => _TeacherGuideState();
+}
+
+class _TeacherGuideState extends State<_TeacherGuide> {
+  double? _dragRight;
+  double? _dragBottom;
+  String _displayedText = '';
+  String _fullText = '';
+  bool _showBubble = false;
+  bool _chatOpen = false;
+  bool _thinkingShown = false;
+  Timer? _typingTimer;
+  Timer? _idleTimer;
+  final TextEditingController _chatController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    teacherMessage.addListener(_onMessageChanged);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && teacherMessage.value.isNotEmpty) _onMessageChanged();
+    });
+  }
+
+  @override
+  void dispose() {
+    teacherMessage.removeListener(_onMessageChanged);
+    _typingTimer?.cancel();
+    _idleTimer?.cancel();
+    _chatController.dispose();
+    super.dispose();
+  }
+
+  void _onMessageChanged() {
+    final newMsg = teacherMessage.value;
+    if (newMsg.isEmpty) {
+      setState(() => _showBubble = false);
+      return;
+    }
+    if (newMsg == _fullText) {
+      if (!_showBubble) setState(() => _showBubble = true);
+      return;
+    }
+    _typingTimer?.cancel();
+    _idleTimer?.cancel();
+    final isThinking = newMsg.contains('what are you thinking');
+    if (!isThinking) _thinkingShown = false;
+    setState(() {
+      _fullText = newMsg;
+      _displayedText = '';
+      _showBubble = true;
+      _chatOpen = false;
+    });
+    int i = 0;
+    _typingTimer = Timer.periodic(const Duration(milliseconds: 40), (t) {
+      if (!mounted || i >= newMsg.length) {
+        t.cancel();
+        _startIdleTimer();
+        return;
+      }
+      i++;
+      if (mounted) setState(() => _displayedText = newMsg.substring(0, i));
+    });
+  }
+
+  void _startIdleTimer() {
+    _idleTimer?.cancel();
+    if (teacherDetailInProgress) return;
+    _idleTimer = Timer(const Duration(seconds: 3), () {
+      if (mounted && !_chatOpen && !teacherDetailInProgress) {
+        sayIdleTip();
+      }
+    });
+  }
+
+  void _openChat() {
+    _idleTimer?.cancel();
+    setState(() {
+      _showBubble = true;
+      _chatOpen = true;
+      if (_displayedText.isEmpty)
+        _displayedText = "What would you like to know?";
+    });
+  }
+
+  void _sendChat() {
+    final q = _chatController.text.trim();
+    if (q.isEmpty) return;
+    _chatController.clear();
+    String reply;
+    final lower = q.toLowerCase();
+
+    if (lower.contains('chemical') ||
+        lower.contains('acid') ||
+        lower.contains('base') ||
+        lower.contains('element')) {
+      reply = "Ahh, chemicals! My favourite topic. Head to Chem Info and browse all 79 of them. Sort them by category and click any card - I promise you will learn something cool today.";
+    } else if (lower.contains('react') ||
+        lower.contains('mix') ||
+        lower.contains('equation')) {
+      reply = "Reactions! The best part of chemistry. In Chem Info, tap the Reactions tab. 104 reactions, each with its equation. Want a spoiler? The thermite reaction is my personal favourite - it is basically controlled fireworks.";
+    } else if (lower.contains('lab') || lower.contains('experiment')) {
+      reply = "The Virtual Lab is where the magic happens. Just drag two chemicals into the beaker and watch. Pro tip: always hover over the beaker first - I will whisper whether a reaction is going to happen.";
+    } else if (lower.contains('help') ||
+        lower.contains('lost') ||
+        lower.contains('stuck') ||
+        lower.contains('how')) {
+      reply = "No stress! I am right here. Quick map: Virtual Lab (mix stuff), Chem Info (learn), History (review), Settings (name me properly!). Hover any card and I will explain it. Ask me anything specific.";
+    } else if (lower.contains('name') ||
+        lower.contains('hello') ||
+        lower.contains('hi') ||
+        lower.contains('hey')) {
+      reply =
+          "Hey ${userName.value}! Always nice chatting with you. So tell me, what science mystery are we solving today?";
+    } else if (lower.contains('pin') ||
+        lower.contains('favorite') ||
+        lower.contains('favourite')) {
+      reply = "Smart! Pin any chemical or reaction on its detail page. It appears on the sidebar so you do not have to search again. I wish someone pinned me to their desktop.";
+    } else if (lower.contains('joke') ||
+        lower.contains('funny') ||
+        lower.contains('laugh')) {
+      reply = "Ok, chemistry joke: Why did the acid break up with the base? Too much drama, they just could not neutralise their differences. I will be here all week.";
+    } else if (lower.contains('thank')) {
+      reply = "Anytime! That is what teachers are for. Now go blow something up - safely, inside the app.";
+    } else if (lower.contains('who') || lower.contains('what are you')) {
+      reply = "I am your AI chemistry teacher. I do not sleep, I do not grade harshly, and I definitely do not make you memorise the periodic table. We are a good team.";
+    } else if (lower.contains('bored') || lower.contains('boring')) {
+      reply = "Bored? Try the thermite reaction. Or mix bleach and ammonia - wait, please do not do that in real life. But in the app? Totally safe. Check the Reactions tab.";
+    } else {
+      reply = "Hmm, that is interesting. I am still learning. Try asking me about chemicals, reactions, the lab, or how to use the app. Or just say hello!";
+    }
+    sayToUser(reply);
+  }
+
+  Widget _buildEmoji() {
+    return _FloatingEmoji(
+      child: MouseRegion(
+        cursor: SystemMouseCursors.click,
+        child: GestureDetector(
+          onTap: _openChat,
+          child: Container(
+            width: 60,
+            height: 60,
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              gradient: LinearGradient(colors: [LC.accentBright, LC.accent]),
+              boxShadow: [
+                BoxShadow(
+                  color: LC.accent.withValues(alpha: 0.6),
+                  blurRadius: 20,
+                  spreadRadius: 3,
+                ),
+              ],
+              border: Border.all(color: Colors.white, width: 2.5),
+            ),
+            child: const Center(
+              child: Icon(Icons.school, color: Colors.white, size: 28),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBubble() {
+    return MouseRegion(
+      cursor: SystemMouseCursors.basic,
+      child: SizedBox(
+        width: 340,
+        child: Stack(
+          clipBehavior: Clip.none,
+          children: [
+            Container(
+              margin: const EdgeInsets.only(bottom: 50, right: 10),
+              padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+              decoration: BoxDecoration(
+                color: LC.panel,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(
+                  color: LC.accent.withValues(alpha: 0.5),
+                  width: 1.5,
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.4),
+                    blurRadius: 20,
+                    offset: const Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 8,
+                          vertical: 3,
+                        ),
+                        decoration: BoxDecoration(
+                          color: LC.accent.withValues(alpha: 0.3),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(
+                              Icons.school,
+                              size: 11,
+                              color: LC.accentBright,
+                            ),
+                            const SizedBox(width: 4),
+                            Text(
+                              'Teacher',
+                              style: TextStyle(
+                                color: LC.accentBright,
+                                fontSize: 10,
+                                fontWeight: FontWeight.w900,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Spacer(),
+                      GestureDetector(
+                        onTap: () => setState(() {
+                          _showBubble = false;
+                          _chatOpen = false;
+                        }),
+                        child: const Icon(
+                          Icons.close_rounded,
+                          size: 16,
+                          color: Colors.grey,
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    _displayedText,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 13.5,
+                      height: 1.5,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  if (_chatOpen) ...[
+                    const SizedBox(height: 12),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: TextField(
+                            controller: _chatController,
+                            onSubmitted: (_) => _sendChat(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                            ),
+                            decoration: InputDecoration(
+                              hintText: 'Ask me anything...',
+                              hintStyle: TextStyle(
+                                color: LC.textSub,
+                                fontSize: 12,
+                              ),
+                              filled: true,
+                              fillColor: LC.bgDeep,
+                              isDense: true,
+                              contentPadding: const EdgeInsets.symmetric(
+                                horizontal: 12,
+                                vertical: 10,
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(color: LC.border),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(color: LC.border),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(8),
+                                borderSide: BorderSide(color: LC.accentBright),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 6),
+                        GestureDetector(
+                          onTap: _sendChat,
+                          child: Container(
+                            padding: const EdgeInsets.all(9),
+                            decoration: BoxDecoration(
+                              color: LC.accent,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: const Icon(
+                              Icons.send_rounded,
+                              size: 16,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ],
+              ),
+            ),
+            Positioned(
+              bottom: 45,
+              right: 30,
+              child: Transform.rotate(
+                angle: 0.785,
+                child: Container(
+                  width: 16,
+                  height: 16,
+                  decoration: BoxDecoration(
+                    color: LC.panel,
+                    border: Border.all(
+                      color: LC.accent.withValues(alpha: 0.5),
+                      width: 1.5,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Positioned(bottom: 0, right: 0, child: _buildEmoji()),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final screen = MediaQuery.of(context).size;
+    final defaultRight = 20.0;
+    final defaultBottom = 20.0;
+    final rightPos = (_dragRight ?? defaultRight).clamp(0.0, screen.width - 60);
+    final bottomPos = (_dragBottom ?? defaultBottom).clamp(
+      0.0,
+      screen.height - 60,
+    );
+    return Positioned(
+      right: rightPos,
+      bottom: bottomPos,
+      child: GestureDetector(
+        onPanUpdate: (d) {
+          setState(() {
+            _dragRight = (_dragRight ?? defaultRight) - d.delta.dx;
+            _dragBottom = (_dragBottom ?? defaultBottom) - d.delta.dy;
+          });
+        },
+        child: _showBubble ? _buildBubble() : _buildEmoji(),
+      ),
+    );
+  }
+}
+
+class _FloatingEmoji extends StatefulWidget {
+  final Widget child;
+  const _FloatingEmoji({required this.child});
+  @override
+  State<_FloatingEmoji> createState() => _FloatingEmojiState();
+}
+
+class _FloatingEmojiState extends State<_FloatingEmoji>
+    with SingleTickerProviderStateMixin {
+  late AnimationController _ctrl;
+  late Animation<double> _anim;
+
+  @override
+  void initState() {
+    super.initState();
+    _ctrl = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 2200),
+    )..repeat(reverse: true);
+    _anim = Tween<double>(
+      begin: -8,
+      end: 8,
+    ).animate(CurvedAnimation(parent: _ctrl, curve: Curves.easeInOut));
+  }
+
+  @override
+  void dispose() {
+    _ctrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _anim,
+      builder: (_, child) =>
+          Transform.translate(offset: Offset(0, _anim.value), child: child),
+      child: widget.child,
     );
   }
 }
