@@ -6,8 +6,13 @@ class RealisticEquipPainter extends CustomPainter {
   final bool isHovered;
   final double time;
   final ReactionInfo? reaction;
-  RealisticEquipPainter({required this.shape, required this.item,
-    required this.isHovered, required this.time, required this.reaction});
+  RealisticEquipPainter({
+    required this.shape,
+    required this.item,
+    required this.isHovered,
+    required this.time,
+    required this.reaction,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -17,25 +22,42 @@ class RealisticEquipPainter extends CustomPainter {
     canvas.translate(ox, oy);
     final path = _buildPath(w, h);
 
-    canvas.drawOval(Rect.fromLTWH(w * 0.15, h * 0.96, w * 0.7, h * 0.05),
-      Paint()..color = Colors.black.withValues(alpha: 0.6)
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10));
+    canvas.drawOval(
+      Rect.fromLTWH(w * 0.15, h * 0.96, w * 0.7, h * 0.05),
+      Paint()
+        ..color = Colors.black.withValues(alpha: 0.6)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
+    );
 
-    canvas.drawPath(path, Paint()..shader = LinearGradient(
-      begin: Alignment.topLeft, end: Alignment.bottomRight,
-      colors: [LC.glassTint.withValues(alpha: 0.12),
-        LC.glassFill.withValues(alpha: 0.06),
-        LC.glassTint.withValues(alpha: 0.10)]).createShader(Rect.fromLTWH(0, 0, w, h)));
+    canvas.drawPath(
+      path,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            LC.glassTint.withValues(alpha: 0.12),
+            LC.glassFill.withValues(alpha: 0.06),
+            LC.glassTint.withValues(alpha: 0.10),
+          ],
+        ).createShader(Rect.fromLTWH(0, 0, w, h)),
+    );
     // GLASS OUTLINE — visible border
-    canvas.drawPath(path, Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.2
-      ..color = Colors.white.withValues(alpha: 0.35));
+    canvas.drawPath(
+      path,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.2
+        ..color = Colors.white.withValues(alpha: 0.35),
+    );
     // Glass shine highlight
-    canvas.drawPath(path, Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 2.5
-      ..color = Colors.white.withValues(alpha: 0.08));
+    canvas.drawPath(
+      path,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2.5
+        ..color = Colors.white.withValues(alpha: 0.08),
+    );
 
     canvas.save();
     canvas.clipPath(path);
@@ -51,10 +73,16 @@ class RealisticEquipPainter extends CustomPainter {
       _paintGasEvolution(canvas, w, h);
       _paintSmoke(canvas, w, h);
       _paintFireBlast(canvas, w, h);
-    // Skip for displacement — already drawn in _paintLayers
-    if (reaction?.precipitate == true && !(reaction!.type.toLowerCase().contains('displacement'))) {
-      _paintPrecipitate(canvas, w, h, reaction!.precipitateColor ?? reaction!.colorChange ?? LC.glassFill);
-    }
+      // Skip for displacement — already drawn in _paintLayers
+      if (reaction?.precipitate == true &&
+          !(reaction!.type.toLowerCase().contains('displacement'))) {
+        _paintPrecipitate(
+          canvas,
+          w,
+          h,
+          reaction!.precipitateColor ?? reaction!.colorChange ?? LC.glassFill,
+        );
+      }
       if (item.isStirring) _paintStir(canvas, w, h);
       if (item.isCold) _paintFrost(canvas, w, h);
     }
@@ -64,9 +92,14 @@ class RealisticEquipPainter extends CustomPainter {
     if (item.hasDropper) _paintDropper(canvas, w, h);
     if (reaction?.foam == true) _paintFoam(canvas, w, h);
 
-    canvas.drawPath(path, Paint()..style = PaintingStyle.stroke
-      ..strokeWidth = isHovered ? 2 : 1.3..strokeJoin = StrokeJoin.round
-      ..color = isHovered ? LC.success : LC.glassEdge.withValues(alpha: 0.6));
+    canvas.drawPath(
+      path,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = isHovered ? 2 : 1.3
+        ..strokeJoin = StrokeJoin.round
+        ..color = isHovered ? LC.success : LC.glassEdge.withValues(alpha: 0.6),
+    );
 
     _paintPour(canvas, w, h);
     _paintMarks(canvas, w, h); // With translate + after pour = on top
@@ -126,16 +159,23 @@ class RealisticEquipPainter extends CustomPainter {
     return path;
   }
 
-  void _paintLayers(Canvas canvas, double w, double h) {    // Calculate blended color of all layers
+  void _paintLayers(Canvas canvas, double w, double h) {
+    // Calculate blended color of all layers
 
     // === Reaction Color Blending (Audit Fix) ===
-    Color blendedLayerColor = item.layers.isEmpty ? Colors.transparent : item.layers.first.color;
+    Color blendedLayerColor = item.layers.isEmpty
+        ? Colors.transparent
+        : item.layers.first.color;
     if (item.layers.length > 1) {
       for (int i = 1; i < item.layers.length; i++) {
-        blendedLayerColor = Color.lerp(blendedLayerColor, item.layers[i].color, 0.5)!;
+        blendedLayerColor = Color.lerp(
+          blendedLayerColor,
+          item.layers[i].color,
+          0.5,
+        )!;
       }
     }
-    
+
     // If a reaction is in progress, blend towards reaction color
     Color finalLiquidColor = blendedLayerColor;
     if (reaction != null && item.reactionProgress > 0) {
@@ -151,7 +191,9 @@ class RealisticEquipPainter extends CustomPainter {
     // === REACTION COMPLETE: separated products ===
     // ONLY precipitate reactions show separated salt bed
     // PRECIPITATE REACTION — liquid tinted, bed drawn by _paintPrecipitate
-    if (reaction != null && item.reactionProgress > 0.3 && reaction!.precipitate) {
+    if (reaction != null &&
+        item.reactionProgress > 0.3 &&
+        reaction!.precipitate) {
       Color liquidTint = reaction!.colorChange ?? item.blendedColor;
       final path = Path()
         ..moveTo(0, baseTop - slosh)
@@ -159,24 +201,36 @@ class RealisticEquipPainter extends CustomPainter {
         ..lineTo(w, h)
         ..lineTo(0, h)
         ..close();
-      canvas.drawPath(path, Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter, end: Alignment.bottomCenter,
-          colors: [
-            liquidTint.withValues(alpha: 0.40),
-            liquidTint.withValues(alpha: 0.60),
-            liquidTint.withValues(alpha: 0.75),
-          ]).createShader(Rect.fromLTWH(0, baseTop - 2, w, h - baseTop + 2)));
+      canvas.drawPath(
+        path,
+        Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              liquidTint.withValues(alpha: 0.40),
+              liquidTint.withValues(alpha: 0.60),
+              liquidTint.withValues(alpha: 0.75),
+            ],
+          ).createShader(Rect.fromLTWH(0, baseTop - 2, w, h - baseTop + 2)),
+      );
       return;
     }
 
     // === GAS REACTION (bubbles, no precipitate) ===
-    if (reaction != null && reaction!.bubbles && !reaction!.precipitate && item.reactionProgress > 0.3) {
+    if (reaction != null &&
+        reaction!.bubbles &&
+        !reaction!.precipitate &&
+        item.reactionProgress > 0.3) {
       // Liquid stays same color, just agitated
       Color gasLiquid = item.blendedColor;
       if (reaction!.colorChange != null) {
         final _t = (item.reactionProgress * 1.5).clamp(0.0, 1.0);
-        gasLiquid = Color.lerp(gasLiquid, reaction!.colorChange!, _t * 0.5)!; // subtle tint
+        gasLiquid = Color.lerp(
+          gasLiquid,
+          reaction!.colorChange!,
+          _t * 0.5,
+        )!; // subtle tint
       }
       final gasPath = Path()
         ..moveTo(0, baseTop - slosh)
@@ -184,27 +238,39 @@ class RealisticEquipPainter extends CustomPainter {
         ..lineTo(w, h)
         ..lineTo(0, h)
         ..close();
-      canvas.drawPath(gasPath, Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter, end: Alignment.bottomCenter,
-          colors: [
-            gasLiquid.withValues(alpha: 0.55),
-            gasLiquid.withValues(alpha: 0.75),
-            gasLiquid.withValues(alpha: 0.9),
-          ]).createShader(Rect.fromLTWH(0, baseTop - 2, w, h - baseTop + 2)));
+      canvas.drawPath(
+        gasPath,
+        Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              gasLiquid.withValues(alpha: 0.55),
+              gasLiquid.withValues(alpha: 0.75),
+              gasLiquid.withValues(alpha: 0.9),
+            ],
+          ).createShader(Rect.fromLTWH(0, baseTop - 2, w, h - baseTop + 2)),
+      );
       return;
     }
-    
+
     // === NORMAL: mixed liquid ===
     Color blended = item.blendedColor;
     if (reaction?.colorChange != null) {
       final _target = reaction!.colorChange!;
-      final _t = (item.reactionProgress * 1.5).clamp(0.0, 1.0); // smooth 0->1 over 66% progress
+      final _t = (item.reactionProgress * 1.5).clamp(
+        0.0,
+        1.0,
+      ); // smooth 0->1 over 66% progress
       blended = Color.lerp(blended, _target, _t)!;
     }
     // Heat transform: CuSO4 (blue) -> anhydrous (white) at high temp
     if (item.isHeatedTransform && item.layers.any((l) => l.chemId == 'cuso4')) {
-      blended = Color.lerp(blended, const Color(0xFFE8EDEF), ((item.temperature - 60) / 90).clamp(0.0, 0.9))!;
+      blended = Color.lerp(
+        blended,
+        const Color(0xFFE8EDEF),
+        ((item.temperature - 60) / 90).clamp(0.0, 0.9),
+      )!;
     }
     final path = Path()
       ..moveTo(0, baseTop - slosh)
@@ -212,15 +278,19 @@ class RealisticEquipPainter extends CustomPainter {
       ..lineTo(w, h)
       ..lineTo(0, h)
       ..close();
-    canvas.drawPath(path, Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter, end: Alignment.bottomCenter,
-        colors: [
-          blended.withValues(alpha: 0.5),
-          blended.withValues(alpha: 0.75),
-          blended.withValues(alpha: 0.9),
-        ],
-      ).createShader(Rect.fromLTWH(0, baseTop - 2, w, h - baseTop + 2)));
+    canvas.drawPath(
+      path,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            blended.withValues(alpha: 0.5),
+            blended.withValues(alpha: 0.75),
+            blended.withValues(alpha: 0.9),
+          ],
+        ).createShader(Rect.fromLTWH(0, baseTop - 2, w, h - baseTop + 2)),
+    );
   }
 
   // Shape-specific liquid top — matches markings exactly
@@ -242,22 +312,30 @@ class RealisticEquipPainter extends CustomPainter {
       case EquipShape.beaker:
         major = [50, 100, 150, 200, 250];
         minorStep = 10;
-        yTop = h * 0.12; yBot = h * 0.95; rightX = w * 0.86;
+        yTop = h * 0.12;
+        yBot = h * 0.95;
+        rightX = w * 0.86;
         break;
       case EquipShape.flask:
         major = [50, 100, 150, 200, 250];
         minorStep = 10;
-        yTop = h * 0.42; yBot = h * 0.92; rightX = w * 0.55; // flask body only
+        yTop = h * 0.42;
+        yBot = h * 0.92;
+        rightX = w * 0.55; // flask body only
         break;
       case EquipShape.testTube:
         major = [10, 20, 30, 40, 50];
         minorStep = 2;
-        yTop = h * 0.18; yBot = h * 0.88; rightX = w * 0.76; // tube: inside body
+        yTop = h * 0.18;
+        yBot = h * 0.88;
+        rightX = w * 0.76; // tube: inside body
         break;
       case EquipShape.cylinder:
         major = [20, 40, 60, 80, 100];
         minorStep = 5;
-        yTop = h * 0.12; yBot = h * 0.95; rightX = w * 0.70;
+        yTop = h * 0.12;
+        yBot = h * 0.95;
+        rightX = w * 0.70;
         break;
     }
 
@@ -277,7 +355,11 @@ class RealisticEquipPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
     for (final v in minor) {
       final y = yBot - (v / maxVol) * span;
-      canvas.drawLine(Offset(rightX - w * 0.045, y), Offset(rightX, y), minorPaint);
+      canvas.drawLine(
+        Offset(rightX - w * 0.045, y),
+        Offset(rightX, y),
+        minorPaint,
+      );
     }
 
     // === Major ticks (thick, long, with numbers) ===
@@ -287,7 +369,11 @@ class RealisticEquipPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round;
     for (final v in major) {
       final y = yBot - (v / maxVol) * span;
-      canvas.drawLine(Offset(rightX - w * 0.10, y), Offset(rightX, y), majorPaint);
+      canvas.drawLine(
+        Offset(rightX - w * 0.10, y),
+        Offset(rightX, y),
+        majorPaint,
+      );
 
       final tp = TextPainter(
         text: TextSpan(
@@ -320,8 +406,6 @@ class RealisticEquipPainter extends CustomPainter {
     unitTp.paint(canvas, Offset(rightX - unitTp.width - 2, yBot + 4));
   }
 
-
-
   void _paintWave(Canvas canvas, double w, double h) {
     final slosh = sin(item.sloshPhase) * item.sloshAmp;
     final baseTop = _liquidTop(h);
@@ -329,35 +413,56 @@ class RealisticEquipPainter extends CustomPainter {
     final wavePath = Path()..moveTo(0, baseTop - slosh);
     for (double x = 0; x <= w; x += 2) {
       final tilt = ((x / w) - 0.5) * 2 * slosh;
-      wavePath.lineTo(x, baseTop + tilt + sin((x / w) * pi * 3 + time * 3) * amp);
+      wavePath.lineTo(
+        x,
+        baseTop + tilt + sin((x / w) * pi * 3 + time * 3) * amp,
+      );
     }
-    canvas.drawPath(wavePath, Paint()
-      ..style = PaintingStyle.stroke..strokeWidth = 2
-      ..color = Colors.white.withValues(alpha: 0.5));
+    canvas.drawPath(
+      wavePath,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 2
+        ..color = Colors.white.withValues(alpha: 0.5),
+    );
   }
 
   // REAL gas colors — based on chemistry
   Color _gasColor(String? gas) {
     switch (gas) {
-      case 'NO2': return const Color(0xFF8B4513); // Brown (red-brown)
-      case 'Cl2': return const Color(0xFFA5D6A7); // Pale greenish-yellow
-      case 'Br2': return const Color(0xFF8B0000); // Red-brown vapor
-      case 'I2':  return const Color(0xFF9C27B0); // Purple vapor
-      case 'H2':  return const Color(0xFFE0E0E0); // Colorless (light gray for visibility)
-      case 'O2':  return const Color(0xFFF0F0F0); // Colorless
-      case 'CO2': return const Color(0xFFF5F5F5); // Colorless
-      case 'NH3': return const Color(0xFFF5F5F5); // Colorless (pungent)
-      case 'SO2': return const Color(0xFFF5F5F5); // Colorless
-      case 'H2S': return const Color(0xFFF5F5F5); // Colorless (rotten egg)
-      case 'HCl': return const Color(0xFFF5F5DC); // Pale yellow fumes
-      // duplicate I2 removed
-      case 'H2':  return const Color(0xFFE0E0E0); // Colorless (gray for visibility)
-      case 'O2':  return const Color(0xFFF0F0F0); // Colorless
-      case 'N2':  return const Color(0xFFF0F0F0); // Colorless
-      default:    return const Color(0xFFF0F0F0); // Colorless
+      case 'NO2':
+        return const Color(0xFF8B4513); // Brown (red-brown)
+      case 'Cl2':
+        return const Color(0xFFA5D6A7); // Pale greenish-yellow
+      case 'Br2':
+        return const Color(0xFF8B0000); // Red-brown vapor
+      case 'I2':
+        return const Color(0xFF9C27B0); // Purple vapor
+      case 'H2':
+        return const Color(0xFFE0E0E0); // Colorless (light gray for visibility)
+      case 'O2':
+        return const Color(0xFFF0F0F0); // Colorless
+      case 'CO2':
+        return const Color(0xFFF5F5F5); // Colorless
+      case 'NH3':
+        return const Color(0xFFF5F5F5); // Colorless (pungent)
+      case 'SO2':
+        return const Color(0xFFF5F5F5); // Colorless
+      case 'H2S':
+        return const Color(0xFFF5F5F5); // Colorless (rotten egg)
+      case 'HCl':
+        return const Color(0xFFF5F5DC); // Pale yellow fumes
+      case 'H2':
+        return const Color(0xFFE0E0E0); // Colorless (gray for visibility)
+      case 'O2':
+        return const Color(0xFFF0F0F0); // Colorless
+      case 'N2':
+        return const Color(0xFFF0F0F0); // Colorless
+      default:
+        return const Color(0xFFF0F0F0); // Colorless
     }
   }
-  
+
   void _paintBubbles(Canvas canvas, double w, double h) {
     final top = _liquidTop(h);
     final gasCol = _gasColor(reaction?.gasEvolution);
@@ -372,27 +477,45 @@ class RealisticEquipPainter extends CustomPainter {
       final r = baseR * (0.5 + progress * 0.8); // grow as they rise
       final bRect = Rect.fromCircle(center: Offset(bx, by), radius: r);
       // Radial gradient fill (hollow center look)
-      canvas.drawCircle(Offset(bx, by), r, Paint()
-        ..shader = RadialGradient(colors: [
-          gasCol.withValues(alpha: 0.12),
-          gasCol.withValues(alpha: 0.45),
-          gasCol.withValues(alpha: 0.72),
-        ], stops: const [0.0, 0.6, 1.0]).createShader(bRect));
+      canvas.drawCircle(
+        Offset(bx, by),
+        r,
+        Paint()
+          ..shader = RadialGradient(
+            colors: [
+              gasCol.withValues(alpha: 0.12),
+              gasCol.withValues(alpha: 0.45),
+              gasCol.withValues(alpha: 0.72),
+            ],
+            stops: const [0.0, 0.6, 1.0],
+          ).createShader(bRect),
+      );
       // White shine (light source top-left)
-      canvas.drawCircle(Offset(bx - r * 0.32, by - r * 0.32), r * 0.32,
-        Paint()..color = Colors.white.withValues(alpha: 0.75));
+      canvas.drawCircle(
+        Offset(bx - r * 0.32, by - r * 0.32),
+        r * 0.32,
+        Paint()..color = Colors.white.withValues(alpha: 0.75),
+      );
       // Outline rim
-      canvas.drawCircle(Offset(bx, by), r, Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 0.7
-        ..color = gasCol.withValues(alpha: 0.85));
+      canvas.drawCircle(
+        Offset(bx, by),
+        r,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 0.7
+          ..color = gasCol.withValues(alpha: 0.85),
+      );
       // Burst effect at surface
       if (progress > 0.85) {
         final bt = (progress - 0.85) / 0.15;
-        canvas.drawCircle(Offset(bx, by), r * (1 + bt * 1.6), Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = (1 - bt) * 1.4
-          ..color = gasCol.withValues(alpha: (1 - bt) * 0.65));
+        canvas.drawCircle(
+          Offset(bx, by),
+          r * (1 + bt * 1.6),
+          Paint()
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = (1 - bt) * 1.4
+            ..color = gasCol.withValues(alpha: (1 - bt) * 0.65),
+        );
       }
     }
     // === FOAM LAYER AT SURFACE (cluster of small bubbles) ===
@@ -401,14 +524,22 @@ class RealisticEquipPainter extends CustomPainter {
       final fx = foamRng.nextDouble() * w;
       final fy = top + foamRng.nextDouble() * 7 - 3;
       final fr = 1.0 + foamRng.nextDouble() * 2.2;
-      canvas.drawCircle(Offset(fx, fy), fr,
-        Paint()..color = gasCol.withValues(alpha: 0.55));
-      canvas.drawCircle(Offset(fx, fy), fr, Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 0.5
-        ..color = Colors.white.withValues(alpha: 0.65));
+      canvas.drawCircle(
+        Offset(fx, fy),
+        fr,
+        Paint()..color = gasCol.withValues(alpha: 0.55),
+      );
+      canvas.drawCircle(
+        Offset(fx, fy),
+        fr,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 0.5
+          ..color = Colors.white.withValues(alpha: 0.65),
+      );
     }
   }
+
   // Precipitate style — unique per precipitate type (real chemistry)
   String _precipStyle() {
     final rxn = reaction;
@@ -432,7 +563,8 @@ class RealisticEquipPainter extends CustomPainter {
     if (products.contains('cac2o4')) return 'granular-white';
     if (products.contains('ag3po4')) return 'granular-yellow';
     // METAL DEPOSIT — coating on metal (Cu, Ag)
-    if (rxn.type.toLowerCase().contains('single displacement')) return 'metal-deposit'; // ONLY single
+    if (rxn.type.toLowerCase().contains('single displacement'))
+      return 'metal-deposit'; // ONLY single
     // MILKY — clouded throughout (limewater)
     if (key.contains('limewater') || key.contains('milky')) return 'milky';
     // AG2O — brown heavy
@@ -447,52 +579,86 @@ class RealisticEquipPainter extends CustomPainter {
   // Precipitate density (particle count multiplier)
   double _precipDensity() {
     switch (_precipStyle()) {
-      case 'curdy-white': return 1.3;
-      case 'gel-blue': return 1.1;
-      case 'gel-brown': return 1.4;
-      case 'gel-green': return 1.2;
-      case 'gel-white': return 1.0;
-      case 'granular-gold': return 1.5;
-      case 'granular-white': return 1.1;
-      case 'granular-yellow': return 1.4;
-      case 'metal-deposit': return 0.7;
-      case 'milky': return 2.0;
-      case 'heavy-brown': return 1.6;
-      default: return 1.25;
+      case 'curdy-white':
+        return 1.3;
+      case 'gel-blue':
+        return 1.1;
+      case 'gel-brown':
+        return 1.4;
+      case 'gel-green':
+        return 1.2;
+      case 'gel-white':
+        return 1.0;
+      case 'granular-gold':
+        return 1.5;
+      case 'granular-white':
+        return 1.1;
+      case 'granular-yellow':
+        return 1.4;
+      case 'metal-deposit':
+        return 0.7;
+      case 'milky':
+        return 2.0;
+      case 'heavy-brown':
+        return 1.6;
+      default:
+        return 1.25;
     }
   }
 
   // Precipitate settling rate (0.5 = slow, 2.0 = fast)
   double _precipSettleRate() {
     switch (_precipStyle()) {
-      case 'curdy-white': return 1.0;   // clumpy
-      case 'gel-blue': return 0.9;      // gelatinous
-      case 'gel-brown': return 0.9;
-      case 'gel-green': return 0.9;
-      case 'gel-white': return 0.9;
-      case 'granular-gold': return 1.5; // fast
-      case 'granular-white': return 1.8; // very fast
-      case 'granular-yellow': return 1.5;
-      case 'metal-deposit': return 2.0;
-      case 'milky': return 0.8;
-      case 'heavy-brown': return 1.0;
-      default: return 1.25;
+      case 'curdy-white':
+        return 1.0; // clumpy
+      case 'gel-blue':
+        return 0.9; // gelatinous
+      case 'gel-brown':
+        return 0.9;
+      case 'gel-green':
+        return 0.9;
+      case 'gel-white':
+        return 0.9;
+      case 'granular-gold':
+        return 1.5; // fast
+      case 'granular-white':
+        return 1.8; // very fast
+      case 'granular-yellow':
+        return 1.5;
+      case 'metal-deposit':
+        return 2.0;
+      case 'milky':
+        return 0.8;
+      case 'heavy-brown':
+        return 1.0;
+      default:
+        return 1.25;
     }
   }
 
   // Particle size (1.0 = normal)
   double _precipParticleSize() {
     switch (_precipStyle()) {
-      case 'curdy-white': return 1.4;   // big clumps
-      case 'gel-blue': return 1.6;      // blobby
-      case 'gel-brown': return 1.8;
-      case 'gel-green': return 1.5;
-      case 'granular-gold': return 0.8; // fine crystals
-      case 'granular-white': return 0.7;
-      case 'granular-yellow': return 0.9;
-      case 'metal-deposit': return 1.2;
-      case 'milky': return 0.5;         // very fine
-      default: return 1.25;
+      case 'curdy-white':
+        return 1.4; // big clumps
+      case 'gel-blue':
+        return 1.6; // blobby
+      case 'gel-brown':
+        return 1.8;
+      case 'gel-green':
+        return 1.5;
+      case 'granular-gold':
+        return 0.8; // fine crystals
+      case 'granular-white':
+        return 0.7;
+      case 'granular-yellow':
+        return 0.9;
+      case 'metal-deposit':
+        return 1.2;
+      case 'milky':
+        return 0.5; // very fine
+      default:
+        return 1.25;
     }
   }
 
@@ -502,24 +668,36 @@ class RealisticEquipPainter extends CustomPainter {
     final density = _precipDensity();
     final settleRate = _precipSettleRate();
     final particleSize = _precipParticleSize();
-    final settleT = (progress * 2.0 * settleRate).clamp(0.0, 1.0); // faster settle
+    final settleT = (progress * 2.0 * settleRate).clamp(
+      0.0,
+      1.0,
+    ); // faster settle
     if (settleT <= 0.0) return;
-    
+
     // METAL DEPOSIT — coating on metal, no settling bed
     if (style == 'metal-deposit') {
       final rng = Random(item.id.length * 11 + 7);
       // Particles form on side/bottom (attached to metal)
-      final depositCount = (35 * (item.totalVolume / 50.0).clamp(0.5, 2.0)).toInt();
+      final depositCount = (35 * (item.totalVolume / 50.0).clamp(0.5, 2.0))
+          .toInt();
       for (int i = 0; i < depositCount; i++) {
         final px = w * 0.15 + rng.nextDouble() * w * 0.7;
         final py = h * 0.55 + rng.nextDouble() * h * 0.4;
         final r = (1.5 + rng.nextDouble() * 2.5) * particleSize;
-        canvas.drawCircle(Offset(px, py), r, Paint()..color = color.withValues(alpha: 0.85 * settleT));
-        canvas.drawCircle(Offset(px - r * 0.3, py - r * 0.3), r * 0.35, Paint()..color = Colors.white.withValues(alpha: 0.6 * settleT));
+        canvas.drawCircle(
+          Offset(px, py),
+          r,
+          Paint()..color = color.withValues(alpha: 0.85 * settleT),
+        );
+        canvas.drawCircle(
+          Offset(px - r * 0.3, py - r * 0.3),
+          r * 0.35,
+          Paint()..color = Colors.white.withValues(alpha: 0.6 * settleT),
+        );
       }
       return;
     }
-    
+
     // MILKY — clouded throughout (no distinct bed)
     if (style == 'milky') {
       final rng = Random(item.id.length * 23 + 13);
@@ -527,49 +705,70 @@ class RealisticEquipPainter extends CustomPainter {
         final px = rng.nextDouble() * w;
         final py = h * 0.25 + rng.nextDouble() * h * 0.75;
         final r = (0.8 + rng.nextDouble() * 1.8) * particleSize;
-        canvas.drawCircle(Offset(px, py), r, Paint()..color = color.withValues(alpha: 0.35 * settleT));
+        canvas.drawCircle(
+          Offset(px, py),
+          r,
+          Paint()..color = color.withValues(alpha: 0.35 * settleT),
+        );
       }
       return;
     }
-    
+
     // BED STYLES — granular, curdy, gel, heavy
     // Bed height SCALES with amount — more reactant = more precipitate
     final totalVol = item.totalVolume;
-    final amountFactor = (totalVol / 100.0).clamp(0.3, 1.5); // 50=0.5, 100=1.0, 150=1.5
+    final amountFactor = (totalVol / 100.0).clamp(
+      0.3,
+      1.5,
+    ); // 50=0.5, 100=1.0, 150=1.5
     final maxH = h * 0.45 * amountFactor; // scales with amount
     final pHeight = maxH * settleT;
     final pTop = h - pHeight;
-    
+
     // === CLOUDY TOP LAYER (turbid diffusion) ===
     final cloudH = style.contains('granular') ? 6.0 : 14.0;
     final cloudRect = Rect.fromLTWH(0, pTop - cloudH, w, cloudH * 1.8);
-    canvas.drawRect(cloudRect, Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter, end: Alignment.bottomCenter,
-        colors: [color.withValues(alpha: 0.0), color.withValues(alpha: 0.30 * settleT)]
-      ).createShader(cloudRect));
-    
-    // === MAIN BED ===    
+    canvas.drawRect(
+      cloudRect,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            color.withValues(alpha: 0.0),
+            color.withValues(alpha: 0.30 * settleT),
+          ],
+        ).createShader(cloudRect),
+    );
+
+    // === MAIN BED ===
     final bedRect = Rect.fromLTWH(0, pTop, w, pHeight);
-    canvas.drawRect(bedRect, Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter, end: Alignment.bottomCenter,
-        colors: [
-          color.withValues(alpha: 0.55 * settleT),  // stronger top
-          color.withValues(alpha: 0.85 * settleT),
-          color.withValues(alpha: 1.00 * settleT),  // full bottom
-        ], stops: const [0.0, 0.55, 1.0]).createShader(bedRect));
-    
+    canvas.drawRect(
+      bedRect,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            color.withValues(alpha: 0.55 * settleT), // stronger top
+            color.withValues(alpha: 0.85 * settleT),
+            color.withValues(alpha: 1.00 * settleT), // full bottom
+          ],
+          stops: const [0.0, 0.55, 1.0],
+        ).createShader(bedRect),
+    );
+
     // === STYLE-SPECIFIC PARTICLES ===
     final rng = Random(item.id.length * 13 + 17);
     final amountScale = (item.totalVolume / 100.0).clamp(0.4, 1.5);
-    final particleCount = (45 * density * amountScale).toInt(); // scales with amount
-    
+    final particleCount = (45 * density * amountScale)
+        .toInt(); // scales with amount
+
     for (int i = 0; i < particleCount; i++) {
       final px = w * 0.05 + rng.nextDouble() * w * 0.9;
       final py = pTop + rng.nextDouble() * pHeight * 0.85;
       final r = (1.2 + rng.nextDouble() * 2.0) * particleSize;
-      
+
       if (style.contains('curdy')) {
         // Big clumpy blobs
         final blobPath = Path()
@@ -579,37 +778,80 @@ class RealisticEquipPainter extends CustomPainter {
           ..quadraticBezierTo(px + r * 0.6, py + r * 0.8, px, py + r * 0.5)
           ..quadraticBezierTo(px - r * 0.6, py + r * 0.8, px - r * 1.2, py)
           ..close();
-        canvas.drawPath(blobPath, Paint()..color = color.withValues(alpha: 0.85));
-        canvas.drawCircle(Offset(px - r * 0.4, py - r * 0.4), r * 0.4, Paint()..color = Colors.white.withValues(alpha: 0.55));
+        canvas.drawPath(
+          blobPath,
+          Paint()..color = color.withValues(alpha: 0.85),
+        );
+        canvas.drawCircle(
+          Offset(px - r * 0.4, py - r * 0.4),
+          r * 0.4,
+          Paint()..color = Colors.white.withValues(alpha: 0.55),
+        );
       } else if (style.contains('gel')) {
         // Gelatinous semi-transparent blobs
-        canvas.drawCircle(Offset(px, py), r * 1.3, Paint()
-          ..color = color.withValues(alpha: 0.55)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.5));
-        canvas.drawCircle(Offset(px, py), r * 0.9, Paint()..color = color.withValues(alpha: 0.85));
-        canvas.drawCircle(Offset(px - r * 0.3, py - r * 0.4), r * 0.35, Paint()..color = Colors.white.withValues(alpha: 0.55));
+        canvas.drawCircle(
+          Offset(px, py),
+          r * 1.3,
+          Paint()
+            ..color = color.withValues(alpha: 0.55)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1.5),
+        );
+        canvas.drawCircle(
+          Offset(px, py),
+          r * 0.9,
+          Paint()..color = color.withValues(alpha: 0.85),
+        );
+        canvas.drawCircle(
+          Offset(px - r * 0.3, py - r * 0.4),
+          r * 0.35,
+          Paint()..color = Colors.white.withValues(alpha: 0.55),
+        );
       } else if (style.contains('granular')) {
         // Small sharp crystals
-        canvas.drawCircle(Offset(px, py), r * 0.7, Paint()..color = color.withValues(alpha: 0.92));
-        canvas.drawCircle(Offset(px - r * 0.25, py - r * 0.25), r * 0.25, Paint()..color = Colors.white.withValues(alpha: 0.7));
+        canvas.drawCircle(
+          Offset(px, py),
+          r * 0.7,
+          Paint()..color = color.withValues(alpha: 0.92),
+        );
+        canvas.drawCircle(
+          Offset(px - r * 0.25, py - r * 0.25),
+          r * 0.25,
+          Paint()..color = Colors.white.withValues(alpha: 0.7),
+        );
       } else {
-        canvas.drawCircle(Offset(px, py), r, Paint()..color = color.withValues(alpha: 0.85));
-        canvas.drawCircle(Offset(px - r * 0.3, py - r * 0.3), r * 0.4, Paint()..color = Colors.white.withValues(alpha: 0.5));
+        canvas.drawCircle(
+          Offset(px, py),
+          r,
+          Paint()..color = color.withValues(alpha: 0.85),
+        );
+        canvas.drawCircle(
+          Offset(px - r * 0.3, py - r * 0.3),
+          r * 0.4,
+          Paint()..color = Colors.white.withValues(alpha: 0.5),
+        );
       }
     }
-    
+
     // === EDGE GLOW (only for light precipitates) ===
     final isLightPpt = color.r > 0.75 && color.g > 0.75 && color.b > 0.75;
     if (isLightPpt) {
-      canvas.drawLine(Offset(0, pTop), Offset(w, pTop), Paint()
-        ..strokeWidth = 1.2
-        ..color = Colors.black.withValues(alpha: 0.75 * settleT)); // stronger
-      canvas.drawRect(bedRect, Paint()
-        ..style = PaintingStyle.stroke
-        ..strokeWidth = 0.8
-        ..color = Colors.black.withValues(alpha: 0.65 * settleT)); // stronger
+      canvas.drawLine(
+        Offset(0, pTop),
+        Offset(w, pTop),
+        Paint()
+          ..strokeWidth = 1.2
+          ..color = Colors.black.withValues(alpha: 0.75 * settleT),
+      ); // stronger
+      canvas.drawRect(
+        bedRect,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 0.8
+          ..color = Colors.black.withValues(alpha: 0.65 * settleT),
+      ); // stronger
     }
   }
+
   void _paintStir(Canvas canvas, double w, double h) {
     // Rotating stirrer rod
     final cx = w * 0.5 + sin(time * 5) * w * 0.12;
@@ -623,17 +865,21 @@ class RealisticEquipPainter extends CustomPainter {
         Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth = 0.8
-          ..color = Colors.white.withValues(alpha: 0.35 - i * 0.08));
+          ..color = Colors.white.withValues(alpha: 0.35 - i * 0.08),
+      );
     }
 
     // Glass rod
     final rodTop = Offset(cx + sin(time * 2) * w * 0.02, h * 0.05);
     final rodBot = Offset(cx + sin(time * 4) * w * 0.05, h * 0.88);
-    canvas.drawLine(rodTop, rodBot,
+    canvas.drawLine(
+      rodTop,
+      rodBot,
       Paint()
         ..color = Colors.white.withValues(alpha: 0.9)
         ..strokeWidth = 3.5
-        ..strokeCap = StrokeCap.round);
+        ..strokeCap = StrokeCap.round,
+    );
 
     // Highlight on rod
     canvas.drawLine(
@@ -642,12 +888,14 @@ class RealisticEquipPainter extends CustomPainter {
       Paint()
         ..color = Colors.white.withValues(alpha: 0.6)
         ..strokeWidth = 1
-        ..strokeCap = StrokeCap.round);
+        ..strokeCap = StrokeCap.round,
+    );
 
     // Bottom paddle
     canvas.drawOval(
       Rect.fromCenter(center: rodBot, width: 18, height: 6),
-      Paint()..color = Colors.white.withValues(alpha: 0.85));
+      Paint()..color = Colors.white.withValues(alpha: 0.85),
+    );
   }
 
   void _paintLitmusStrip(Canvas canvas, double w, double h) {
@@ -656,7 +904,7 @@ class RealisticEquipPainter extends CustomPainter {
     final fillRatio = item.fillRatio;
     final liquidTop = h * (1 - fillRatio);
     final stripTop = (liquidTop - stripH * 0.50).clamp(h * 0.05, h * 0.85);
-    // Float physics ΓÇö subtle movement like real liquid
+    // Float physics  subtle movement like real liquid
     final floatY = sin(time * 2.8) * h * 0.005;
     final floatX = sin(time * 2.2 + 0.5) * w * 0.008;
     final floatTilt = sin(time * 1.8) * 0.04;
@@ -668,24 +916,25 @@ class RealisticEquipPainter extends CustomPainter {
 
     // Drop shadow
     canvas.drawRRect(
-      RRect.fromRectAndRadius(strip.shift(const Offset(1.5, 2.5)), const Radius.circular(2)),
-      Paint()..color = Colors.black.withValues(alpha: 0.5)
+      RRect.fromRectAndRadius(
+        strip.shift(const Offset(1.5, 2.5)),
+        const Radius.circular(2),
+      ),
+      Paint()
+        ..color = Colors.black.withValues(alpha: 0.5)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5),
     );
 
-    // DRY LITMUS BASE ΓÇö purple/blue color (real litmus paper)
+    // DRY LITMUS BASE  purple/blue color (real litmus paper)
     const dryColor = Color(0xFF8E6BB0);
     canvas.drawRRect(
       RRect.fromRectAndRadius(strip, const Radius.circular(2)),
-      Paint()..shader = LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          const Color(0xFF9B7BC0),
-          dryColor,
-          const Color(0xFF7A5A9A),
-        ],
-      ).createShader(strip),
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [const Color(0xFF9B7BC0), dryColor, const Color(0xFF7A5A9A)],
+        ).createShader(strip),
     );
 
     // Paper texture
@@ -695,11 +944,13 @@ class RealisticEquipPainter extends CustomPainter {
       canvas.drawLine(
         Offset(strip.left + 1, y),
         Offset(strip.right - 1, y),
-        Paint()..color = Colors.black.withValues(alpha: 0.04)..strokeWidth = 0.3,
+        Paint()
+          ..color = Colors.black.withValues(alpha: 0.04)
+          ..strokeWidth = 0.3,
       );
     }
 
-    // COLOR DEVELOP ΓÇö from tip upward (submerged in liquid)
+    // COLOR DEVELOP  from tip upward (submerged in liquid)
     final ph = LabPhService.calculatePh(item);
     if (ph != null && item.layers.isNotEmpty) {
       final color = PhCalculator.litmusColor(ph);
@@ -708,36 +959,42 @@ class RealisticEquipPainter extends CustomPainter {
       final submergedH = colorH;
       if (submergedH > 0) {
         final developRect = Rect.fromLTWH(
-          strip.left, strip.bottom - submergedH, strip.width, submergedH);
+          strip.left,
+          strip.bottom - submergedH,
+          strip.width,
+          submergedH,
+        );
 
-        // Gradient color ΓÇö strong at tip, fade upward
+        // Gradient color  strong at tip, fade upward
         canvas.drawRect(
           developRect,
-          Paint()..shader = LinearGradient(
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-            colors: [
-              color,
-              Color.lerp(color, dryColor, 0.05)!,
-              Color.lerp(color, dryColor, 0.20)!,
-            ],
-            stops: const [0.0, 0.6, 1.0],
-          ).createShader(developRect),
+          Paint()
+            ..shader = LinearGradient(
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+              colors: [
+                color,
+                Color.lerp(color, dryColor, 0.05)!,
+                Color.lerp(color, dryColor, 0.20)!,
+              ],
+              stops: const [0.0, 0.6, 1.0],
+            ).createShader(developRect),
         );
 
         // Wet shine
         canvas.drawRect(
           developRect,
-          Paint()..shader = LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            colors: [
-              Colors.white.withValues(alpha: 0.0),
-              Colors.white.withValues(alpha: 0.3),
-              Colors.white.withValues(alpha: 0.0),
-            ],
-            stops: const [0.0, 0.4, 1.0],
-          ).createShader(developRect),
+          Paint()
+            ..shader = LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [
+                Colors.white.withValues(alpha: 0.0),
+                Colors.white.withValues(alpha: 0.3),
+                Colors.white.withValues(alpha: 0.0),
+              ],
+              stops: const [0.0, 0.4, 1.0],
+            ).createShader(developRect),
         );
 
         // Meniscus
@@ -789,9 +1046,9 @@ class RealisticEquipPainter extends CustomPainter {
     final stripH = h * 0.58;
     final fillRatio = item.fillRatio;
     final liquidTop = h * (1 - fillRatio);
-    // Strip hangs from above ΓÇö top portion out of liquid
+    // Strip hangs from above  top portion out of liquid
     final stripTop = (liquidTop - stripH * 0.50).clamp(h * 0.05, h * 0.85);
-    // Float physics ΓÇö subtle movement like real liquid
+    // Float physics  subtle movement like real liquid
     final floatY = sin(time * 2.8 + 0.3) * h * 0.005;
     final floatX = sin(time * 2.2 + 0.8) * w * 0.008;
     final floatTilt = sin(time * 1.8 + 0.2) * 0.04;
@@ -803,37 +1060,44 @@ class RealisticEquipPainter extends CustomPainter {
 
     // Drop shadow
     canvas.drawRRect(
-      RRect.fromRectAndRadius(strip.shift(const Offset(1.5, 2.5)), const Radius.circular(2)),
-      Paint()..color = Colors.black.withValues(alpha: 0.5)
+      RRect.fromRectAndRadius(
+        strip.shift(const Offset(1.5, 2.5)),
+        const Radius.circular(2),
+      ),
+      Paint()
+        ..color = Colors.black.withValues(alpha: 0.5)
         ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5),
     );
 
     // WHITE BASE (dry pH paper is always white)
     canvas.drawRRect(
       RRect.fromRectAndRadius(strip, const Radius.circular(2)),
-      Paint()..shader = LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          const Color(0xFFFFFEF8),
-          const Color(0xFFF8F8EC),
-          const Color(0xFFF0EBD8),
-        ],
-      ).createShader(strip),
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            const Color(0xFFFFFEF8),
+            const Color(0xFFF8F8EC),
+            const Color(0xFFF0EBD8),
+          ],
+        ).createShader(strip),
     );
 
-    // Paper texture ΓÇö subtle horizontal fibers
+    // Paper texture  subtle horizontal fibers
     final rng = Random(42);
     for (int i = 0; i < 20; i++) {
       final y = strip.top + rng.nextDouble() * strip.height;
       canvas.drawLine(
         Offset(strip.left + 1, y),
         Offset(strip.right - 1, y),
-        Paint()..color = Colors.black.withValues(alpha: 0.03)..strokeWidth = 0.3,
+        Paint()
+          ..color = Colors.black.withValues(alpha: 0.03)
+          ..strokeWidth = 0.3,
       );
     }
 
-    // COLOR DEVELOP ΓÇö from TIP upward (like real capillary action)
+    // COLOR DEVELOP  from TIP upward (like real capillary action)
     final ph = LabPhService.calculatePh(item);
     if (ph != null && item.layers.isNotEmpty) {
       final color = PhCalculator.colorForPh(ph);
@@ -843,39 +1107,45 @@ class RealisticEquipPainter extends CustomPainter {
       final submergedH = colorH;
       if (submergedH > 0) {
         final developRect = Rect.fromLTWH(
-          strip.left, strip.bottom - submergedH, strip.width, submergedH);
+          strip.left,
+          strip.bottom - submergedH,
+          strip.width,
+          submergedH,
+        );
 
         // Main color with gradient (strong at tip, fade upward)
         canvas.drawRect(
           developRect,
-          Paint()..shader = LinearGradient(
-            begin: Alignment.bottomCenter,
-            end: Alignment.topCenter,
-            colors: [
-              color,
-              Color.lerp(color, const Color(0xFFFAFAF5), 0.05)!,
-              Color.lerp(color, const Color(0xFFFAFAF5), 0.20)!,
-            ],
-            stops: const [0.0, 0.6, 1.0],
-          ).createShader(developRect),
+          Paint()
+            ..shader = LinearGradient(
+              begin: Alignment.bottomCenter,
+              end: Alignment.topCenter,
+              colors: [
+                color,
+                Color.lerp(color, const Color(0xFFFAFAF5), 0.05)!,
+                Color.lerp(color, const Color(0xFFFAFAF5), 0.20)!,
+              ],
+              stops: const [0.0, 0.6, 1.0],
+            ).createShader(developRect),
         );
 
         // Wet shine (submerged portion is wet & glossy)
         canvas.drawRect(
           developRect,
-          Paint()..shader = LinearGradient(
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
-            colors: [
-              Colors.white.withValues(alpha: 0.0),
-              Colors.white.withValues(alpha: 0.35),
-              Colors.white.withValues(alpha: 0.0),
-            ],
-            stops: const [0.0, 0.4, 1.0],
-          ).createShader(developRect),
+          Paint()
+            ..shader = LinearGradient(
+              begin: Alignment.centerLeft,
+              end: Alignment.centerRight,
+              colors: [
+                Colors.white.withValues(alpha: 0.0),
+                Colors.white.withValues(alpha: 0.35),
+                Colors.white.withValues(alpha: 0.0),
+              ],
+              stops: const [0.0, 0.4, 1.0],
+            ).createShader(developRect),
         );
 
-        // Meniscus line ΓÇö where paper meets liquid
+        // Meniscus line  where paper meets liquid
         canvas.drawLine(
           Offset(strip.left, liquidTop),
           Offset(strip.right, liquidTop),
@@ -913,65 +1183,107 @@ class RealisticEquipPainter extends CustomPainter {
   void _paintFrost(Canvas canvas, double w, double h) {
     canvas.drawRect(
       Rect.fromLTWH(0, h * 0.60, w, h * 0.40),
-      Paint()..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          Colors.transparent,
-          const Color(0xFFB3E5FC).withValues(alpha: 0.35),
-          const Color(0xFF81D4FA).withValues(alpha: 0.60),
-        ],
-        stops: const [0.0, 0.6, 1.0],
-      ).createShader(Rect.fromLTWH(0, h * 0.60, w, h * 0.40)));
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Colors.transparent,
+            const Color(0xFFB3E5FC).withValues(alpha: 0.35),
+            const Color(0xFF81D4FA).withValues(alpha: 0.60),
+          ],
+          stops: const [0.0, 0.6, 1.0],
+        ).createShader(Rect.fromLTWH(0, h * 0.60, w, h * 0.40)),
+    );
     final rng = Random(42);
     for (int i = 0; i < 18; i++) {
       final x = rng.nextDouble() * w;
       final y = h - rng.nextDouble() * h * 0.25;
       final r = 1.5 + rng.nextDouble() * 3.0;
-      canvas.drawCircle(Offset(x, y), r,
-        Paint()..color = Colors.white.withValues(alpha: 0.8));
-      canvas.drawCircle(Offset(x, y), r * 2.2,
-        Paint()..style = PaintingStyle.stroke..strokeWidth = 0.5
-          ..color = const Color(0xFFB3E5FC).withValues(alpha: 0.75));
+      canvas.drawCircle(
+        Offset(x, y),
+        r,
+        Paint()..color = Colors.white.withValues(alpha: 0.8),
+      );
+      canvas.drawCircle(
+        Offset(x, y),
+        r * 2.2,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 0.5
+          ..color = const Color(0xFFB3E5FC).withValues(alpha: 0.75),
+      );
     }
     for (int i = 0; i < 30; i++) {
       final x = rng.nextDouble() * w;
       final y = rng.nextDouble() * h * 0.4;
-      canvas.drawCircle(Offset(x, y), 0.5 + rng.nextDouble() * 1.3,
-        Paint()..color = Colors.white.withValues(alpha: 0.65));
+      canvas.drawCircle(
+        Offset(x, y),
+        0.5 + rng.nextDouble() * 1.3,
+        Paint()..color = Colors.white.withValues(alpha: 0.65),
+      );
     }
   }
 
   // Reaction-specific fire colors (real chemistry)
   List<Color> _fireColors() {
     final rxn = reaction;
-    if (rxn == null) return [const Color(0xFFFFEB3B), const Color(0xFFE53935), const Color(0xFF4A0000)];
+    if (rxn == null)
+      return [
+        const Color(0xFFFFEB3B),
+        const Color(0xFFE53935),
+        const Color(0xFF4A0000),
+      ];
     final name = rxn.name.toUpperCase();
     final eq = rxn.equation.toUpperCase();
     // Thermite specific: Blinding white/yellow sparks
     if (name.contains('THERMITE') || eq.contains('FE2O3')) {
-      return [const Color(0xFFFFFFFF), const Color(0xFFFFF59D), const Color(0xFFFF7043)];
+      return [
+        const Color(0xFFFFFFFF),
+        const Color(0xFFFFF59D),
+        const Color(0xFFFF7043),
+      ];
     }
     // Potassium → lilac/purple
     if (eq.contains('K ') || name.contains('POTASSIUM')) {
-      return [const Color(0xFFE1BEE7), const Color(0xFF9C27B0), const Color(0xFF4A148C)];
+      return [
+        const Color(0xFFE1BEE7),
+        const Color(0xFF9C27B0),
+        const Color(0xFF4A148C),
+      ];
     }
     // Sodium → orange-yellow (classic)
     if (eq.contains('NA ') || name.contains('SODIUM')) {
-      return [const Color(0xFFFFF176), const Color(0xFFFF6F00), const Color(0xFF8B0000)]; // sodium: orange-yellow
+      return [
+        const Color(0xFFFFF176),
+        const Color(0xFFFF6F00),
+        const Color(0xFF8B0000),
+      ]; // sodium: orange-yellow
     }
     // Magnesium → bright white-blue
     if (name.contains('MAGNESIUM') || eq.contains('MG ')) {
-      return [const Color(0xFFFFFFFF), const Color(0xFFB0E0E6), const Color(0xFF4682B4)];
+      return [
+        const Color(0xFFFFFFFF),
+        const Color(0xFFB0E0E6),
+        const Color(0xFF4682B4),
+      ];
     }
     // Calcium → pale yellow
     if (name.contains('CALCIUM') || eq.contains('CA ')) {
-      return [const Color(0xFFFFF9C4), const Color(0xFFFFEB3B), const Color(0xFFF57F17)];
+      return [
+        const Color(0xFFFFF9C4),
+        const Color(0xFFFFEB3B),
+        const Color(0xFFF57F17),
+      ];
     }
     // Default → orange-red
-    return [const Color(0xFFFFEB3B), const Color(0xFFE53935), const Color(0xFF4A0000)];
+    return [
+      const Color(0xFFFFEB3B),
+      const Color(0xFFE53935),
+      const Color(0xFF4A0000),
+    ];
   }
-  
+
   // Fire animation style — unique per reaction
   String _fireStyle() {
     final rxn = reaction;
@@ -980,7 +1292,8 @@ class RealisticEquipPainter extends CustomPainter {
     final eq = rxn.equation.toUpperCase();
     final k = rxn.equation.toLowerCase();
     // K + H2O → dancing lilac flame (metal moves on surface)
-    if (k.contains('2k + 2h2o') || (eq.contains('K ') && eq.contains('H2O'))) return 'dancing-lilac';
+    if (k.contains('2k + 2h2o') || (eq.contains('K ') && eq.contains('H2O')))
+      return 'dancing-lilac';
     // Na + H2O → dancing orange (sodium skitters)
     if (k.contains('2na + 2h2o')) return 'dancing-orange';
     // Na + HCl → white-hot explosion (instant)
@@ -998,13 +1311,20 @@ class RealisticEquipPainter extends CustomPainter {
   double _fireIntensity() {
     final style = _fireStyle();
     switch (style) {
-      case 'dancing-lilac': return 1.40;   // K more vigorous than Na
-      case 'dancing-orange': return 1.25;   // Na = baseline
-      case 'explosion-white': return 1.45;  // HCl more violent
-      case 'explosion-intense': return 1.55;// H2SO4 most violent
-      case 'glow-white': return 0.85;       // Mg = steady glow
-      case 'gentle-yellow': return 0.75;    // Ca = mild
-      default: return 1.25;
+      case 'dancing-lilac':
+        return 1.40; // K more vigorous than Na
+      case 'dancing-orange':
+        return 1.25; // Na = baseline
+      case 'explosion-white':
+        return 1.45; // HCl more violent
+      case 'explosion-intense':
+        return 1.55; // H2SO4 most violent
+      case 'glow-white':
+        return 0.85; // Mg = steady glow
+      case 'gentle-yellow':
+        return 0.75; // Ca = mild
+      default:
+        return 1.25;
     }
   }
 
@@ -1027,7 +1347,7 @@ class RealisticEquipPainter extends CustomPainter {
 
   void _paintFireBlast(Canvas canvas, double w, double h) {
     if (reaction == null || !reaction!.isViolent) return;
-    
+
     // === THERMITE SPECIFIC EFFECT (BLINDING WHITE LIGHT, NO FIRE FLAMES) ===
     if (reaction!.name.contains('Thermite') && !item.reactionComplete) {
       final progress = item.reactionProgress;
@@ -1035,16 +1355,25 @@ class RealisticEquipPainter extends CustomPainter {
       final cx = w * 0.5;
       final baseY = h * 0.90;
       final intensity = (1 - progress).clamp(0.0, 1.0);
-      
+
       // Intense White/Yellow radial glow
-      canvas.drawCircle(Offset(cx, baseY), w * 0.5 * intensity, Paint()
-        ..shader = RadialGradient(colors: [
-          Colors.white.withValues(alpha: 0.95 * intensity),
-          const Color(0xFFFFF59D).withValues(alpha: 0.7 * intensity),
-          Colors.transparent,
-        ]).createShader(Rect.fromCircle(center: Offset(cx, baseY), radius: w * 0.5))
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 25));
-        
+      canvas.drawCircle(
+        Offset(cx, baseY),
+        w * 0.5 * intensity,
+        Paint()
+          ..shader =
+              RadialGradient(
+                colors: [
+                  Colors.white.withValues(alpha: 0.95 * intensity),
+                  const Color(0xFFFFF59D).withValues(alpha: 0.7 * intensity),
+                  Colors.transparent,
+                ],
+              ).createShader(
+                Rect.fromCircle(center: Offset(cx, baseY), radius: w * 0.5),
+              )
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 25),
+      );
+
       // Explosive white/yellow sparks flying out
       for (int i = 0; i < 60; i++) {
         final seed = rng.nextDouble();
@@ -1053,20 +1382,28 @@ class RealisticEquipPainter extends CustomPainter {
         final ey = baseY - prog * h * 0.9;
         final es = 1.0 + (1 - prog) * 4.0;
         final ea = (1 - prog) * intensity;
-        
+
         // Spark core (White)
-        canvas.drawCircle(Offset(ex, ey), es, Paint()
-          ..color = Colors.white.withValues(alpha: ea)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2));
-          
+        canvas.drawCircle(
+          Offset(ex, ey),
+          es,
+          Paint()
+            ..color = Colors.white.withValues(alpha: ea)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2),
+        );
+
         // Spark glow (Yellow)
-        canvas.drawCircle(Offset(ex, ey), es * 2.5, Paint()
-          ..color = const Color(0xFFFFF59D).withValues(alpha: ea * 0.4)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5));
+        canvas.drawCircle(
+          Offset(ex, ey),
+          es * 2.5,
+          Paint()
+            ..color = const Color(0xFFFFF59D).withValues(alpha: ea * 0.4)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 5),
+        );
       }
-      
+
       // No return here; let the smoke logic run after this
-      // But we skip the rest of the fire logic by wrapping the rest in an else if needed, 
+      // But we skip the rest of the fire logic by wrapping the rest in an else if needed,
       // or since the rest is inside Phase 1 & 2, we just need to prevent _drawRealFlame from running.
     }
     // === PERSISTENT STATE (after reaction complete) ===
@@ -1084,12 +1421,19 @@ class RealisticEquipPainter extends CustomPainter {
         final by = baseY - prog * h * 0.5;
         final bs = 2 + (1 - prog) * 4;
         final ba = (1 - prog) * 0.7;
-        canvas.drawCircle(Offset(bx, by), bs, Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 1.2
-          ..color = _fireColors()[0].withValues(alpha: ba));
-        canvas.drawCircle(Offset(bx, by), bs * 0.4, Paint()
-          ..color = Colors.white.withValues(alpha: ba * 0.8));
+        canvas.drawCircle(
+          Offset(bx, by),
+          bs,
+          Paint()
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 1.2
+            ..color = _fireColors()[0].withValues(alpha: ba),
+        );
+        canvas.drawCircle(
+          Offset(bx, by),
+          bs * 0.4,
+          Paint()..color = Colors.white.withValues(alpha: ba * 0.8),
+        );
       }
 
       // === LIGHT SMOKE (thin, rising) ===
@@ -1101,13 +1445,22 @@ class RealisticEquipPainter extends CustomPainter {
         final ss = 18 + prog * 30;
         final sa = sin(prog * 3.14159) * 0.35;
         final sway = sin(time * 1.2 + seed * 6) * 8;
-        canvas.drawCircle(Offset(sx + sway, sy), ss, Paint()
-          ..shader = RadialGradient(colors: [
-            const Color(0xFF5A5A5A).withValues(alpha: sa),
-            const Color(0xFF3A3A3A).withValues(alpha: sa * 0.5),
-            Colors.transparent,
-          ]).createShader(Rect.fromCircle(center: Offset(sx + sway, sy), radius: ss))
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12));
+        canvas.drawCircle(
+          Offset(sx + sway, sy),
+          ss,
+          Paint()
+            ..shader =
+                RadialGradient(
+                  colors: [
+                    const Color(0xFF5A5A5A).withValues(alpha: sa),
+                    const Color(0xFF3A3A3A).withValues(alpha: sa * 0.5),
+                    Colors.transparent,
+                  ],
+                ).createShader(
+                  Rect.fromCircle(center: Offset(sx + sway, sy), radius: ss),
+                )
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12),
+        );
       }
 
       return;
@@ -1117,7 +1470,7 @@ class RealisticEquipPainter extends CustomPainter {
     final progress = item.reactionProgress;
     final cx = w * 0.5;
     final cy = _liquidTop(h); // liquid top level
-    
+
     // UNIQUE FIRE STYLE per reaction
     final fireStyle = _fireStyle();
     final fireIntensity = _fireIntensity();
@@ -1136,47 +1489,39 @@ class RealisticEquipPainter extends CustomPainter {
       final shockP = ((p - 0.15) / 0.35).clamp(0.0, 1.0);
       if (shockP > 0.0 && shockP < 1.0) {
         final ringR = w * 0.15 + shockP * w * 0.35;
-        canvas.drawCircle(Offset(cx, cy), ringR, Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = (3.5 * (1 - shockP)).clamp(0.5, 3.5)
-          ..color = Colors.white.withValues(alpha: 0.85 * (1 - shockP))
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3.0));
+        canvas.drawCircle(
+          Offset(cx, cy),
+          ringR,
+          Paint()
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = (3.5 * (1 - shockP)).clamp(0.5, 3.5)
+            ..color = Colors.white.withValues(alpha: 0.85 * (1 - shockP))
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3.0),
+        );
       }
       if (p < 0.15) {
         final pp = p / 0.2;
         final r = w * 0.04 + pp * w * 0.04;
-        canvas.drawCircle(Offset(flameX, cy), r * 6 * fireIntensity * burstMult, Paint()
-          ..color = _fireColors()[0].withValues(alpha: 0.5 * pp)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15));
-        canvas.drawCircle(Offset(flameX, cy), r * 2.5 * fireIntensity * burstMult, Paint()
-          ..color = _fireColors()[0].withValues(alpha: 0.9 * pp));
-        canvas.drawCircle(Offset(flameX, cy), r * 1.2 * fireIntensity * burstMult, Paint()..color = Colors.white);
+        canvas.drawCircle(
+          Offset(flameX, cy),
+          r * 6 * fireIntensity * burstMult,
+          Paint()
+            ..color = _fireColors()[0].withValues(alpha: 0.5 * pp)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15),
+        );
+        canvas.drawCircle(
+          Offset(flameX, cy),
+          r * 2.5 * fireIntensity * burstMult,
+          Paint()..color = _fireColors()[0].withValues(alpha: 0.9 * pp),
+        );
+        canvas.drawCircle(
+          Offset(flameX, cy),
+          r * 1.2 * fireIntensity * burstMult,
+          Paint()..color = Colors.white,
+        );
       } else if (p < 0.45) {
         final pp = (p - 0.15) / 0.30;
         final baseR = w * 0.08 + pp * w * 0.18;
-
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
-        // [SMOKE REMOVED]
 
         // LAYER 2: Deep red (gradient + highlight)
         for (int i = 0; i < 16; i++) {
@@ -1187,16 +1532,23 @@ class RealisticEquipPainter extends CustomPainter {
           final bx = cx + cos(ang) * dist;
           final by = cy + sin(ang) * dist * 0.9;
           final puffR = baseR * (0.42 + (seed % 1) * 0.3);
-          canvas.drawCircle(Offset(bx, by), puffR, Paint()
-            ..shader = RadialGradient(
-              center: const Alignment(-0.3, -0.4),
-              colors: [
-                _fireColors()[1].withValues(alpha: 0.95),
-                _fireColors()[2].withValues(alpha: 0.95),
-                _fireColors()[2].withValues(alpha: 0.7),
-              ],
-              stops: const [0.0, 0.5, 1.0],
-            ).createShader(Rect.fromCircle(center: Offset(bx, by), radius: puffR)));
+          canvas.drawCircle(
+            Offset(bx, by),
+            puffR,
+            Paint()
+              ..shader =
+                  RadialGradient(
+                    center: const Alignment(-0.3, -0.4),
+                    colors: [
+                      _fireColors()[1].withValues(alpha: 0.95),
+                      _fireColors()[2].withValues(alpha: 0.95),
+                      _fireColors()[2].withValues(alpha: 0.7),
+                    ],
+                    stops: const [0.0, 0.5, 1.0],
+                  ).createShader(
+                    Rect.fromCircle(center: Offset(bx, by), radius: puffR),
+                  ),
+          );
         }
 
         // LAYER 3: Bright red (with top highlight)
@@ -1208,16 +1560,23 @@ class RealisticEquipPainter extends CustomPainter {
           final bx = cx + cos(ang) * dist;
           final by = cy + sin(ang) * dist * 0.88;
           final puffR = baseR * (0.4 + (seed % 1) * 0.25);
-          canvas.drawCircle(Offset(bx, by), puffR, Paint()
-            ..shader = RadialGradient(
-              center: const Alignment(-0.4, -0.5),
-              colors: [
-                _fireColors()[1].withValues(alpha: 0.95),
-                _fireColors()[1].withValues(alpha: 0.95),
-                _fireColors()[2].withValues(alpha: 0.6),
-              ],
-              stops: const [0.0, 0.55, 1.0],
-            ).createShader(Rect.fromCircle(center: Offset(bx, by), radius: puffR)));
+          canvas.drawCircle(
+            Offset(bx, by),
+            puffR,
+            Paint()
+              ..shader =
+                  RadialGradient(
+                    center: const Alignment(-0.4, -0.5),
+                    colors: [
+                      _fireColors()[1].withValues(alpha: 0.95),
+                      _fireColors()[1].withValues(alpha: 0.95),
+                      _fireColors()[2].withValues(alpha: 0.6),
+                    ],
+                    stops: const [0.0, 0.55, 1.0],
+                  ).createShader(
+                    Rect.fromCircle(center: Offset(bx, by), radius: puffR),
+                  ),
+          );
         }
 
         // LAYER 4: Orange (gradient with glow)
@@ -1229,17 +1588,24 @@ class RealisticEquipPainter extends CustomPainter {
           final bx = cx + cos(ang) * dist;
           final by = cy + sin(ang) * dist * 0.85;
           final puffR = baseR * (0.38 + (seed % 1) * 0.22);
-          canvas.drawCircle(Offset(bx, by), puffR, Paint()
-            ..shader = RadialGradient(
-              center: const Alignment(-0.3, -0.4),
-              colors: [
-                _fireColors()[1].withValues(alpha: 0.98),
-                _fireColors()[1].withValues(alpha: 0.95),
-                _fireColors()[2].withValues(alpha: 0.7),
-              ],
-              stops: const [0.0, 0.5, 1.0],
-            ).createShader(Rect.fromCircle(center: Offset(bx, by), radius: puffR))
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1));
+          canvas.drawCircle(
+            Offset(bx, by),
+            puffR,
+            Paint()
+              ..shader =
+                  RadialGradient(
+                    center: const Alignment(-0.3, -0.4),
+                    colors: [
+                      _fireColors()[1].withValues(alpha: 0.98),
+                      _fireColors()[1].withValues(alpha: 0.95),
+                      _fireColors()[2].withValues(alpha: 0.7),
+                    ],
+                    stops: const [0.0, 0.5, 1.0],
+                  ).createShader(
+                    Rect.fromCircle(center: Offset(bx, by), radius: puffR),
+                  )
+              ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 1),
+          );
         }
 
         // LAYER 5: Yellow-orange (bright center highlight)
@@ -1251,16 +1617,23 @@ class RealisticEquipPainter extends CustomPainter {
           final bx = cx + cos(ang) * dist;
           final by = cy + sin(ang) * dist * 0.82;
           final puffR = baseR * (0.35 + (seed % 1) * 0.2);
-          canvas.drawCircle(Offset(bx, by), puffR, Paint()
-            ..shader = RadialGradient(
-              center: const Alignment(-0.3, -0.5),
-              colors: [
-                _fireColors()[0],
-                _fireColors()[1],
-                _fireColors()[1],
-              ],
-              stops: const [0.0, 0.6, 1.0],
-            ).createShader(Rect.fromCircle(center: Offset(bx, by), radius: puffR)));
+          canvas.drawCircle(
+            Offset(bx, by),
+            puffR,
+            Paint()
+              ..shader =
+                  RadialGradient(
+                    center: const Alignment(-0.3, -0.5),
+                    colors: [
+                      _fireColors()[0],
+                      _fireColors()[1],
+                      _fireColors()[1],
+                    ],
+                    stops: const [0.0, 0.6, 1.0],
+                  ).createShader(
+                    Rect.fromCircle(center: Offset(bx, by), radius: puffR),
+                  ),
+          );
         }
 
         // LAYER 6: Bright yellow (inner core puffs)
@@ -1272,29 +1645,45 @@ class RealisticEquipPainter extends CustomPainter {
           final bx = cx + cos(ang) * dist;
           final by = cy + sin(ang) * dist * 0.8;
           final puffR = baseR * (0.3 + (seed % 1) * 0.15);
-          canvas.drawCircle(Offset(bx, by), puffR, Paint()
-            ..shader = RadialGradient(
-              center: const Alignment(-0.2, -0.4),
-              colors: [
-                _fireColors()[0],
-                _fireColors()[1],
-                _fireColors()[0],
-              ],
-              stops: const [0.0, 0.5, 1.0],
-            ).createShader(Rect.fromCircle(center: Offset(bx, by), radius: puffR)));
+          canvas.drawCircle(
+            Offset(bx, by),
+            puffR,
+            Paint()
+              ..shader =
+                  RadialGradient(
+                    center: const Alignment(-0.2, -0.4),
+                    colors: [
+                      _fireColors()[0],
+                      _fireColors()[1],
+                      _fireColors()[0],
+                    ],
+                    stops: const [0.0, 0.5, 1.0],
+                  ).createShader(
+                    Rect.fromCircle(center: Offset(bx, by), radius: puffR),
+                  ),
+          );
         }
 
         // LAYER 7: White hot core (jagged + glow)
         final coreR = baseR * 0.4;
         // Outer glow
-        canvas.drawCircle(Offset(cx, cy), coreR * 1.4, Paint()
-          ..shader = RadialGradient(colors: [
-            _fireColors()[0].withValues(alpha: 0.6),
-            _fireColors()[1].withValues(alpha: 0.3),
-            Colors.transparent,
-          ], stops: const [0.0, 0.6, 1.0])
-            .createShader(Rect.fromCircle(center: Offset(cx, cy), radius: coreR * 1.4))
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6));
+        canvas.drawCircle(
+          Offset(cx, cy),
+          coreR * 1.4,
+          Paint()
+            ..shader =
+                RadialGradient(
+                  colors: [
+                    _fireColors()[0].withValues(alpha: 0.6),
+                    _fireColors()[1].withValues(alpha: 0.3),
+                    Colors.transparent,
+                  ],
+                  stops: const [0.0, 0.6, 1.0],
+                ).createShader(
+                  Rect.fromCircle(center: Offset(cx, cy), radius: coreR * 1.4),
+                )
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 6),
+        );
         // Jagged core
         final corePath = Path();
         for (int i = 0; i <= 16; i++) {
@@ -1304,19 +1693,35 @@ class RealisticEquipPainter extends CustomPainter {
           final r = coreR * (spike + jitter);
           final x = cx + cos(ang) * r;
           final y = cy + sin(ang) * r;
-          if (i == 0) { corePath.moveTo(x, y); } else { corePath.lineTo(x, y); }
+          if (i == 0) {
+            corePath.moveTo(x, y);
+          } else {
+            corePath.lineTo(x, y);
+          }
         }
         corePath.close();
-        canvas.drawPath(corePath, Paint()
-          ..shader = RadialGradient(colors: [
-            Colors.white,
-            _fireColors()[0],
-            _fireColors()[1].withValues(alpha: 0.8),
-            Colors.transparent,
-          ], stops: const [0.0, 0.4, 0.75, 1.0])
-            .createShader(Rect.fromCircle(center: Offset(cx, cy), radius: coreR))
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-        canvas.drawCircle(Offset(cx, cy), coreR * 0.5, Paint()..color = Colors.white);
+        canvas.drawPath(
+          corePath,
+          Paint()
+            ..shader =
+                RadialGradient(
+                  colors: [
+                    Colors.white,
+                    _fireColors()[0],
+                    _fireColors()[1].withValues(alpha: 0.8),
+                    Colors.transparent,
+                  ],
+                  stops: const [0.0, 0.4, 0.75, 1.0],
+                ).createShader(
+                  Rect.fromCircle(center: Offset(cx, cy), radius: coreR),
+                )
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
+        );
+        canvas.drawCircle(
+          Offset(cx, cy),
+          coreR * 0.5,
+          Paint()..color = Colors.white,
+        );
 
         // LAYER 8: Sparks with glow
         for (int i = 0; i < 45; i++) {
@@ -1327,15 +1732,28 @@ class RealisticEquipPainter extends CustomPainter {
           final sy = cy + sin(ang) * dist * 0.85;
           final ss = 1.5 + rng.nextDouble() * 3;
           final sa = (1 - pp * 0.5) * 0.95;
-          canvas.drawCircle(Offset(sx, sy), ss * 2.5, Paint()
-            ..color = _fireColors()[1].withValues(alpha: sa * 0.4)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-          canvas.drawCircle(Offset(sx, sy), ss, Paint()
-            ..shader = RadialGradient(colors: [
-              Colors.white,
-              _fireColors()[0],
-              _fireColors()[1].withValues(alpha: 0.6),
-            ]).createShader(Rect.fromCircle(center: Offset(sx, sy), radius: ss)));
+          canvas.drawCircle(
+            Offset(sx, sy),
+            ss * 2.5,
+            Paint()
+              ..color = _fireColors()[1].withValues(alpha: sa * 0.4)
+              ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
+          );
+          canvas.drawCircle(
+            Offset(sx, sy),
+            ss,
+            Paint()
+              ..shader =
+                  RadialGradient(
+                    colors: [
+                      Colors.white,
+                      _fireColors()[0],
+                      _fireColors()[1].withValues(alpha: 0.6),
+                    ],
+                  ).createShader(
+                    Rect.fromCircle(center: Offset(sx, sy), radius: ss),
+                  ),
+          );
         }
       } else {
         final pp = (p - 0.35) / 0.65;
@@ -1349,16 +1767,23 @@ class RealisticEquipPainter extends CustomPainter {
           final bx = cx + cos(ang) * dist;
           final by = cy + sin(ang) * dist * 0.9;
           final puffR = baseR * (0.5 + (seed % 1) * 0.3) * (1 + pp * 0.3);
-          canvas.drawCircle(Offset(bx, by), puffR, Paint()
-            ..shader = RadialGradient(
-              center: const Alignment(0.0, 0.3),
-              colors: [
-                const Color(0xFF4A4A4A).withValues(alpha: 0.75 * fade),
-                const Color(0xFF1A1A1A).withValues(alpha: 0.6 * fade),
-                Colors.transparent,
-              ],
-            ).createShader(Rect.fromCircle(center: Offset(bx, by), radius: puffR))
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
+          canvas.drawCircle(
+            Offset(bx, by),
+            puffR,
+            Paint()
+              ..shader =
+                  RadialGradient(
+                    center: const Alignment(0.0, 0.3),
+                    colors: [
+                      const Color(0xFF4A4A4A).withValues(alpha: 0.75 * fade),
+                      const Color(0xFF1A1A1A).withValues(alpha: 0.6 * fade),
+                      Colors.transparent,
+                    ],
+                  ).createShader(
+                    Rect.fromCircle(center: Offset(bx, by), radius: puffR),
+                  )
+              ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
+          );
         }
         // Fading red
         for (int i = 0; i < 12; i++) {
@@ -1367,11 +1792,23 @@ class RealisticEquipPainter extends CustomPainter {
           final dist = baseR * (0.7 + (seed % 1) * 0.35);
           final bx = cx + cos(ang) * dist;
           final by = cy + sin(ang) * dist * 0.88;
-          canvas.drawCircle(Offset(bx, by), baseR * 0.45, Paint()
-            ..shader = RadialGradient(colors: [
-              _fireColors()[2].withValues(alpha: 0.85 * fade),
-              _fireColors()[2].withValues(alpha: 0.6 * fade),
-            ]).createShader(Rect.fromCircle(center: Offset(bx, by), radius: baseR * 0.45)));
+          canvas.drawCircle(
+            Offset(bx, by),
+            baseR * 0.45,
+            Paint()
+              ..shader =
+                  RadialGradient(
+                    colors: [
+                      _fireColors()[2].withValues(alpha: 0.85 * fade),
+                      _fireColors()[2].withValues(alpha: 0.6 * fade),
+                    ],
+                  ).createShader(
+                    Rect.fromCircle(
+                      center: Offset(bx, by),
+                      radius: baseR * 0.45,
+                    ),
+                  ),
+          );
         }
         // Fading orange
         for (int i = 0; i < 9; i++) {
@@ -1380,11 +1817,23 @@ class RealisticEquipPainter extends CustomPainter {
           final dist = baseR * (0.45 + (seed % 1) * 0.3);
           final bx = cx + cos(ang) * dist;
           final by = cy + sin(ang) * dist * 0.85;
-          canvas.drawCircle(Offset(bx, by), baseR * 0.4, Paint()
-            ..shader = RadialGradient(colors: [
-              _fireColors()[1].withValues(alpha: 0.8 * fade),
-              _fireColors()[1].withValues(alpha: 0.6 * fade),
-            ]).createShader(Rect.fromCircle(center: Offset(bx, by), radius: baseR * 0.4)));
+          canvas.drawCircle(
+            Offset(bx, by),
+            baseR * 0.4,
+            Paint()
+              ..shader =
+                  RadialGradient(
+                    colors: [
+                      _fireColors()[1].withValues(alpha: 0.8 * fade),
+                      _fireColors()[1].withValues(alpha: 0.6 * fade),
+                    ],
+                  ).createShader(
+                    Rect.fromCircle(
+                      center: Offset(bx, by),
+                      radius: baseR * 0.4,
+                    ),
+                  ),
+          );
         }
       }
     }
@@ -1397,11 +1846,56 @@ class RealisticEquipPainter extends CustomPainter {
       final baseY = h * 0.90;
       final maxHeight = h * 0.75;
       if (!reaction!.name.contains('Thermite')) {
-        _drawRealFlame(canvas, cx, baseY, w * 0.34, maxHeight * 1.25 * intensity, intensity, rng, time);
-      _drawRealFlame(canvas, cx - w * 0.22, baseY, w * 0.20, maxHeight * 0.95 * intensity, intensity * 0.9, rng, time + 1.3);
-      _drawRealFlame(canvas, cx + w * 0.22, baseY, w * 0.20, maxHeight * 0.95 * intensity, intensity * 0.9, rng, time + 2.7);
-      _drawRealFlame(canvas, cx - w * 0.36, baseY, w * 0.14, maxHeight * 0.70 * intensity, intensity * 0.7, rng, time + 4.1);
-      _drawRealFlame(canvas, cx + w * 0.36, baseY, w * 0.14, maxHeight * 0.70 * intensity, intensity * 0.7, rng, time + 5.5);
+        _drawRealFlame(
+          canvas,
+          cx,
+          baseY,
+          w * 0.34,
+          maxHeight * 1.25 * intensity,
+          intensity,
+          rng,
+          time,
+        );
+        _drawRealFlame(
+          canvas,
+          cx - w * 0.22,
+          baseY,
+          w * 0.20,
+          maxHeight * 0.95 * intensity,
+          intensity * 0.9,
+          rng,
+          time + 1.3,
+        );
+        _drawRealFlame(
+          canvas,
+          cx + w * 0.22,
+          baseY,
+          w * 0.20,
+          maxHeight * 0.95 * intensity,
+          intensity * 0.9,
+          rng,
+          time + 2.7,
+        );
+        _drawRealFlame(
+          canvas,
+          cx - w * 0.36,
+          baseY,
+          w * 0.14,
+          maxHeight * 0.70 * intensity,
+          intensity * 0.7,
+          rng,
+          time + 4.1,
+        );
+        _drawRealFlame(
+          canvas,
+          cx + w * 0.36,
+          baseY,
+          w * 0.14,
+          maxHeight * 0.70 * intensity,
+          intensity * 0.7,
+          rng,
+          time + 5.5,
+        );
       }
       for (int i = 0; i < 25; i++) {
         final seed = rng.nextDouble();
@@ -1410,25 +1904,45 @@ class RealisticEquipPainter extends CustomPainter {
         final ey = baseY - prog * maxHeight;
         final es = 1.5 + (1 - prog) * 2.5;
         final ea = (1 - prog) * intensity;
-        canvas.drawCircle(Offset(ex, ey), es * 2.5, Paint()
-          ..color = _fireColors()[1].withValues(alpha: ea * 0.4)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-        canvas.drawCircle(Offset(ex, ey), es, Paint()
-          ..color = _fireColors()[0].withValues(alpha: ea));
+        canvas.drawCircle(
+          Offset(ex, ey),
+          es * 2.5,
+          Paint()
+            ..color = _fireColors()[1].withValues(alpha: ea * 0.4)
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
+        );
+        canvas.drawCircle(
+          Offset(ex, ey),
+          es,
+          Paint()..color = _fireColors()[0].withValues(alpha: ea),
+        );
         if (es > 2.5) {
-          canvas.drawCircle(Offset(ex, ey), es * 0.4, Paint()
-            ..color = Colors.white.withValues(alpha: ea * 0.9));
+          canvas.drawCircle(
+            Offset(ex, ey),
+            es * 0.4,
+            Paint()..color = Colors.white.withValues(alpha: ea * 0.9),
+          );
         }
       }
-      canvas.drawCircle(Offset(cx, baseY), w * 0.28, Paint()
-        ..shader = RadialGradient(colors: [
-          const Color(0xFFFF6B00).withValues(alpha: 0.8 * intensity),
-          _fireColors()[1].withValues(alpha: 0.4 * intensity),
-          Colors.transparent,
-        ]).createShader(Rect.fromCircle(center: Offset(cx, baseY), radius: w * 0.28))
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15));
+      canvas.drawCircle(
+        Offset(cx, baseY),
+        w * 0.28,
+        Paint()
+          ..shader =
+              RadialGradient(
+                colors: [
+                  const Color(0xFFFF6B00).withValues(alpha: 0.8 * intensity),
+                  _fireColors()[1].withValues(alpha: 0.4 * intensity),
+                  Colors.transparent,
+                ],
+              ).createShader(
+                Rect.fromCircle(center: Offset(cx, baseY), radius: w * 0.28),
+              )
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 15),
+      );
     }
   }
+
   void _paintFoam(Canvas canvas, double w, double h) {
     // FOAM GATE: no foam during pour — appears after pour completes
     if (item.pourAnim > 0.0) return;
@@ -1441,31 +1955,49 @@ class RealisticEquipPainter extends CustomPainter {
     final benchY = h * 1.05;
     final beakerPath = _buildPath(w, h);
     final insideHeight = surfaceY - mouthY;
-    
+
     // AUTO WIDTH — foam width matches equipment mouth
     double mouthW;
     switch (item.shape) {
-      case EquipShape.beaker: mouthW = 0.83; break;
-      case EquipShape.flask: mouthW = 0.20; break;
-      case EquipShape.testTube: mouthW = 0.60; break;
-      case EquipShape.cylinder: mouthW = 0.40; break;
-      default: mouthW = 0.60;
+      case EquipShape.beaker:
+        mouthW = 0.83;
+        break;
+      case EquipShape.flask:
+        mouthW = 0.20;
+        break;
+      case EquipShape.testTube:
+        mouthW = 0.60;
+        break;
+      case EquipShape.cylinder:
+        mouthW = 0.40;
+        break;
+      default:
+        mouthW = 0.60;
     }
     // AUTO WIDTH — top width limit
     double topWFactor;
     switch (item.shape) {
-      case EquipShape.beaker: topWFactor = 1.15; break; // Slight widen
-      case EquipShape.flask: topWFactor = 2.2; break; // Moderate expand
-      case EquipShape.testTube: topWFactor = 1.8; break;
-      case EquipShape.cylinder: topWFactor = 1.5; break;
-      default: topWFactor = 1.5;
+      case EquipShape.beaker:
+        topWFactor = 1.15;
+        break; // Slight widen
+      case EquipShape.flask:
+        topWFactor = 2.2;
+        break; // Moderate expand
+      case EquipShape.testTube:
+        topWFactor = 1.8;
+        break;
+      case EquipShape.cylinder:
+        topWFactor = 1.5;
+        break;
+      default:
+        topWFactor = 1.5;
     }
-    
+
     final darkGreen = const Color(0xFF558B2F);
     final midGreen = const Color(0xFF9CCC65);
     final lightGreen = const Color(0xFFDCEDC8);
     final foamWhite = const Color(0xFFF1F8E9);
-    
+
     // Draw a wavy blob path (single cloud shape, no circles)
     Path wavyBlob(double bx, double by, double bw, double bh, double seed) {
       final path = Path();
@@ -1492,58 +2024,86 @@ class RealisticEquipPainter extends CustomPainter {
       path.close();
       return path;
     }
-    
+
     // Draw wavy foam blob with gradient
-    void drawWavyBlob(double bx, double by, double bw, double bh, double seed, double alpha) {
+    void drawWavyBlob(
+      double bx,
+      double by,
+      double bw,
+      double bh,
+      double seed,
+      double alpha,
+    ) {
       final path = wavyBlob(bx, by, bw, bh, seed);
       // Main fill
-      canvas.drawPath(path, Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            lightGreen.withValues(alpha: alpha),
-            midGreen.withValues(alpha: alpha),
-            darkGreen.withValues(alpha: 0.85 * alpha),
-          ],
-          stops: const [0.0, 0.5, 1.0],
-        ).createShader(Rect.fromLTWH(bx - bw * 0.6, by - bh * 0.6, bw * 1.2, bh * 1.2)));
+      canvas.drawPath(
+        path,
+        Paint()
+          ..shader =
+              LinearGradient(
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+                colors: [
+                  lightGreen.withValues(alpha: alpha),
+                  midGreen.withValues(alpha: alpha),
+                  darkGreen.withValues(alpha: 0.85 * alpha),
+                ],
+                stops: const [0.0, 0.5, 1.0],
+              ).createShader(
+                Rect.fromLTWH(bx - bw * 0.6, by - bh * 0.6, bw * 1.2, bh * 1.2),
+              ),
+      );
       // Soft inner white (top highlight)
-      canvas.drawPath(path, Paint()
-        ..shader = RadialGradient(
-          center: const Alignment(0.0, -0.6),
-          radius: 1.0,
-          colors: [
-            Colors.white.withValues(alpha: 0.5 * alpha),
-            foamWhite.withValues(alpha: 0.2 * alpha),
-            Colors.transparent,
-          ],
-        ).createShader(Rect.fromLTWH(bx - bw * 0.6, by - bh * 0.6, bw * 1.2, bh * 1.2)));
+      canvas.drawPath(
+        path,
+        Paint()
+          ..shader =
+              RadialGradient(
+                center: const Alignment(0.0, -0.6),
+                radius: 1.0,
+                colors: [
+                  Colors.white.withValues(alpha: 0.5 * alpha),
+                  foamWhite.withValues(alpha: 0.2 * alpha),
+                  Colors.transparent,
+                ],
+              ).createShader(
+                Rect.fromLTWH(bx - bw * 0.6, by - bh * 0.6, bw * 1.2, bh * 1.2),
+              ),
+      );
     }
-    
+
     final boostedProgress = (progress * 2.5).clamp(0.0, 1.0); // Faster fill
-    final totalFoamHeight = h * 2.10 * boostedProgress * item.foamRamp; // Smooth rise
+    final totalFoamHeight =
+        h * 2.10 * boostedProgress * item.foamRamp; // Smooth rise
     final insideFoamH = totalFoamHeight.clamp(0.0, insideHeight);
-    final overflowH = (totalFoamHeight - insideHeight * 0.75).clamp(0.0, h * 0.85);
-    
+    final overflowH = (totalFoamHeight - insideHeight * 0.75).clamp(
+      0.0,
+      h * 0.85,
+    );
+
     // ============ INSIDE FOAM (clipped, wavy blobs stacked) ============
     canvas.save();
     canvas.clipPath(beakerPath);
-    
+
     if (insideFoamH > 3) {
-      final layers = (insideFoamH / (h * 0.018)).round().clamp(12, 110); // Fuller rows
+      final layers = (insideFoamH / (h * 0.018)).round().clamp(
+        12,
+        110,
+      ); // Fuller rows
       for (int r = 0; r < layers; r++) {
         final rowP = r / (layers - 1).toDouble().clamp(1.0, 100.0);
         final rowY = surfaceY - rowP * insideFoamH;
-        
+
         double widthFactor = 1.0;
-        if (rowP > 0.90) widthFactor = 1.0 - (rowP - 0.90) * 2.0; // Minimal narrowing
+        if (rowP > 0.90)
+          widthFactor = 1.0 - (rowP - 0.90) * 2.0; // Minimal narrowing
         widthFactor = widthFactor.clamp(0.4, 1.0);
-        
+
         // Equipment profile at this height — flask: body wide, neck narrow
         double localW;
         if (item.shape == EquipShape.flask && rowP < 0.90) {
-          if (rowP < 0.35) { // Body stays wide longer
+          if (rowP < 0.35) {
+            // Body stays wide longer
             localW = 0.84; // Flask body
           } else {
             final t = (rowP - 0.35) / 0.55; // Wider transition
@@ -1553,11 +2113,22 @@ class RealisticEquipPainter extends CustomPainter {
         } else {
           localW = mouthW;
         }
-        final blobW = w * localW * widthFactor * (0.35 + 0.65 * item.foamRamp); // Bubble grow
+        final blobW =
+            w *
+            localW *
+            widthFactor *
+            (0.35 + 0.65 * item.foamRamp); // Bubble grow
         final blobH = h * 0.24; // Balanced
         // Wobble animation
         final wobbleY = sin(t * 1.5 + r * 0.5) * h * 0.005;
-        drawWavyBlob(cx, rowY + wobbleY, blobW, blobH, (100 + r).toDouble(), 0.95);
+        drawWavyBlob(
+          cx,
+          rowY + wobbleY,
+          blobW,
+          blobH,
+          (100 + r).toDouble(),
+          0.95,
+        );
       }
       // Rising bubbles REMOVED (were appearing outside flask)
       // for (int i = 0; i < 6; i++) {
@@ -1572,30 +2143,45 @@ class RealisticEquipPainter extends CustomPainter {
       // }
     }
     canvas.restore();
-    
+
     // ============ OVERFLOW (wavy column + mushroom cloud) ============
     if (overflowH > 5) {
       final overflowTopY = mouthY - overflowH;
-      final layers = (overflowH / (h * 0.016)).round().clamp(12, 90); // Smoother rows
-      
+      final layers = (overflowH / (h * 0.016)).round().clamp(
+        12,
+        90,
+      ); // Smoother rows
+
       for (int r = 0; r < layers; r++) {
         final rowP = r / (layers - 1).toDouble().clamp(1.0, 100.0);
         final rowY = mouthY - rowP * overflowH;
-        
+
         double widthFactor;
         // CONTINUOUS WIDTH — 0.85 (minor) → 1.25 (wider)
         // HOLD neck width first 25%, then smoothstep expand
         final p = rowP < 0.40 ? 0.0 : (rowP - 0.40) / 0.60; // Longer neck hold
         final ss = p * p * (3 - 2 * p); // smoothstep (no jump)
         widthFactor = 1.0 + ss * (topWFactor - 1.0);
-        widthFactor = widthFactor.clamp(1.0, topWFactor).toDouble(); // Equipment-specific
-        
-        final blobW = w * mouthW * widthFactor * (0.35 + 0.65 * item.foamRamp); // Bubble grow
+        widthFactor = widthFactor
+            .clamp(1.0, topWFactor)
+            .toDouble(); // Equipment-specific
+
+        final blobW =
+            w *
+            mouthW *
+            widthFactor *
+            (0.35 + 0.65 * item.foamRamp); // Bubble grow
         final blobH = h * 0.20; // FIXED — no jump as width grows
         final wobbleY = sin(t * 1.2 + r * 0.4) * h * 0.008;
-        drawWavyBlob(cx, rowY + wobbleY, blobW, blobH, (500 + r).toDouble(), 0.96);
+        drawWavyBlob(
+          cx,
+          rowY + wobbleY,
+          blobW,
+          blobH,
+          (500 + r).toDouble(),
+          0.96,
+        );
       }
-      
     }
     // ============ DRIPS ============
     if (overflowH > h * 0.05) {
@@ -1604,7 +2190,7 @@ class RealisticEquipPainter extends CustomPainter {
       final dripHalfW = w * mouthW * 0.5 + w * 0.02;
       final leftEdgeX = cx - dripHalfW;
       final rightEdgeX = cx + dripHalfW;
-      
+
       // Flask: drops slide along outer contour | Beaker: vertical
       double dripX(double y, double sgn) {
         if (item.shape != EquipShape.flask) {
@@ -1623,7 +2209,7 @@ class RealisticEquipPainter extends CustomPainter {
         }
         return cx + sgn * halfW;
       }
-      
+
       for (int i = 0; i < 8; i++) {
         final side = (i < 4) ? -1.0 : 1.0;
         final edgeX = (i < 4) ? leftEdgeX : rightEdgeX;
@@ -1631,7 +2217,7 @@ class RealisticEquipPainter extends CustomPainter {
         final dripProg = ((t * 0.4 + staggerSeed) % 1.0);
         final dripY = mouthY + dripProg * (benchY - mouthY - h * 0.08);
         final dropSize = (5 + sin(dripProg * 3.14159) * 3) * dripIntensity;
-        
+
         // Trail wavy blobs
         for (int trail = 1; trail <= 3; trail++) {
           final trailProg = dripProg - trail * 0.09;
@@ -1639,20 +2225,34 @@ class RealisticEquipPainter extends CustomPainter {
             final trailY = mouthY + trailProg * (benchY - mouthY - h * 0.08);
             final trailR = dropSize * (0.8 - trail * 0.18);
             if (trailR > 2) {
-              drawWavyBlob(dripX(trailY, side), trailY, trailR * 2, trailR * 1.6, (i * 900 + trail).toDouble(), dripIntensity * (0.6 - trail * 0.12));
+              drawWavyBlob(
+                dripX(trailY, side),
+                trailY,
+                trailR * 2,
+                trailR * 1.6,
+                (i * 900 + trail).toDouble(),
+                dripIntensity * (0.6 - trail * 0.12),
+              );
             }
           }
         }
-        
+
         if (dropSize > 2) {
           canvas.save();
           canvas.translate(dripX(dripY, side), dripY);
           canvas.scale(1.0, 1.0 + dripProg * 0.6);
-          drawWavyBlob(0, 0, dropSize * 2.2, dropSize * 1.8, (i * 100).toDouble(), dripIntensity);
+          drawWavyBlob(
+            0,
+            0,
+            dropSize * 2.2,
+            dropSize * 1.8,
+            (i * 100).toDouble(),
+            dripIntensity,
+          );
           canvas.restore();
         }
       }
-      
+
       // Foam pile at base
       for (int i = 0; i < 8; i++) {
         final brng = Random(i * 9973 + 41);
@@ -1660,19 +2260,29 @@ class RealisticEquipPainter extends CustomPainter {
         final baseX = (side < 0) ? w * 0.08 : w * 0.92;
         final pileX = baseX + (brng.nextDouble() - 0.5) * w * 0.08;
         final pileY = benchY - h * 0.02 - brng.nextDouble() * h * 0.04;
-        final pileR = w * (0.06 + brng.nextDouble() * 0.05) * (overflowH / (h * 0.5)).clamp(0.0, 1.0);
+        final pileR =
+            w *
+            (0.06 + brng.nextDouble() * 0.05) *
+            (overflowH / (h * 0.5)).clamp(0.0, 1.0);
         if (pileR > 2) {
-          drawWavyBlob(pileX, pileY, pileR * 2.5, pileR * 1.8, (i * 200).toDouble(), 0.92);
+          drawWavyBlob(
+            pileX,
+            pileY,
+            pileR * 2.5,
+            pileR * 1.8,
+            (i * 200).toDouble(),
+            0.92,
+          );
         }
       }
     }
-    
+
     // ============ BENCH PUDDLE ============
     if (overflowH > h * 0.05) {
       final puddleP = ((overflowH - h * 0.05) / (h * 0.45)).clamp(0.0, 1.0);
       final leftEdge = w * 0.05;
       final rightEdge = w * 0.95;
-      
+
       for (int i = 0; i < 12; i++) {
         final brng = Random(i * 7919 + 13);
         final relPos = brng.nextDouble();
@@ -1688,22 +2298,16 @@ class RealisticEquipPainter extends CustomPainter {
     }
   }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  void _drawRealFlame(Canvas canvas, double baseX, double baseY, double baseW, double height, double intensity, Random rng, double t) {
+  void _drawRealFlame(
+    Canvas canvas,
+    double baseX,
+    double baseY,
+    double baseW,
+    double height,
+    double intensity,
+    Random rng,
+    double t,
+  ) {
     if (intensity <= 0.01 || height <= 1) return;
     for (int layer = 0; layer < 4; layer++) {
       final layerH = height * (1 - layer * 0.18);
@@ -1712,10 +2316,10 @@ class RealisticEquipPainter extends CustomPainter {
       final color = layer == 0
           ? const Color(0xFFD32F2F)
           : layer == 1
-              ? const Color(0xFFFF6B00)
-              : layer == 2
-                  ? _fireColors()[0]
-                  : Colors.white;
+          ? const Color(0xFFFF6B00)
+          : layer == 2
+          ? _fireColors()[0]
+          : Colors.white;
       final wobble1 = sin(t * 5 + layer * 1.3) * baseW * 0.4;
       final wobble2 = cos(t * 6.5 + layer * 2.1) * baseW * 0.25;
       final path = Path();
@@ -1739,17 +2343,28 @@ class RealisticEquipPainter extends CustomPainter {
         baseY,
       );
       path.close();
-      canvas.drawPath(path, Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.bottomCenter,
-          end: Alignment.topCenter,
-          colors: [
-            color.withValues(alpha: alpha),
-            color.withValues(alpha: alpha * 0.5),
-            color.withValues(alpha: 0),
-          ],
-        ).createShader(Rect.fromLTWH(baseX - layerW, baseY - layerH, layerW * 2, layerH))
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5));
+      canvas.drawPath(
+        path,
+        Paint()
+          ..shader =
+              LinearGradient(
+                begin: Alignment.bottomCenter,
+                end: Alignment.topCenter,
+                colors: [
+                  color.withValues(alpha: alpha),
+                  color.withValues(alpha: alpha * 0.5),
+                  color.withValues(alpha: 0),
+                ],
+              ).createShader(
+                Rect.fromLTWH(
+                  baseX - layerW,
+                  baseY - layerH,
+                  layerW * 2,
+                  layerH,
+                ),
+              )
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 2.5),
+      );
     }
   }
 
@@ -1764,11 +2379,22 @@ class RealisticEquipPainter extends CustomPainter {
       final by = h - progress * h * 1.2;
       if (by > top + 5) continue;
       final r = 2 + rng.nextDouble() * 3.5;
-      canvas.drawCircle(Offset(bx, by), r,
-        Paint()..color = _gasColor(reaction!.gasEvolution).withValues(alpha: 0.7 * (1 - progress)));
-      canvas.drawCircle(Offset(bx, by), r,
-        Paint()..style = PaintingStyle.stroke..strokeWidth = 0.8
-          ..color = _gasColor(reaction!.gasEvolution).withValues(alpha: 0.95 * (1 - progress)));
+      canvas.drawCircle(
+        Offset(bx, by),
+        r,
+        Paint()
+          ..color = _gasColor(reaction!.gasEvolution)
+              .withValues(alpha: 0.7 * (1 - progress)),
+      );
+      canvas.drawCircle(
+        Offset(bx, by),
+        r,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 0.8
+          ..color = _gasColor(reaction!.gasEvolution)
+              .withValues(alpha: 0.95 * (1 - progress)),
+      );
     }
   }
 
@@ -1780,12 +2406,17 @@ class RealisticEquipPainter extends CustomPainter {
       final progress = (time * 0.35 + rng.nextDouble()) % 1.0;
       final by = -20 - progress * h * 0.6;
       final r = 6 + progress * 20;
-      canvas.drawCircle(Offset(bx, by), r,
+      canvas.drawCircle(
+        Offset(bx, by),
+        r,
         Paint()
-          ..color = _gasColor(reaction?.gasEvolution).withValues(alpha: (1 - progress) * 0.45)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
+          ..color = _gasColor(reaction?.gasEvolution)
+              .withValues(alpha: (1 - progress) * 0.45)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
+      );
     }
   }
+
   void _paintHeatingEffect(Canvas canvas, double w, double h) {
     final he = item.activeHeatingEffect;
     if (he == null) return;
@@ -1799,11 +2430,24 @@ class RealisticEquipPainter extends CustomPainter {
         final progress = (time * speed + rng.nextDouble()) % 1.0;
         final by = h - progress * (h - top);
         final r = 2 + rng.nextDouble() * 3.5;
-        canvas.drawCircle(Offset(bx, by), r,
-          Paint()..color = Colors.white.withValues(alpha: 0.55 * (1 - progress * 0.5)));
-        canvas.drawCircle(Offset(bx, by), r,
-          Paint()..style = PaintingStyle.stroke..strokeWidth = 0.7
-            ..color = Colors.white.withValues(alpha: 0.85 * (1 - progress * 0.5)));
+        canvas.drawCircle(
+          Offset(bx, by),
+          r,
+          Paint()
+            ..color = Colors.white.withValues(
+              alpha: 0.55 * (1 - progress * 0.5),
+            ),
+        );
+        canvas.drawCircle(
+          Offset(bx, by),
+          r,
+          Paint()
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 0.7
+            ..color = Colors.white.withValues(
+              alpha: 0.85 * (1 - progress * 0.5),
+            ),
+        );
       }
     }
 
@@ -1814,13 +2458,17 @@ class RealisticEquipPainter extends CustomPainter {
         final progress = (time * 0.4 + rng.nextDouble()) % 1.0;
         final by = -10 - progress * h * 0.8;
         final r = 5 + progress * 22;
-        canvas.drawCircle(Offset(bx, by), r,
+        canvas.drawCircle(
+          Offset(bx, by),
+          r,
           Paint()
             ..color = smokeCol.withValues(alpha: (1 - progress) * 0.5)
-            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8));
+            ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 8),
+        );
       }
     }
   }
+
   void _paintThermometer(Canvas canvas, double w, double h) {
     final tx = w * 0.98;
     final ty = h * 0.30;
@@ -1830,39 +2478,51 @@ class RealisticEquipPainter extends CustomPainter {
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(tx, ty, tw, th),
-        const Radius.circular(5)),
-      Paint()..color = Colors.white.withValues(alpha: 0.95));
+        const Radius.circular(5),
+      ),
+      Paint()..color = Colors.white.withValues(alpha: 0.95),
+    );
 
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(tx, ty, tw, th),
-        const Radius.circular(5)),
+        const Radius.circular(5),
+      ),
       Paint()
         ..color = const Color(0xFF37474F)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1.2);
+        ..strokeWidth = 1.2,
+    );
 
     final level = ((item.temperature - 0) / 1000).clamp(0.05, 1.0);
     final mercuryH = th * 0.78 * level;
     final mercuryColor = item.temperature >= 60
         ? _fireColors()[2]
         : item.temperature <= 10
-            ? const Color(0xFF1E88E5)
-            : const Color(0xFFB85450);
+        ? const Color(0xFF1E88E5)
+        : const Color(0xFFB85450);
 
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(tx + 2, ty + th - mercuryH - 1, tw - 4, mercuryH),
-        const Radius.circular(2)),
-      Paint()..color = mercuryColor);
+        const Radius.circular(2),
+      ),
+      Paint()..color = mercuryColor,
+    );
 
-    canvas.drawCircle(Offset(tx + tw / 2, ty + th + 6), 7,
-      Paint()..color = mercuryColor);
-    canvas.drawCircle(Offset(tx + tw / 2, ty + th + 6), 7,
+    canvas.drawCircle(
+      Offset(tx + tw / 2, ty + th + 6),
+      7,
+      Paint()..color = mercuryColor,
+    );
+    canvas.drawCircle(
+      Offset(tx + tw / 2, ty + th + 6),
+      7,
       Paint()
         ..color = const Color(0xFF37474F)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1);
+        ..strokeWidth = 1,
+    );
 
     for (int i = 0; i < 6; i++) {
       final y = ty + th * 0.1 + (th * 0.78 * i / 5);
@@ -1872,15 +2532,20 @@ class RealisticEquipPainter extends CustomPainter {
         Offset(tx, y),
         Paint()
           ..color = const Color(0xFF37474F).withValues(alpha: 0.8)
-          ..strokeWidth = isMajor ? 1.2 : 0.7);
+          ..strokeWidth = isMajor ? 1.2 : 0.7,
+      );
     }
 
     final tempTp = TextPainter(
       text: TextSpan(
         text: '${item.temperature.toInt()}°C',
         style: const TextStyle(
-          fontSize: 10, color: Colors.white,
-          fontWeight: FontWeight.w800, letterSpacing: 0.3)),
+          fontSize: 10,
+          color: Colors.white,
+          fontWeight: FontWeight.w800,
+          letterSpacing: 0.3,
+        ),
+      ),
       textDirection: TextDirection.ltr,
     )..layout();
     final pillW = tempTp.width + 8;
@@ -1890,12 +2555,15 @@ class RealisticEquipPainter extends CustomPainter {
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(pillX, pillY, pillW, pillH),
-        const Radius.circular(4)),
-      Paint()..color = item.temperature >= 60
-          ? _fireColors()[2]
-          : item.temperature <= 10
-              ? const Color(0xFF1E88E5)
-              : const Color(0xFF37474F));
+        const Radius.circular(4),
+      ),
+      Paint()
+        ..color = item.temperature >= 60
+            ? _fireColors()[2]
+            : item.temperature <= 10
+            ? const Color(0xFF1E88E5)
+            : const Color(0xFF37474F),
+    );
     tempTp.paint(canvas, Offset(pillX + 4, pillY + 2));
   }
 
@@ -1903,39 +2571,53 @@ class RealisticEquipPainter extends CustomPainter {
     final dx = w * 0.10;
     final dy = h * 0.20;
 
-    canvas.drawCircle(Offset(dx, dy), 11,
-      Paint()..color = const Color(0xFF6B7280));
-    canvas.drawCircle(Offset(dx, dy), 11,
+    canvas.drawCircle(
+      Offset(dx, dy),
+      11,
+      Paint()..color = const Color(0xFF6B7280),
+    );
+    canvas.drawCircle(
+      Offset(dx, dy),
+      11,
       Paint()
         ..color = const Color(0xFF37474F)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 1);
+        ..strokeWidth = 1,
+    );
 
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(dx - 4, dy + 11, 8, h * 0.28),
-        const Radius.circular(2)),
-      Paint()..color = Colors.white.withValues(alpha: 0.9));
+        const Radius.circular(2),
+      ),
+      Paint()..color = Colors.white.withValues(alpha: 0.9),
+    );
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(dx - 4, dy + 11, 8, h * 0.28),
-        const Radius.circular(2)),
+        const Radius.circular(2),
+      ),
       Paint()
         ..color = const Color(0xFF37474F)
         ..style = PaintingStyle.stroke
-        ..strokeWidth = 0.8);
+        ..strokeWidth = 0.8,
+    );
 
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromLTWH(dx - 2, dy + 12, 4, h * 0.14),
-        const Radius.circular(1)),
-      Paint()..color = const Color(0xFF8B7BA8).withValues(alpha: 0.8));
+        const Radius.circular(1),
+      ),
+      Paint()..color = const Color(0xFF8B7BA8).withValues(alpha: 0.8),
+    );
 
     final dropP = (time * 0.7) % 1.0;
     final dropY = dy + h * 0.30 + dropP * h * 0.25;
-    canvas.drawCircle(Offset(dx, dropY),
+    canvas.drawCircle(
+      Offset(dx, dropY),
       2.5 - dropP * 1.5,
-      Paint()..color = const Color(0xFF8B7BA8).withValues(alpha: 1 - dropP));
+      Paint()..color = const Color(0xFF8B7BA8).withValues(alpha: 1 - dropP),
+    );
   }
 
   void _paintPour(Canvas canvas, double w, double h) {
@@ -1946,9 +2628,10 @@ class RealisticEquipPainter extends CustomPainter {
     double bottleX, bottleY, tilt;
     // Bottle floats ABOVE equipment — stream visible from mouth to surface
     const bottleAbove = 55.0; // Bottle sits ~55px above equipment mouth
-    final pourTargetX = cx - 18.5; // Bottle shifted left so MOUTH lands at center
+    final pourTargetX =
+        cx - 18.5; // Bottle shifted left so MOUTH lands at center
     final pourTargetY = -bottleAbove;
-    
+
     if (p > 0.85) {
       final t = (1.0 - p) / 0.15;
       bottleX = pourTargetX + 50 * (1 - t); // Fly-in from further right
@@ -1964,7 +2647,7 @@ class RealisticEquipPainter extends CustomPainter {
       bottleY = pourTargetY - 20 * (1 - t);
       tilt = 1.0 * t;
     }
-    
+
     final wobble = (p > 0.20 && p < 0.85) ? sin(time * 6) * 0.028 : 0.0;
     final aTilt = tilt + wobble;
 
@@ -1974,7 +2657,8 @@ class RealisticEquipPainter extends CustomPainter {
 
     final surfaceY = _liquidTop(h);
     final col = item.pourColor.a == 0
-        ? const Color(0xFF9CB9D0) : item.pourColor;
+        ? const Color(0xFF9CB9D0)
+        : item.pourColor;
     final sa = (p > 0.85 ? (1.0 - p) / 0.15 : (p < 0.20 ? p / 0.20 : 1.0))
         .clamp(0.0, 1.0);
 
@@ -1983,27 +2667,40 @@ class RealisticEquipPainter extends CustomPainter {
         final dy = surfaceY - mouthY; // Full stream to liquid surface
         final streamPath = Path()..moveTo(mouthX, mouthY);
         for (double t = 0.0; t <= 1.0; t += 0.04) {
-          final px = mouthX + t * 2 + sin(t * 6 + time * 7) * 1.0; // Straighter — stays in tube
+          final px =
+              mouthX +
+              t * 2 +
+              sin(t * 6 + time * 7) * 1.0; // Straighter — stays in tube
           final py = mouthY + t * t * dy;
           streamPath.lineTo(px, py);
         }
-        canvas.drawPath(streamPath, Paint()
-          ..color = col.withValues(alpha: 0.45 * sa)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 7
-          ..strokeCap = StrokeCap.round);
-        canvas.drawPath(streamPath, Paint()
-          ..color = col.withValues(alpha: 0.95 * sa)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 3
-          ..strokeCap = StrokeCap.round);
-        canvas.drawPath(streamPath, Paint()
-          ..color = Colors.white.withValues(alpha: 0.4 * sa)
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 0.9
-          ..strokeCap = StrokeCap.round);
+        canvas.drawPath(
+          streamPath,
+          Paint()
+            ..color = col.withValues(alpha: 0.45 * sa)
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 7
+            ..strokeCap = StrokeCap.round,
+        );
+        canvas.drawPath(
+          streamPath,
+          Paint()
+            ..color = col.withValues(alpha: 0.95 * sa)
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 3
+            ..strokeCap = StrokeCap.round,
+        );
+        canvas.drawPath(
+          streamPath,
+          Paint()
+            ..color = Colors.white.withValues(alpha: 0.4 * sa)
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 0.9
+            ..strokeCap = StrokeCap.round,
+        );
 
-        final impactX = mouthX + 2 + sin(6 + time * 7) * 1.0; // Aligned with stream
+        final impactX =
+            mouthX + 2 + sin(6 + time * 7) * 1.0; // Aligned with stream
 
         final rng = Random(7);
         for (int i = 0; i < 12; i++) {
@@ -2013,11 +2710,13 @@ class RealisticEquipPainter extends CustomPainter {
           canvas.drawCircle(
             Offset(impactX + spread, surfaceY - rise),
             1.4 + s * 2.5,
-            Paint()..color = col.withValues(alpha: 0.85 * sa));
+            Paint()..color = col.withValues(alpha: 0.85 * sa),
+          );
           canvas.drawCircle(
             Offset(impactX + spread * 0.9, surfaceY - rise * 0.55),
             0.7 + s * 1.2,
-            Paint()..color = col.withValues(alpha: 0.4 * sa));
+            Paint()..color = col.withValues(alpha: 0.4 * sa),
+          );
         }
 
         for (int r = 0; r < 3; r++) {
@@ -2026,11 +2725,13 @@ class RealisticEquipPainter extends CustomPainter {
             Rect.fromCenter(
               center: Offset(impactX, surfaceY),
               width: 12 + rp * 70,
-              height: 4 + rp * 22),
+              height: 4 + rp * 22,
+            ),
             Paint()
               ..style = PaintingStyle.stroke
               ..strokeWidth = 2.2 * (1 - rp)
-              ..color = Colors.white.withValues(alpha: (1 - rp) * 0.7 * sa));
+              ..color = Colors.white.withValues(alpha: (1 - rp) * 0.7 * sa),
+          );
         }
 
         for (int i = 0; i < 10; i++) {
@@ -2040,7 +2741,8 @@ class RealisticEquipPainter extends CustomPainter {
           canvas.drawCircle(
             Offset(fx, fy),
             1.3 + s * 2.2,
-            Paint()..color = Colors.white.withValues(alpha: 0.6 * sa));
+            Paint()..color = Colors.white.withValues(alpha: 0.6 * sa),
+          );
         }
       } else {
         final rng = Random(11);
@@ -2051,19 +2753,26 @@ class RealisticEquipPainter extends CustomPainter {
           final py = mouthY + (0.12 * t + 0.88 * t * t) * totalFall;
           final px = mouthX + (s - 0.5) * 18 + t * t * 8;
           final rad = 1.0 + rng.nextDouble() * 1.4 + t * 0.7;
-          canvas.drawCircle(Offset(px, py), rad,
-            Paint()..color = col.withValues(alpha: 0.92 * sa));
           canvas.drawCircle(
-            Offset(px - rad * 0.3, py - rad * 0.3), rad * 0.35,
-            Paint()..color = Colors.white.withValues(alpha: 0.6 * sa));
+            Offset(px, py),
+            rad,
+            Paint()..color = col.withValues(alpha: 0.92 * sa),
+          );
+          canvas.drawCircle(
+            Offset(px - rad * 0.3, py - rad * 0.3),
+            rad * 0.35,
+            Paint()..color = Colors.white.withValues(alpha: 0.6 * sa),
+          );
         }
         final prng = Random(21);
         for (int i = 0; i < 8; i++) {
           final px = mouthX + (prng.nextDouble() - 0.5) * 24;
           final py = surfaceY - prng.nextDouble() * 6;
-          canvas.drawCircle(Offset(px, py),
+          canvas.drawCircle(
+            Offset(px, py),
             1.2 + prng.nextDouble() * 1.4,
-            Paint()..color = col.withValues(alpha: 0.9 * sa));
+            Paint()..color = col.withValues(alpha: 0.9 * sa),
+          );
         }
       }
     }
@@ -2074,8 +2783,10 @@ class RealisticEquipPainter extends CustomPainter {
     canvas.drawRRect(
       RRect.fromRectAndRadius(
         Rect.fromCenter(center: Offset.zero, width: 24, height: 38),
-        const Radius.circular(3)),
-      Paint()..color = Colors.black.withValues(alpha: 0.28));
+        const Radius.circular(3),
+      ),
+      Paint()..color = Colors.black.withValues(alpha: 0.28),
+    );
     canvas.restore();
 
     canvas.save();
@@ -2086,95 +2797,149 @@ class RealisticEquipPainter extends CustomPainter {
     const bh = 38.0;
     final bodyRect = RRect.fromRectAndRadius(
       Rect.fromCenter(center: Offset.zero, width: bw, height: bh),
-      const Radius.circular(3));
+      const Radius.circular(3),
+    );
 
-    canvas.drawRRect(bodyRect, Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          col.withValues(alpha: 0.55),
-          col.withValues(alpha: 0.9),
-          col.withValues(alpha: 0.75),
-        ],
-        stops: const [0.0, 0.6, 1.0],
-      ).createShader(bodyRect.outerRect));
+    canvas.drawRRect(
+      bodyRect,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            col.withValues(alpha: 0.55),
+            col.withValues(alpha: 0.9),
+            col.withValues(alpha: 0.75),
+          ],
+          stops: const [0.0, 0.6, 1.0],
+        ).createShader(bodyRect.outerRect),
+    );
 
     canvas.save();
     canvas.clipRRect(bodyRect);
     canvas.drawRect(
       Rect.fromLTWH(-bw * 0.7, -bh * 0.05, bw * 1.4, bh * 0.8),
-      Paint()..color = col.withValues(alpha: 0.95));
+      Paint()..color = col.withValues(alpha: 0.95),
+    );
     canvas.restore();
 
     canvas.drawRect(
       Rect.fromLTWH(-bw * 0.42, -bh * 0.42, bw * 0.1, bh * 0.78),
-      Paint()..color = Colors.white.withValues(alpha: 0.55));
+      Paint()..color = Colors.white.withValues(alpha: 0.55),
+    );
     canvas.drawRect(
       Rect.fromLTWH(-bw * 0.40, -bh * 0.42, bw * 0.04, bh * 0.78),
-      Paint()..color = Colors.white.withValues(alpha: 0.9));
+      Paint()..color = Colors.white.withValues(alpha: 0.9),
+    );
 
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        Rect.fromCenter(center: Offset.zero, width: bw * 0.8, height: bh * 0.35),
-        const Radius.circular(1.5)),
-      Paint()..color = Colors.white.withValues(alpha: 0.9));
+        Rect.fromCenter(
+          center: Offset.zero,
+          width: bw * 0.8,
+          height: bh * 0.35,
+        ),
+        const Radius.circular(1.5),
+      ),
+      Paint()..color = Colors.white.withValues(alpha: 0.9),
+    );
     canvas.drawRect(
-      Rect.fromCenter(center: const Offset(0, -2.5), width: bw * 0.58, height: 1.2),
-      Paint()..color = col.withValues(alpha: 0.75));
+      Rect.fromCenter(
+        center: const Offset(0, -2.5),
+        width: bw * 0.58,
+        height: 1.2,
+      ),
+      Paint()..color = col.withValues(alpha: 0.75),
+    );
     canvas.drawRect(
-      Rect.fromCenter(center: const Offset(0, 2.5), width: bw * 0.48, height: 1.2),
-      Paint()..color = col.withValues(alpha: 0.55));
+      Rect.fromCenter(
+        center: const Offset(0, 2.5),
+        width: bw * 0.48,
+        height: 1.2,
+      ),
+      Paint()..color = col.withValues(alpha: 0.55),
+    );
 
     canvas.drawRect(
-      Rect.fromCenter(center: const Offset(0, -bh * 0.62),
-        width: bw * 0.32, height: bh * 0.26),
-      Paint()..color = col.withValues(alpha: 0.75));
+      Rect.fromCenter(
+        center: const Offset(0, -bh * 0.62),
+        width: bw * 0.32,
+        height: bh * 0.26,
+      ),
+      Paint()..color = col.withValues(alpha: 0.75),
+    );
     canvas.drawRect(
       Rect.fromLTWH(-bw * 0.14, -bh * 0.72, bw * 0.05, bh * 0.22),
-      Paint()..color = Colors.white.withValues(alpha: 0.55));
+      Paint()..color = Colors.white.withValues(alpha: 0.55),
+    );
 
     canvas.drawRRect(
       RRect.fromRectAndRadius(
-        Rect.fromCenter(center: const Offset(0, -bh * 0.85),
-          width: bw * 0.4, height: bh * 0.16),
-        const Radius.circular(1.5)),
-      Paint()..color = const Color(0xFF8B6A3F));
+        Rect.fromCenter(
+          center: const Offset(0, -bh * 0.85),
+          width: bw * 0.4,
+          height: bh * 0.16,
+        ),
+        const Radius.circular(1.5),
+      ),
+      Paint()..color = const Color(0xFF8B6A3F),
+    );
     canvas.drawRect(
       Rect.fromLTWH(-bw * 0.16, -bh * 0.88, bw * 0.04, bh * 0.06),
-      Paint()..color = const Color(0xFFA98556));
+      Paint()..color = const Color(0xFFA98556),
+    );
 
     canvas.restore();
 
     if (aTilt > 0.35 && sa > 0.05) {
-      canvas.drawCircle(Offset(mouthX, mouthY), 3.5,
-        Paint()..color = col.withValues(alpha: 0.95 * sa));
-      canvas.drawCircle(Offset(mouthX, mouthY), 1.5,
-        Paint()..color = Colors.white.withValues(alpha: 0.7 * sa));
+      canvas.drawCircle(
+        Offset(mouthX, mouthY),
+        3.5,
+        Paint()..color = col.withValues(alpha: 0.95 * sa),
+      );
+      canvas.drawCircle(
+        Offset(mouthX, mouthY),
+        1.5,
+        Paint()..color = Colors.white.withValues(alpha: 0.7 * sa),
+      );
     }
   }
+
   void _paintSolidPile(Canvas canvas, double w, double h) {
     // PRODUCT RESIDUE — decomposition reactions leave solid product
-    if (item.reactionComplete && reaction != null && reaction!.type == 'Decomposition') {
+    if (item.reactionComplete &&
+        reaction != null &&
+        reaction!.type == 'Decomposition') {
       final products = reaction!.products.join(' ').toLowerCase();
       Color productCol = const Color(0xFFBDBDBD); // default gray
-      if (products.contains('cao')) { productCol = const Color(0xFFF5F5F0); } // CaO white
-      if (products.contains('na2co3')) { productCol = const Color(0xFFFAFAF5); } // Na2CO3 white
-      if (products.contains('kno2')) { productCol = const Color(0xFFF5F5E8); } // KNO2 pale
-      if (products.contains('ag')) { productCol = const Color(0xFFD0D0D0); } // Ag silver
+      if (products.contains('cao')) {
+        productCol = const Color(0xFFF5F5F0);
+      } // CaO white
+      if (products.contains('na2co3')) {
+        productCol = const Color(0xFFFAFAF5);
+      } // Na2CO3 white
+      if (products.contains('kno2')) {
+        productCol = const Color(0xFFF5F5E8);
+      } // KNO2 pale
+      if (products.contains('ag')) {
+        productCol = const Color(0xFFD0D0D0);
+      } // Ag silver
       final beakerBottom = h * 0.95; // where beaker bottom sits
       final beakerTop = h * 0.12; // where liquid starts
       final usableH = beakerBottom - beakerTop;
       final ph = usableH * 0.85; // 85% of usable — ~50ml+ residue
       // final ptY = beakerBottom - ph;
-      // (old ptY below)
       final ptY = beakerBottom - ph; // top of residue
       // Surface: WAVE during heating, FLAT when complete
       if (item.reactionComplete) {
         // FLAT — reaction done, solid residue
-        canvas.drawLine(Offset(0, ptY + 2), Offset(w, ptY + 2), Paint()
-          ..strokeWidth = 2.0
-          ..color = Colors.white.withValues(alpha: 0.7));
+        canvas.drawLine(
+          Offset(0, ptY + 2),
+          Offset(w, ptY + 2),
+          Paint()
+            ..strokeWidth = 2.0
+            ..color = Colors.white.withValues(alpha: 0.7),
+        );
       } else {
         // WAVY — still reacting (fire below)
         final wavePath = Path()..moveTo(0, ptY + 2);
@@ -2184,40 +2949,61 @@ class RealisticEquipPainter extends CustomPainter {
           final y = ptY + 2 + sin(x / w * waveFreq + time * 3) * waveAmp;
           wavePath.lineTo(x, y);
         }
-        canvas.drawPath(wavePath, Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 2.2
-          ..color = Colors.white.withValues(alpha: 0.75));
+        canvas.drawPath(
+          wavePath,
+          Paint()
+            ..style = PaintingStyle.stroke
+            ..strokeWidth = 2.2
+            ..color = Colors.white.withValues(alpha: 0.75),
+        );
         // Bubble shimmer on wave
         for (int b = 0; b < 5; b++) {
           final bx = (b * 17.0 + time * 8) % w;
           final by = ptY + 2 + sin(bx / w * waveFreq + time * 3) * waveAmp - 2;
-          canvas.drawCircle(Offset(bx, by), 1.5, Paint()
-            ..color = productCol.withValues(alpha: 0.85));
+          canvas.drawCircle(
+            Offset(bx, by),
+            1.5,
+            Paint()..color = productCol.withValues(alpha: 0.85),
+          );
         }
       }
       // Base solid bed — gives structure to residue
       final bedRect = Rect.fromLTWH(0, ptY, w, h - ptY); // full to bottom
-      canvas.drawRect(bedRect, Paint()
-        ..shader = LinearGradient(
-          begin: Alignment.topCenter, end: Alignment.bottomCenter,
-          colors: [
-            productCol.withValues(alpha: 0.55),
-            productCol.withValues(alpha: 0.85),
-            productCol.withValues(alpha: 0.95),
-          ], stops: const [0.0, 0.5, 1.0]
-        ).createShader(bedRect));
+      canvas.drawRect(
+        bedRect,
+        Paint()
+          ..shader = LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              productCol.withValues(alpha: 0.55),
+              productCol.withValues(alpha: 0.85),
+              productCol.withValues(alpha: 0.95),
+            ],
+            stops: const [0.0, 0.5, 1.0],
+          ).createShader(bedRect),
+      );
       final prng = Random(item.id.length * 19 + 53);
       for (int i = 0; i < 30; i++) {
         final px = prng.nextDouble() * w;
         final py = beakerBottom - prng.nextDouble() * ph; // above beaker bottom
         final r = 1.8 + prng.nextDouble() * 2.7; // bigger particles
-        canvas.drawCircle(Offset(px, py), r, Paint()..color = productCol.withValues(alpha: 0.85));
-        canvas.drawCircle(Offset(px - r * 0.3, py - r * 0.3), r * 0.4, Paint()..color = Colors.white.withValues(alpha: 0.5));
+        canvas.drawCircle(
+          Offset(px, py),
+          r,
+          Paint()..color = productCol.withValues(alpha: 0.85),
+        );
+        canvas.drawCircle(
+          Offset(px - r * 0.3, py - r * 0.3),
+          r * 0.4,
+          Paint()..color = Colors.white.withValues(alpha: 0.5),
+        );
       }
       return; // skip normal dissolve logic
     }
-    final solids = item.layers.where((l) => l.isSolid && l.dissolveProgress < 1.0).toList();
+    final solids = item.layers
+        .where((l) => l.isSolid && l.dissolveProgress < 1.0)
+        .toList();
     if (solids.isEmpty) return;
 
     final solidVol = item.solidVolume;
@@ -2234,35 +3020,47 @@ class RealisticEquipPainter extends CustomPainter {
     // Main pile shape (mound)
     final pilePath = Path()
       ..moveTo(w * 0.18, baseY)
-      ..quadraticBezierTo(w * 0.32, baseY - pileH * 1.15, w * 0.50, baseY - pileH * 1.3)
+      ..quadraticBezierTo(
+        w * 0.32,
+        baseY - pileH * 1.15,
+        w * 0.50,
+        baseY - pileH * 1.3,
+      )
       ..quadraticBezierTo(w * 0.68, baseY - pileH * 1.15, w * 0.82, baseY)
       ..lineTo(w * 0.18, baseY)
       ..close();
 
-    canvas.drawPath(pilePath, Paint()
-      ..shader = LinearGradient(
-        begin: Alignment.topCenter,
-        end: Alignment.bottomCenter,
-        colors: [
-          col.withValues(alpha: 0.55),
-          col.withValues(alpha: 0.85),
-          col.withValues(alpha: 1.0),
-        ],
-        stops: const [0.0, 0.5, 1.0],
-      ).createShader(Rect.fromLTWH(0, baseY - pileH * 1.3, w, pileH * 1.3)));
+    canvas.drawPath(
+      pilePath,
+      Paint()
+        ..shader = LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            col.withValues(alpha: 0.55),
+            col.withValues(alpha: 0.85),
+            col.withValues(alpha: 1.0),
+          ],
+          stops: const [0.0, 0.5, 1.0],
+        ).createShader(Rect.fromLTWH(0, baseY - pileH * 1.3, w, pileH * 1.3)),
+    );
 
     // Powder texture particles
     final count = (solidVol * 1.2).toInt().clamp(12, 60);
     for (int i = 0; i < count; i++) {
       final px = w * 0.22 + rng.nextDouble() * w * 0.56;
-      final distFromCenter = ((px - w * 0.5).abs() / (w * 0.32)).clamp(0.0, 1.0);
+      final distFromCenter = ((px - w * 0.5).abs() / (w * 0.32)).clamp(
+        0.0,
+        1.0,
+      );
       final topY = baseY - pileH * 1.25 * (1 - distFromCenter);
       final py = topY + rng.nextDouble() * (baseY - topY) * 0.9;
       if (py > baseY) continue;
       canvas.drawCircle(
         Offset(px, py),
         0.7 + rng.nextDouble() * 1.4,
-        Paint()..color = col.withValues(alpha: 0.85 + rng.nextDouble() * 0.15));
+        Paint()..color = col.withValues(alpha: 0.85 + rng.nextDouble() * 0.15),
+      );
     }
 
     // Sparkle highlights (crystalline look)
@@ -2273,7 +3071,8 @@ class RealisticEquipPainter extends CustomPainter {
       canvas.drawCircle(
         Offset(px, py),
         0.5 + rng.nextDouble() * 0.7,
-        Paint()..color = Colors.white.withValues(alpha: 0.75));
+        Paint()..color = Colors.white.withValues(alpha: 0.75),
+      );
     }
 
     // Dissolving particles rising up (jab dissolve chal raha ho)
@@ -2289,7 +3088,11 @@ class RealisticEquipPainter extends CustomPainter {
         canvas.drawCircle(
           Offset(px, py),
           0.8 + (1 - riseP) * 1.2,
-          Paint()..color = col.withValues(alpha: dissolveIntensity * (1 - riseP) * 0.85));
+          Paint()
+            ..color = col.withValues(
+              alpha: dissolveIntensity * (1 - riseP) * 0.85,
+            ),
+        );
       }
       for (int i = 0; i < 3; i++) {
         final s = rng.nextDouble();
@@ -2300,23 +3103,38 @@ class RealisticEquipPainter extends CustomPainter {
         canvas.drawCircle(
           Offset(px, py),
           0.6 + (1 - riseP) * 0.9,
-          Paint()..color = Colors.white.withValues(alpha: dissolveIntensity * (1 - riseP) * 0.7));
+          Paint()
+            ..color = Colors.white.withValues(
+              alpha: dissolveIntensity * (1 - riseP) * 0.7,
+            ),
+        );
       }
     }
 
     // Top surface highlight
     final topHighlight = Path()
       ..moveTo(w * 0.32, baseY - pileH * 0.95)
-      ..quadraticBezierTo(w * 0.42, baseY - pileH * 1.25, w * 0.5, baseY - pileH * 1.28)
-      ..quadraticBezierTo(w * 0.58, baseY - pileH * 1.25, w * 0.68, baseY - pileH * 0.95);
-    canvas.drawPath(topHighlight, Paint()
-      ..style = PaintingStyle.stroke
-      ..strokeWidth = 1.2
-      ..color = Colors.white.withValues(alpha: 0.35));
+      ..quadraticBezierTo(
+        w * 0.42,
+        baseY - pileH * 1.25,
+        w * 0.5,
+        baseY - pileH * 1.28,
+      )
+      ..quadraticBezierTo(
+        w * 0.58,
+        baseY - pileH * 1.25,
+        w * 0.68,
+        baseY - pileH * 0.95,
+      );
+    canvas.drawPath(
+      topHighlight,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 1.2
+        ..color = Colors.white.withValues(alpha: 0.35),
+    );
   }
 
   @override
   bool shouldRepaint(covariant RealisticEquipPainter old) => true;
 }
-
-

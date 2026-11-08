@@ -1,12 +1,17 @@
-﻿part of chem_lab;
+part of chem_lab;
 
 class Chemical {
   final String id, name, formula, state, category;
   final Color color;
-  const Chemical({required this.id, required this.name, required this.formula,
-    required this.state, required this.category, required this.color});
+  const Chemical({
+    required this.id,
+    required this.name,
+    required this.formula,
+    required this.state,
+    required this.category,
+    required this.color,
+  });
 }
-
 
 class ChemLayer {
   final String chemId;
@@ -14,9 +19,14 @@ class ChemLayer {
   double volume;
   final bool isSolid;
   double dissolveProgress;
-  ChemLayer({required this.chemId, required this.color, required this.volume, this.isSolid = false, this.dissolveProgress = 0.0});
+  ChemLayer({
+    required this.chemId,
+    required this.color,
+    required this.volume,
+    this.isSolid = false,
+    this.dissolveProgress = 0.0,
+  });
 }
-
 
 class ChemDetail {
   final String uses, properties, safety, occurrence;
@@ -46,5 +56,3 @@ class ChemDetail {
     this.bonds,
   });
 }
-
-

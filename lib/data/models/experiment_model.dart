@@ -1,4 +1,4 @@
-﻿part of chem_lab;
+part of chem_lab;
 
 class LabExperiment {
   final String name;
@@ -19,20 +19,26 @@ const List<LabExperiment> allExperiments = [
   LabExperiment(
     name: 'Acid-Base Neutralization',
     description: 'Mix HCl with NaOH to form salt and water. Exothermic.',
-    steps: ['Add HCl to beaker', 'Add NaOH to same beaker', 'Watch temperature rise'],
+    steps: [
+      'Add HCl to beaker',
+      'Add NaOH to same beaker',
+      'Watch temperature rise',
+    ],
     chemicals: ['HCl', 'NaOH'],
     expectedResult: 'Salt + Water, warm solution',
   ),
   LabExperiment(
     name: 'AgCl Precipitation',
-    description: 'Silver nitrate + sodium chloride gives curdy white precipitate.',
+    description:
+        'Silver nitrate + sodium chloride gives curdy white precipitate.',
     steps: ['Add AgNO3 to beaker', 'Add NaCl', 'White precipitate settles'],
     chemicals: ['AgNO3', 'NaCl'],
     expectedResult: 'White AgCl precipitate at bottom',
   ),
   LabExperiment(
     name: 'Cu(OH)2 Precipitation',
-    description: 'Copper sulfate + sodium hydroxide gives blue gelatinous precipitate.',
+    description:
+        'Copper sulfate + sodium hydroxide gives blue gelatinous precipitate.',
     steps: ['Add CuSO4 (blue) to beaker', 'Add NaOH', 'Blue precipitate forms'],
     chemicals: ['CuSO4', 'NaOH'],
     expectedResult: 'Blue Cu(OH)2 precipitate',
@@ -40,13 +46,18 @@ const List<LabExperiment> allExperiments = [
   LabExperiment(
     name: 'Phenolphthalein Titration',
     description: 'Indicator turns pink in basic solution.',
-    steps: ['Add HCl + Phenolphthalein', 'Add NaOH dropwise', 'Pink endpoint appears'],
+    steps: [
+      'Add HCl + Phenolphthalein',
+      'Add NaOH dropwise',
+      'Pink endpoint appears',
+    ],
     chemicals: ['HCl', 'NaOH', 'Phenolphthalein'],
     expectedResult: 'Deep pink solution',
   ),
   LabExperiment(
     name: 'Dehydration of CuSO4',
-    description: 'Heat blue hydrated copper sulfate to get white anhydrous form.',
+    description:
+        'Heat blue hydrated copper sulfate to get white anhydrous form.',
     steps: ['Add CuSO4 to beaker', 'Attach Bunsen burner', 'Heat past 60C'],
     chemicals: ['CuSO4'],
     expectedResult: 'Blue -> White (anhydrous)',
@@ -74,4 +85,3 @@ const List<LabExperiment> allExperiments = [
   ),
 ];
 // ===== AMOUNT PICKER DIALOG (date-picker style wheel) =====
-

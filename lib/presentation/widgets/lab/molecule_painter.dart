@@ -10,7 +10,7 @@ class MoleculePainter extends CustomPainter {
     if (atoms.isEmpty) return;
     final cx = size.width / 2;
     final cy = size.height / 2;
-    
+
     // Compute bounding box
     double minX = double.infinity, maxX = -double.infinity;
     double minY = double.infinity, maxY = -double.infinity;
@@ -24,52 +24,60 @@ class MoleculePainter extends CustomPainter {
     final h = (maxY - minY).clamp(0.5, 10.0);
     final centerX = (minX + maxX) / 2;
     final centerY = (minY + maxY) / 2;
-    
+
     // Fit into canvas (75% — bigger than before)
     final availableW = size.width * 0.88;
     final availableH = size.height * 0.88;
-    final scale = [availableW / w, availableH / h].reduce((a, b) => a < b ? a : b);
-    
+    final scale = [
+      availableW / w,
+      availableH / h,
+    ].reduce((a, b) => a < b ? a : b);
+
     // Compute pixel positions
     List<Offset> pixelPos = [];
     List<double> pixelR = [];
     for (var a in atoms) {
-      pixelPos.add(Offset(
-        cx + (a.x - centerX) * scale,
-        cy + (a.y - centerY) * scale,
-      ));
+      pixelPos.add(
+        Offset(cx + (a.x - centerX) * scale, cy + (a.y - centerY) * scale),
+      );
       pixelR.add(a.radius * scale * 0.50); // small balls - lots of gap
     }
-    
-    // â•â•â• DRAW BONDS (behind atoms) â•â•â•
+
+    // ••• DRAW BONDS (behind atoms) •••
     for (var b in bonds) {
       if (b.from >= atoms.length || b.to >= atoms.length) continue;
       final p1Center = pixelPos[b.from];
       final p2Center = pixelPos[b.to];
       final r1 = pixelR[b.from];
       final r2 = pixelR[b.to];
-      
+
       final dx = p2Center.dx - p1Center.dx;
       final dy = p2Center.dy - p1Center.dy;
       final len = sqrt(dx * dx + dy * dy);
       if (len < 1) continue;
-      
+
       // Direction unit vector
       final ux = dx / len;
       final uy = dy / len;
       // Perpendicular unit vector
       final px = -uy;
       final py = ux;
-      
+
       // Bond start/end at atom edges
-      final p1 = Offset(p1Center.dx + ux * r1 * 0.95, p1Center.dy + uy * r1 * 0.95);
-      final p2 = Offset(p2Center.dx - ux * r2 * 0.95, p2Center.dy - uy * r2 * 0.95);
-      
+      final p1 = Offset(
+        p1Center.dx + ux * r1 * 0.95,
+        p1Center.dy + uy * r1 * 0.95,
+      );
+      final p2 = Offset(
+        p2Center.dx - ux * r2 * 0.95,
+        p2Center.dy - uy * r2 * 0.95,
+      );
+
       final bondPaint = Paint()
         ..color = const Color(0xFF444444)
         ..strokeCap = StrokeCap.round
         ..style = PaintingStyle.stroke;
-      
+
       if (b.order == 1) {
         bondPaint.strokeWidth = 4;
         canvas.drawLine(p1, p2, bondPaint);
@@ -89,22 +97,25 @@ class MoleculePainter extends CustomPainter {
         );
       }
     }
-    
-    // â•â•â• DRAW ATOMS on top â•â•â•
+
+    // ••• DRAW ATOMS on top •••
     for (int i = 0; i < atoms.length; i++) {
       final a = atoms[i];
       final pos = pixelPos[i];
       final r = pixelR[i];
-      
+
       // Drop shadow
-      canvas.drawCircle(Offset(pos.dx + 2, pos.dy + 4), r,
+      canvas.drawCircle(
+        Offset(pos.dx + 2, pos.dy + 4),
+        r,
         Paint()
           ..color = Colors.black.withValues(alpha: 0.35)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3));
-      
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 3),
+      );
+
       // Base fill
       canvas.drawCircle(pos, r, Paint()..color = Color(a.color));
-      
+
       // Radial gradient for 3D shine (top-left highlight)
       final shinePaint = Paint()
         ..shader = RadialGradient(
@@ -117,7 +128,7 @@ class MoleculePainter extends CustomPainter {
           stops: const [0.0, 0.55],
         ).createShader(Rect.fromCircle(center: pos, radius: r));
       canvas.drawCircle(pos, r, shinePaint);
-      
+
       // Darker bottom-right
       final shadowPaint = Paint()
         ..shader = RadialGradient(
@@ -130,14 +141,17 @@ class MoleculePainter extends CustomPainter {
           stops: const [0.0, 0.7],
         ).createShader(Rect.fromCircle(center: pos, radius: r));
       canvas.drawCircle(pos, r, shadowPaint);
-      
+
       // Bold dark outline (matches reference style)
-      canvas.drawCircle(pos, r,
+      canvas.drawCircle(
+        pos,
+        r,
         Paint()
           ..style = PaintingStyle.stroke
           ..strokeWidth = 2.5
-          ..color = Colors.black.withValues(alpha: 0.75));
-      
+          ..color = Colors.black.withValues(alpha: 0.75),
+      );
+
       // Symbol text
       final symbolStyle = TextStyle(
         color: Color(0xFF94A3B8).withValues(alpha: 0.2),
@@ -158,5 +172,3 @@ class MoleculePainter extends CustomPainter {
   bool shouldRepaint(covariant MoleculePainter old) =>
       old.atoms != atoms || old.bonds != bonds;
 }
-
-

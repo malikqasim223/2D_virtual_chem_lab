@@ -26,12 +26,12 @@ class SideEffect {
 SideEffect? detectSideEffect(List<String> chemIds) {
   final set = chemIds.toSet();
 
-  
   if (set.contains('agno3') && set.contains('hcl') && set.contains('naoh')) {
     return const SideEffect(
       label: 'Ag2O PRECIPITATE',
       description: 'AgCl first, then AgOH -> Ag2O brown ppt with excess NaOH.',
-      fizz: true, colorPulse: true,
+      fizz: true,
+      colorPulse: true,
       tintColor: Color(0xFF8D6E63),
     );
   }
@@ -39,7 +39,8 @@ SideEffect? detectSideEffect(List<String> chemIds) {
     return const SideEffect(
       label: 'AG2SO4 FORMATION',
       description: 'Silver sulfate precipitates, heat released.',
-      smoke: true, heatUp: true,
+      smoke: true,
+      heatUp: true,
       tintColor: Color(0xFFE0E0E0),
     );
   }
@@ -47,7 +48,8 @@ SideEffect? detectSideEffect(List<String> chemIds) {
     return const SideEffect(
       label: 'SO2 GAS RISK',
       description: 'Concentrated H2SO4 + NaCl -> HCl; heating may release SO2.',
-      fizz: true, smoke: true,
+      fizz: true,
+      smoke: true,
       tintColor: Color(0xFFCFD8DC),
     );
   }
@@ -60,7 +62,8 @@ SideEffect? detectSideEffect(List<String> chemIds) {
 SideEffect defaultMixingEffect(List<String> chemIds) {
   return const SideEffect(
     label: 'MIXING',
-    description: 'No validated reaction data for this combination. Visual mixing only.',
+    description:
+        'No validated reaction data for this combination. Visual mixing only.',
     heatUp: false,
     tintColor: Color(0xFFB0BEC5),
   );
@@ -69,4 +72,3 @@ SideEffect defaultMixingEffect(List<String> chemIds) {
 //
 // PREDEFINED EXPERIMENTS (Manual Lab Guide)
 //
-

@@ -16,8 +16,7 @@ class MarbleBenchPainter extends CustomPainter {
       ).createShader(rect);
     canvas.drawRect(rect, paint);
   }
+
   @override
   bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
-
-

@@ -5,7 +5,8 @@ final Map<String, ReactionInfo> multiReactions = {
     name: 'Neutralization (Phenolphthalein)',
     equation: 'HCl + NaOH + Phenolphthalein -> NaCl + H2O (Pink to Colorless)',
     type: 'Neutralization',
-    description: 'Acid neutralizes base, indicator changes from pink to colorless.',
+    description:
+        'Acid neutralizes base, indicator changes from pink to colorless.',
     products: ['NaCl', 'H2O'],
     colorChange: Color(0x00FFFFFF),
     startColor: Color(0xFFE91E63),
@@ -25,7 +26,8 @@ final Map<String, ReactionInfo> multiReactions = {
   ),
   'agno3+nacl+nh4oh': const ReactionInfo(
     name: 'Silver Complex Formation',
-    equation: 'AgNO3 + NaCl -> AgCl (ppt); AgCl + 2NH4OH -> [Ag(NH3)2]Cl + 2H2O',
+    equation:
+        'AgNO3 + NaCl -> AgCl (ppt); AgCl + 2NH4OH -> [Ag(NH3)2]Cl + 2H2O',
     type: 'Complexation',
     description: 'White AgCl precipitate dissolves in ammonia.',
     products: ['[Ag(NH3)2]Cl', 'H2O'],
@@ -58,7 +60,8 @@ final Map<String, ReactionInfo> multiReactions = {
     name: 'Complex Precipitation',
     equation: 'H2SO4 + 2NaOH -> Na2SO4; CuSO4 + 2NaOH -> Cu(OH)2',
     type: 'Multi-step',
-    description: 'Sulfuric acid neutralized, then copper hydroxide precipitates.',
+    description:
+        'Sulfuric acid neutralized, then copper hydroxide precipitates.',
     products: ['Na2SO4', 'Cu(OH)2', 'H2O'],
     precipitate: true,
     releasesHeat: true,

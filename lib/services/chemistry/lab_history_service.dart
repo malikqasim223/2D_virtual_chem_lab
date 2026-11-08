@@ -3,21 +3,30 @@ part of chem_lab;
 class LabHistoryService {
   static const String _fileName = 'saved_experiments.json';
 
-  static Future<void> saveExperiment(List<EquipItem> equipment, String expName) async {
+  static Future<void> saveExperiment(
+    List<EquipItem> equipment,
+    String expName,
+  ) async {
     final data = {
       'name': expName,
       'date': DateTime.now().toIso8601String(),
-      'equipment': equipment.map((e) => {
-        'shape': e.shape.toString(),
-        'label': e.shape.label,
-        'temperature': e.temperature,
-        'layers': e.layers.map((l) => {'chemId': l.chemId, 'volume': l.volume}).toList(),
-      }).toList(),
+      'equipment': equipment
+          .map(
+            (e) => {
+              'shape': e.shape.toString(),
+              'label': e.shape.label,
+              'temperature': e.temperature,
+              'layers': e.layers
+                  .map((l) => {'chemId': l.chemId, 'volume': l.volume})
+                  .toList(),
+            },
+          )
+          .toList(),
     };
 
     final file = File(_fileName);
     List<dynamic> history = [];
-    
+
     if (await file.exists()) {
       try {
         final content = await file.readAsString();
@@ -26,7 +35,7 @@ class LabHistoryService {
         history = [];
       }
     }
-    
+
     history.insert(0, data);
     await file.writeAsString(jsonEncode(history));
   }
@@ -34,7 +43,7 @@ class LabHistoryService {
   static Future<List<dynamic>> loadHistory() async {
     final file = File(_fileName);
     if (!await file.exists()) return [];
-    
+
     try {
       final content = await file.readAsString();
       return jsonDecode(content) as List<dynamic>;

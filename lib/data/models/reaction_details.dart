@@ -1,4 +1,4 @@
-﻿part of chem_lab;
+part of chem_lab;
 
 /// Bubble rate for reactions that produce gas.
 /// Used for realistic animation intensity.

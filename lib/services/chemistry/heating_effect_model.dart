@@ -1,5 +1,4 @@
-﻿part of chem_lab;
-
+part of chem_lab;
 
 class HeatingEffect {
   final String label;
@@ -19,4 +18,3 @@ class HeatingEffect {
     this.colorChange,
   });
 }
-
