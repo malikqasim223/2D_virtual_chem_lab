@@ -47,3 +47,7 @@ build/
 .dart_tool/
 .flutter-plugins
 .flutter-plugins-dependencies
+
+# -- Large asset folders (used by app locally, not in git) --
+assets/audio/
+assets/models/
