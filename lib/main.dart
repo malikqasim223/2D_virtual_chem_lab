@@ -1,4 +1,4 @@
-library chem_lab;
+﻿library chem_lab;
 
 import 'package:flutter/gestures.dart';
 
@@ -10,6 +10,8 @@ import 'dart:math';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
+import 'package:flutter_tts/flutter_tts.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
 part 'presentation/widgets/lab/realistic_equip_painter.dart';
 part 'data/models/bench_tool_model.dart';
@@ -47,7 +49,20 @@ part 'services/chemistry/lab_ph_service.dart';
 part 'services/chemistry/lab_history_service.dart';
 part 'presentation/widgets/lab/ph_color_book.dart';
 part 'presentation/widgets/lab/litmus_color_book.dart';
+part 'data/teacher/teacher_memory.dart';
+part 'data/teacher/teacher_responses.dart';
+part 'data/teacher/teacher_brain.dart';
+part 'data/teacher/voice_service.dart';
+part 'data/teacher/reaction_deep_data.dart';
 
 final GlobalKey<NavigatorState> navigatorKey = GlobalKey<NavigatorState>();
 
-void main() => runApp(const ChemLabApp());
+bool _appWelcomeShown = false;
+
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  runApp(const ChemLabApp());
+}
+
+
+

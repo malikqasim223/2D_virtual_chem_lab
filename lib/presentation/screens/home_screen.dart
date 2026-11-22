@@ -1,4 +1,4 @@
-part of chem_lab;
+﻿part of chem_lab;
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
@@ -8,9 +8,8 @@ class HomeScreen extends StatelessWidget {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(const Duration(milliseconds: 800), () {
         if (userName.value == 'Student') {
-          sayToUser(
-            "Hey there! I'm your chemistry teacher. What should I call you? You can set your name in Settings, and I'll remember you next time!",
-          );
+          // sayToUser(  // removed empty call
+          // );
         } else {
           sayToUser(
             "Hey ${userName.value}! Great to see you back. Let's explore chemistry together today. Hover over any card and I'll explain what it does.",
@@ -2677,39 +2676,28 @@ class _NavHoverCardState extends State<_NavHoverCard> {
     return MouseRegion(
       onEnter: (_) {
         setState(() => _isHovered = true);
-        if (userWasAway) {
-          userWasAway = false;
-          final name = userName.value == "Student" ? "friend" : userName.value;
-          sayToUser(
-            "Ohhhh thank god $name, you are back! First let me tell you what you are choosing, then I will move forward.",
-          );
-          return;
-        }
         final t = widget.title;
+        final name = userName.value == "Student" ? "friend" : userName.value;
+        String explanation = "";
         if (t.contains('Virtual')) {
-          sayToUser(
-            "This is the Virtual Lab! Here you can mix chemicals and see real reactions happen on screen. Give it a try!",
-          );
+          explanation = "This is the Virtual Lab $name! Mix chemicals and watch real reactions. Give it a try!";
         } else if (t.contains('Chem Info')) {
-          sayToUser(
-            "Chem Info - your chemistry encyclopedia . You can browse all 79 chemicals and 104 reactions. Click any card for full details.",
-          );
+          explanation = "Chem Info - your chemistry encyclopedia $name. You can browse 79 chemicals, 104 reactions, and click any card for full details.";
         } else if (t.contains('History')) {
-          sayToUser(
-            "History keeps track of everything you've done in the lab . If you ever want to look back, click here.",
-          );
+          explanation = "History tracks everything you have done in the lab $name. You can look back anytime.";
         } else if (t.contains('Settings')) {
-          sayToUser(
-            "Settings is where you can personalize the app . Don't forget to tell me your name here so I can greet you properly!",
-          );
+          explanation = "Settings is where you personalize the app $name. Do not forget to set your name here!";
         }
+        sayToUser(explanation);
       },
       onExit: (_) {
         setState(() => _isHovered = false);
         if (userName.value == 'Student') {
-          sayToUser(
-            "Hey there! I'm your chemistry teacher. What should I call you? Set your name in Settings, and I'll remember you next time.",
-          );
+          // if (!_welcomeSpoken) { _welcomeSpoken = true;
+          // welcome suppressed — will fire only once via sayWelcome()
+          // sayToUser(  // removed empty call
+          // );
+          // }
         } else {
           sayToUser(
             "Hey ${userName.value}! Great to see you back. Let's explore chemistry together today. Hover over any card and I'll explain what it does.",
@@ -3636,37 +3624,17 @@ class _GuideDialogState extends State<_GuideDialog> {
 // ============================================================
 final ValueNotifier<String> userName = ValueNotifier<String>('Student');
 final ValueNotifier<String> teacherMessage = ValueNotifier<String>('');
+int _messageSeq = 0;
+_TeacherGuideState? _activeGuide;
 
-void sayWelcome() {
-  if (userName.value == 'Student') {
-    sayToUser(
-      "Hey there! I am your chemistry teacher. What should I call you? Set your name in Settings, and I will remember you next time.",
-    );
-  } else {
-    sayToUser(
-      "Hey ${userName.value}! Great to see you back. Let us explore chemistry together today.",
-    );
-  }
-}
+bool _welcomeSpoken = false;
 
-void sayRandomWelcome() {
-  final welcomes = userName.value == 'Student'
-      ? [
-          "Hey there, future scientist! What should I call you? Set your name in Settings.",
-          "Welcome to the lab, my friend. I am your chemistry teacher. Pop your name in Settings!",
-          "Ah, a new student! I love fresh curiosity. Tell me your name in Settings and let us begin.",
-        ]
-      : [
-          "Hey ${userName.value}! Back for more chemistry? I love the commitment.",
-          "${userName.value}! My favourite student returns. Ready to blow some minds (and beakers)?",
-          "Oh hello ${userName.value}! I was just thinking about the periodic table. Want to explore?",
-          "Welcome back, ${userName.value}! Let us make today's session legendary.",
-        ];
-  welcomes.shuffle(Random());
-  sayToUser(welcomes.first);
-}
+void sayWelcome() {}  // welcome removed
+
+void sayRandomWelcome() {}  // welcome removed
 
 void sayIdleTip() {
+  userWasAway = true;
   final name = userName.value == 'Student' ? 'friend' : userName.value;
 
   if (teacherJustFinishedDetail) {
@@ -3688,7 +3656,7 @@ void sayIdleTip() {
     "$name, I'm literally going to fall asleep. Wake me up...",
     "$name, it's been so long... do I even exist anymore?",
     "$name PLEASE COME BACK. I have so much to teach you!",
-    "$name, do you know how bored I am? I counted water atoms. Twice.",
+    // "$name, do you know how bored I am? I counted water atoms. Twice.",  // REMOVED: intro
     "Just one tiny hover $name? That's all I ask.",
     "$name, I'm going to start singing if you don't come back. Don't test me.",
     "Remember me $name? Your chemistry teacher? The one who cares?",
@@ -3737,6 +3705,7 @@ final Set<String> _usedMessages = {};
 
 void sayChemicalIntro(dynamic chemical) async {
   _lastIntroSeqId++;
+  await VoiceService.stopSpeaking();
   final mySeq = _lastIntroSeqId;
   teacherDetailInProgress = true;
   teacherJustFinishedDetail = false;
@@ -3749,42 +3718,43 @@ void sayChemicalIntro(dynamic chemical) async {
   final cat = chemical.category.toString().toLowerCase();
   final detail = chemDetails[chemical.id];
 
-  sayToUser(
-    "$name, do you know what $chemName can do? Wait wait, let me tell you more detail!",
-  );
-
-  await Future.delayed(const Duration(seconds: 6));
+  // await sayToUserAndWait("do you know what $chemName is? Wait wait, let me tell you what this is first!");  // REMOVED: intro
   if (_lastIntroSeqId != mySeq) return;
-  sayToUser("$chemName with formula $formula is a $state $cat.");
 
-  await Future.delayed(const Duration(seconds: 8));
+  String whatIsIt = "$chemName is a $state $cat with the formula $formula.";
+  if (detail != null && detail.commonName != null && detail.commonName!.isNotEmpty) {
+    whatIsIt += " It is also known as ${detail.commonName}.";
+  }
+  if (detail != null && detail.appearance != null && detail.appearance!.isNotEmpty) {
+    whatIsIt += " It appears as ${detail.appearance}.";
+  }
+  await sayToUserAndWait(whatIsIt);
   if (_lastIntroSeqId != mySeq) return;
+
   if (detail != null && detail.uses.isNotEmpty) {
-    sayToUser("Uses of $chemName: ${detail.uses}");
+    await sayToUserAndWait("Uses of $chemName: ${detail.uses}");
+    if (_lastIntroSeqId != mySeq) return;
   }
 
-  await Future.delayed(const Duration(seconds: 8));
-  if (_lastIntroSeqId != mySeq) return;
   if (detail != null && detail.properties.isNotEmpty) {
-    sayToUser("Properties: ${detail.properties}");
+    await sayToUserAndWait("Properties: ${detail.properties}");
+    if (_lastIntroSeqId != mySeq) return;
   }
 
-  await Future.delayed(const Duration(seconds: 8));
-  if (_lastIntroSeqId != mySeq) return;
   if (detail != null && detail.safety.isNotEmpty) {
-    sayToUser("Safety note: ${detail.safety}");
+    await sayToUserAndWait("Safety note: ${detail.safety}");
+    if (_lastIntroSeqId != mySeq) return;
   }
 
-  await Future.delayed(const Duration(seconds: 6));
+  await Future.delayed(const Duration(milliseconds: 500));
   if (_lastIntroSeqId != mySeq) return;
   teacherDetailInProgress = false;
   teacherJustFinishedDetail = true;
-  sayToUser(
-    "$name, that is the full detail. Hover another chemical and I will guide you again!",
-  );
+  await sayToUserAndWait("that is the full detail. Hover another chemical and I will guide you again!");
 }
 
 bool userWasAway = false;
+Completer<void>? _typingCompleter;
 bool teacherDetailInProgress = false;
 bool teacherJustFinishedDetail = false;
 int teacherIdleSequence = 0;
@@ -3792,6 +3762,27 @@ int _lastIntroSeqId = 0;
 
 void sayToUser(String msg) {
   teacherMessage.value = msg;
+  VoiceService.speak(msg);
+}
+
+Future<void> sayToUserAndWait(String msg) async {
+  final mySeq = ++_messageSeq;
+  teacherMessage.value = msg;  // text starts typing
+  await Future.delayed(const Duration(milliseconds: 50));
+  if (mySeq != _messageSeq) return;
+  // Voice starts IN PARALLEL with typing — natural teacher behavior
+  final voiceFuture = VoiceService.speak(msg);
+  // Wait for typing to finish
+  if (_typingCompleter != null && !_typingCompleter!.isCompleted) {
+    try {
+      await _typingCompleter!.future.timeout(const Duration(seconds: 30));
+    } catch (_) {}
+  }
+  if (mySeq != _messageSeq) return;  // aborted — newer will handle voice
+  // Wait for voice to finish
+  await voiceFuture;
+  if (mySeq != _messageSeq) return;
+  await Future.delayed(const Duration(milliseconds: 300));
 }
 
 class _TeacherGuide extends StatefulWidget {
@@ -3801,21 +3792,38 @@ class _TeacherGuide extends StatefulWidget {
 }
 
 class _TeacherGuideState extends State<_TeacherGuide> {
+  String _teacherMood = 'neutral';
+  Timer? _wanderTimer;
+  bool _isDragging = false;
   double? _dragRight;
   double? _dragBottom;
   String _displayedText = '';
   String _fullText = '';
   bool _showBubble = false;
   bool _chatOpen = false;
-  bool _thinkingShown = false;
-  Timer? _typingTimer;
+    Timer? _typingTimer;
   Timer? _idleTimer;
   final TextEditingController _chatController = TextEditingController();
 
   @override
   void initState() {
+    _activeGuide = this;
     super.initState();
+    VoiceService.initTts();
     teacherMessage.addListener(_onMessageChanged);
+    // _wanderTimer = Timer.periodic(const Duration(seconds: 6), (_) {
+      // if (!mounted || _isDragging || _chatOpen || _showBubble) return;
+      // try {
+        // final screen = MediaQuery.of(context).size;
+        // final rnd = Random();
+        // final maxR = screen.width > 150 ? screen.width - 100 : 100.0;
+        // final maxB = screen.height > 400 ? screen.height - 300 : 200.0;
+        // setState(() {
+          // _dragRight = 20 + rnd.nextDouble() * maxR;
+          // _dragBottom = 20 + rnd.nextDouble() * maxB;
+        // });
+      // } catch (_) {}
+    // });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (mounted && teacherMessage.value.isNotEmpty) _onMessageChanged();
     });
@@ -3827,45 +3835,82 @@ class _TeacherGuideState extends State<_TeacherGuide> {
     _typingTimer?.cancel();
     _idleTimer?.cancel();
     _chatController.dispose();
+    _wanderTimer?.cancel();
     super.dispose();
   }
 
   void _onMessageChanged() {
+    if (_activeGuide != this) return;  // only active guide handles
+    // print("[DBG-OMM] ENTER newLen=${teacherMessage.value.length} oldFullLen=${_fullText.length} same=${teacherMessage.value == _fullText}");
+    if (_typingCompleter != null && !_typingCompleter!.isCompleted) {
+      // print("[DBG-COMPLETE] completing at " + DateTime.now().millisecondsSinceEpoch.toString());
+      _typingCompleter!.complete();
+    }
+    _typingCompleter = Completer<void>();
+
     final newMsg = teacherMessage.value;
     if (newMsg.isEmpty) {
       setState(() => _showBubble = false);
       return;
     }
+
+    // Mood Detection
+    final lower = newMsg.toLowerCase();
+    if (lower.contains('?')) {
+      _teacherMood = 'thinking';
+    } else if (lower.contains('joke') || lower.contains('laugh') || lower.contains('funny')) {
+      _teacherMood = 'laughing';
+    } else if (lower.contains('cry') || lower.contains('sad') || lower.contains('lonely') || lower.contains('boring') || lower.contains('where are you')) {
+      _teacherMood = 'crying';
+    } else if (lower.contains('wow') || lower.contains('god') || lower.contains('amazing')) {
+      _teacherMood = 'surprised';
+    } else if (lower.contains('hello') || lower.contains('hi') || lower.contains('great') || lower.contains('good')) {
+      _teacherMood = 'happy';
+    } else {
+      _teacherMood = 'neutral';
+    }
+
     if (newMsg == _fullText) {
       if (!_showBubble) setState(() => _showBubble = true);
+      if (_typingCompleter != null && !_typingCompleter!.isCompleted) {
+        // print("[DBG-COMPLETE] completing at " + DateTime.now().millisecondsSinceEpoch.toString());
+        _typingCompleter!.complete();
+      }
       return;
     }
+
     _typingTimer?.cancel();
     _idleTimer?.cancel();
-    final isThinking = newMsg.contains('what are you thinking');
-    if (!isThinking) _thinkingShown = false;
+
     setState(() {
       _fullText = newMsg;
       _displayedText = '';
       _showBubble = true;
       _chatOpen = false;
     });
+
+    // Typewriter Effect
     int i = 0;
-    _typingTimer = Timer.periodic(const Duration(milliseconds: 40), (t) {
+    _typingTimer = Timer.periodic(const Duration(milliseconds: 55), (t) {
       if (!mounted || i >= newMsg.length) {
         t.cancel();
+        if (_typingCompleter != null && !_typingCompleter!.isCompleted) {
+          // print("[DBG-COMPLETE] completing at " + DateTime.now().millisecondsSinceEpoch.toString());
+          _typingCompleter!.complete();
+        }
         _startIdleTimer();
         return;
       }
       i++;
       if (mounted) setState(() => _displayedText = newMsg.substring(0, i));
+      // if (i <= 3 || i == newMsg.length) print("[DBG-TYPE] i=$i/${newMsg.length} at " + DateTime.now().millisecondsSinceEpoch.toString());
     });
   }
 
   void _startIdleTimer() {
     _idleTimer?.cancel();
     if (teacherDetailInProgress) return;
-    _idleTimer = Timer(const Duration(seconds: 3), () {
+    _idleTimer = Timer(const Duration(seconds: 18), () {
       if (mounted && !_chatOpen && !teacherDetailInProgress) {
         sayIdleTip();
       }
@@ -3886,51 +3931,29 @@ class _TeacherGuideState extends State<_TeacherGuide> {
     final q = _chatController.text.trim();
     if (q.isEmpty) return;
     _chatController.clear();
-    String reply;
-    final lower = q.toLowerCase();
-
-    if (lower.contains('chemical') ||
-        lower.contains('acid') ||
-        lower.contains('base') ||
-        lower.contains('element')) {
-      reply = "Ahh, chemicals! My favourite topic. Head to Chem Info and browse all 79 of them. Sort them by category and click any card - I promise you will learn something cool today.";
-    } else if (lower.contains('react') ||
-        lower.contains('mix') ||
-        lower.contains('equation')) {
-      reply = "Reactions! The best part of chemistry. In Chem Info, tap the Reactions tab. 104 reactions, each with its equation. Want a spoiler? The thermite reaction is my personal favourite - it is basically controlled fireworks.";
-    } else if (lower.contains('lab') || lower.contains('experiment')) {
-      reply = "The Virtual Lab is where the magic happens. Just drag two chemicals into the beaker and watch. Pro tip: always hover over the beaker first - I will whisper whether a reaction is going to happen.";
-    } else if (lower.contains('help') ||
-        lower.contains('lost') ||
-        lower.contains('stuck') ||
-        lower.contains('how')) {
-      reply = "No stress! I am right here. Quick map: Virtual Lab (mix stuff), Chem Info (learn), History (review), Settings (name me properly!). Hover any card and I will explain it. Ask me anything specific.";
-    } else if (lower.contains('name') ||
-        lower.contains('hello') ||
-        lower.contains('hi') ||
-        lower.contains('hey')) {
-      reply =
-          "Hey ${userName.value}! Always nice chatting with you. So tell me, what science mystery are we solving today?";
-    } else if (lower.contains('pin') ||
-        lower.contains('favorite') ||
-        lower.contains('favourite')) {
-      reply = "Smart! Pin any chemical or reaction on its detail page. It appears on the sidebar so you do not have to search again. I wish someone pinned me to their desktop.";
-    } else if (lower.contains('joke') ||
-        lower.contains('funny') ||
-        lower.contains('laugh')) {
-      reply = "Ok, chemistry joke: Why did the acid break up with the base? Too much drama, they just could not neutralise their differences. I will be here all week.";
-    } else if (lower.contains('thank')) {
-      reply = "Anytime! That is what teachers are for. Now go blow something up - safely, inside the app.";
-    } else if (lower.contains('who') || lower.contains('what are you')) {
-      reply = "I am your AI chemistry teacher. I do not sleep, I do not grade harshly, and I definitely do not make you memorise the periodic table. We are a good team.";
-    } else if (lower.contains('bored') || lower.contains('boring')) {
-      reply = "Bored? Try the thermite reaction. Or mix bleach and ammonia - wait, please do not do that in real life. But in the app? Totally safe. Check the Reactions tab.";
-    } else {
-      reply = "Hmm, that is interesting. I am still learning. Try asking me about chemicals, reactions, the lab, or how to use the app. Or just say hello!";
-    }
+    _lastIntroSeqId++;
+    teacherDetailInProgress = false;
+    teacherJustFinishedDetail = false;
+    _typingTimer?.cancel();
+    _idleTimer?.cancel();
+    final reply = TeacherBrain.respond(q);
     sayToUser(reply);
+    _startIdleTimer();
   }
 
+  
+
+  
+  String _getMoodEmoji() {
+    switch (_teacherMood) {
+      case 'thinking': return '🤔';
+      case 'laughing': return '😂';
+      case 'crying': return '😭';
+      case 'surprised': return '😲';
+      case 'happy': return '😄';
+      default: return '👨‍🔬';
+    }
+  }
   Widget _buildEmoji() {
     return _FloatingEmoji(
       child: MouseRegion(
@@ -3938,22 +3961,17 @@ class _TeacherGuideState extends State<_TeacherGuide> {
         child: GestureDetector(
           onTap: _openChat,
           child: Container(
-            width: 60,
-            height: 60,
+            width: 60, height: 60,
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               gradient: LinearGradient(colors: [LC.accentBright, LC.accent]),
               boxShadow: [
-                BoxShadow(
-                  color: LC.accent.withValues(alpha: 0.6),
-                  blurRadius: 20,
-                  spreadRadius: 3,
-                ),
+                BoxShadow(color: LC.accent.withValues(alpha: 0.6), blurRadius: 20, spreadRadius: 3),
               ],
               border: Border.all(color: Colors.white, width: 2.5),
             ),
-            child: const Center(
-              child: Icon(Icons.school, color: Colors.white, size: 28),
+            child: Center(
+              child: Text(_getMoodEmoji(), style: const TextStyle(fontSize: 28)),
             ),
           ),
         ),
@@ -4037,13 +4055,18 @@ class _TeacherGuideState extends State<_TeacherGuide> {
                     ],
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    _displayedText,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 13.5,
-                      height: 1.5,
-                      fontWeight: FontWeight.w500,
+                  ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 300),
+                    child: SingleChildScrollView(
+                      child: Text(
+                        _displayedText,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 13.5,
+                          height: 1.5,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
                     ),
                   ),
                   if (_chatOpen) ...[
@@ -4053,6 +4076,8 @@ class _TeacherGuideState extends State<_TeacherGuide> {
                         Expanded(
                           child: TextField(
                             controller: _chatController,
+                            maxLength: 200,
+                            buildCounter: (_, {required currentLength, required isFocused, maxLength}) => null,
                             onSubmitted: (_) => _sendChat(),
                             style: const TextStyle(
                               color: Colors.white,
@@ -4086,7 +4111,9 @@ class _TeacherGuideState extends State<_TeacherGuide> {
                             ),
                           ),
                         ),
-                        const SizedBox(width: 6),
+                        const SizedBox(width: 4),
+
+                        const SizedBox(width: 4),
                         GestureDetector(
                           onTap: _sendChat,
                           child: Container(
@@ -4144,17 +4171,9 @@ class _TeacherGuideState extends State<_TeacherGuide> {
       screen.height - 60,
     );
     return Positioned(
-      right: rightPos,
-      bottom: bottomPos,
-      child: GestureDetector(
-        onPanUpdate: (d) {
-          setState(() {
-            _dragRight = (_dragRight ?? defaultRight) - d.delta.dx;
-            _dragBottom = (_dragBottom ?? defaultBottom) - d.delta.dy;
-          });
-        },
-        child: _showBubble ? _buildBubble() : _buildEmoji(),
-      ),
+      right: 20,
+      bottom: 20,
+      child: _showBubble ? _buildBubble() : _buildEmoji(),
     );
   }
 }
@@ -4200,3 +4219,6 @@ class _FloatingEmojiState extends State<_FloatingEmoji>
     );
   }
 }
+
+
+

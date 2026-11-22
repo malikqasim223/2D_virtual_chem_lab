@@ -1,4 +1,4 @@
-part of chem_lab;
+﻿part of chem_lab;
 
 class LabScreen extends StatefulWidget {
   final Map<String, dynamic>? loadData;
@@ -58,6 +58,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
   Timer? _alertTimer;
 
   ReactionInfo? currentReaction;
+  String? _lastAnnouncedReaction;
   Timer? _tick;
   late AnimationController _shakeCtrl;
   ReactionInfo? _currentReaction;
@@ -242,6 +243,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
 
   void _recomputeReaction() {
     currentReaction = null;
+    _lastAnnouncedReaction = null;
     if (equipment.isEmpty) return;
 
     // === POPULATE eq.reaction for EACH beaker (multi-reaction display) ===
@@ -309,6 +311,7 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
       }
       benchTools.clear();
       currentReaction = null;
+      _lastAnnouncedReaction = null;
       _currentReaction = null;
       activeEquipId = null;
       _flashCtrl.reset();
@@ -649,7 +652,10 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
   }
 
   void _pourInto(String equipId, Chemical c, double amount) {
+    // print('[DBG-POUR] called');
     EquipItem? targetEq;
+    ReactionInfo? newlyFormedRxn;
+    int layerCountAfter = 0;
     for (final e in equipment) {
       if (e.id == equipId) {
         targetEq = e;
@@ -675,6 +681,9 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
       _recomputeReaction();
       final _rxnCheck = _reactionFor(eq);
       _currentReaction = _rxnCheck;
+      newlyFormedRxn = _rxnCheck;
+      layerCountAfter = eq.layers.length;
+      // print('[DBG-RXN] rxn=' + (newlyFormedRxn?.name ?? 'null') + ' layers=' + layerCountAfter.toString());
       if (_rxnCheck != null && _rxnCheck.isViolent) {
         _flashCtrl.forward(from: 0);
         // Only shake if the reaction has a shakeAmplitude > 0 (e.g. Sodium + Water)
@@ -684,6 +693,121 @@ class _LabScreenState extends State<LabScreen> with TickerProviderStateMixin {
         }
       }
     });
+
+    
+// ── Reaction narration (fire-and-forget, after UI update) ──
+    
+if (newlyFormedRxn != null) {
+    
+  if (_lastAnnouncedReaction != newlyFormedRxn!.name) {
+    
+    _lastAnnouncedReaction = newlyFormedRxn!.name;
+    
+    // print('[DBG-NARRATE] firing');
+    unawaited(_narrateReaction(newlyFormedRxn!, equipId));
+    
+  }
+    
+} else if (layerCountAfter >= 2 && _lastAnnouncedReaction != '__no_reaction__') {
+    
+  _lastAnnouncedReaction = '__no_reaction__';
+    
+  // print('[DBG-NO-RXN] firing');
+  unawaited(_narrateNoReaction());
+    
+}
+  }
+
+  // ── Reaction narration helpers ──
+  Future<void> _narrateReaction(ReactionInfo rxn, String equipId) async {
+    _lastIntroSeqId++;
+    await VoiceService.stopSpeaking();
+    try {
+      // Reactant names from current equipment
+      EquipItem? eq;
+      for (final e in equipment) { if (e.id == equipId) { eq = e; break; } }
+      final reactantNames = <String>[];
+      if (eq != null) {
+        final seen = <String>{};
+        for (final layer in eq.layers) {
+          if (seen.add(layer.chemId)) {
+            try {
+              final c = allChemicals.firstWhere((ch) => ch.id == layer.chemId);
+              reactantNames.add(c.name);
+            } catch (_) { reactantNames.add(layer.chemId); }
+          }
+        }
+      }
+      // Product names (formula -> name lookup)
+      final productNames = <String>[];
+      for (final f in rxn.products) {
+        try {
+          final c = allChemicals.firstWhere((ch) => ch.formula == f);
+          productNames.add(c.name);
+        } catch (_) { productNames.add(f); }
+      }
+      final reactantStr = reactantNames.join(' and ');
+      final productStr = productNames.join(' and ');
+      // Line 1: Reaction name + reactant names + product names
+      if (reactantStr.isNotEmpty && productStr.isNotEmpty) {
+        await sayToUserAndWait('${rxn.name}! $reactantStr gives $productStr.');
+      } else {
+        await sayToUserAndWait('${rxn.name}! ${rxn.equation}');
+      }
+      // Line 2: Description
+      if (rxn.description.isNotEmpty) {
+        await sayToUserAndWait(rxn.description);
+      }
+      // Line 3: Detailed effects
+      final effects = <String>[];
+      if (rxn.releasesHeat) effects.add('it releases heat');
+      if (rxn.tempDeltaC != null && rxn.tempDeltaC! > 0) effects.add('temperature rises by ${rxn.tempDeltaC!.round()} degrees');
+      if (rxn.bubbles) effects.add('you see bubbling');
+      if (rxn.gasEvolution != null && rxn.gasEvolution!.isNotEmpty) effects.add('${rxn.gasEvolution} gas escapes');
+      if (rxn.precipitate) effects.add('a solid precipitate forms');
+      if (rxn.colorChange != null) effects.add('the solution changes color');
+      if (rxn.producesSmoke) effects.add('smoke rises');
+      if (rxn.foam) effects.add('foam forms on top');
+      if (rxn.isViolent) effects.add('this reaction is violent, stay back');
+      if (rxn.odor != null && rxn.odor!.isNotEmpty) effects.add('you may smell ${rxn.odor}');
+      if (effects.isNotEmpty) {
+        await sayToUserAndWait('What you see: ${effects.join(', ')}.');
+      }
+      // Line 4: Products
+      if (productStr.isNotEmpty) {
+        await sayToUserAndWait('Products formed: $productStr.');
+      }
+    } catch (_) {}
+      // ── Deep dive: real-world & educational knowledge ──
+      try {
+        final deep = reactionDeepDive[rxn.name] ?? reactionDeepDive[rxn.type] ?? reactionDeepDive['_default'];
+        if (deep != null) {
+          if (deep['mechanism']?.isNotEmpty == true) {
+            await sayToUserAndWait(deep['mechanism']!);
+          }
+          if (deep['realWorld']?.isNotEmpty == true) {
+            await sayToUserAndWait(deep['realWorld']!);
+          }
+          if (deep['whenMixed']?.isNotEmpty == true) {
+            await sayToUserAndWait(deep['whenMixed']!);
+          }
+          if (deep['safety']?.isNotEmpty == true) {
+            await sayToUserAndWait(deep['safety']!);
+          }
+        }
+      } catch (e) {
+        debugPrint('[DEEP-DIVE] error: ');
+      }
+  }
+
+  Future<void> _narrateNoReaction() async {
+    _lastIntroSeqId++;  // abort pending intro
+    await VoiceService.stopSpeaking();  // kill current voice
+    try {
+      await sayToUserAndWait(
+        'No reaction here. These chemicals are stable together — no color change, no gas, nothing happens.'
+      );
+    } catch (_) {}
   }
 
   Widget _dragBottle(Chemical c) => SizedBox(
@@ -3647,17 +3771,9 @@ class _PremiumChemTileState extends State<_PremiumChemTile> {
   Widget build(BuildContext context) {
     return MouseRegion(
       onEnter: (_) {
-        setState(() => _isHovered = true);
-        if (userWasAway) {
-          userWasAway = false;
-          final name = userName.value == 'Student' ? 'friend' : userName.value;
-          sayToUser(
-            "Ohhhh thank god $name, you are back! Let me tell you about ${widget.c.name} first, then we will move forward.",
-          );
-        } else {
+          setState(() => _isHovered = true);
           sayChemicalIntro(widget.c);
-        }
-      },
+        },
       onExit: (_) {
         setState(() => _isHovered = false);
       },
